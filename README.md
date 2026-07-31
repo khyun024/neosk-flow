@@ -2,7 +2,9 @@
 
 2026-07-31 작성, 코드 입력 방식으로 변경. 프로토타입 반영 완료.
 
-프로토타입 주소: https://gistpreview.github.io/?60c0b8e37056dc8e543ad85261c8715f
+프로토타입 주소(공유용): **https://khyun024.github.io/neosk-flow/**
+
+이전에 쓰던 gistpreview 주소(`gistpreview.github.io/?60c0b8e…`)는 GitHub API를 매번 호출하는 구조라 접속량 제한이나 사내망 차단으로 안 열리는 경우가 있었다. 위 GitHub Pages 주소는 일반 웹페이지와 같아서 그런 제약이 없다. 앞으로는 이 주소만 공유하면 된다.
 
 ## 1. 현재 방식: 참여 코드 입력 (난수번호 방식)
 
