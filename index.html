@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEOSK 키오스크 · 유저 플로우 (와이어프레임)</title>
+<style>
+/* 디자인 배제 버전 — 구조·플로우 확인 전용. 시각 요소는 원본 NEOSK_키오스크.html 참조 */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Apple SD Gothic Neo","Pretendard",sans-serif;background:#f4f4f4;color:#111;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;padding:16px 16px 60px}
+
+/* 플로우 맵 (항상 상단 고정) */
+.flowmap{position:sticky;top:0;z-index:10;background:#fff;border:1px solid #ccc;border-radius:8px;padding:10px 12px;margin-bottom:16px}
+.flowmap .fm-title{font-size:11px;color:#888;letter-spacing:.08em;margin-bottom:6px}
+.flowmap ol{list-style:none;display:flex;flex-wrap:wrap;gap:4px;font-size:12px}
+.flowmap li{padding:3px 8px;border:1px solid #ddd;border-radius:99px;color:#999;background:#fafafa}
+.flowmap li.cur{border-color:#111;color:#fff;background:#111;font-weight:700}
+.flowmap li.done{color:#333;border-color:#aaa}
+
+/* 화면 공통 */
+.screen{display:none}
+.screen.on{display:block}
+.card{background:#fff;border:1px solid #ccc;border-radius:8px;padding:20px;margin-bottom:12px}
+.step-tag{font-size:11px;color:#888;letter-spacing:.1em;margin-bottom:4px}
+h2{font-size:18px;margin-bottom:8px}
+.desc{font-size:13px;color:#555;margin-bottom:16px}
+.note{font-size:12px;color:#777;background:#f7f7f7;border:1px dashed #ccc;border-radius:6px;padding:8px 10px;margin-top:12px}
+.note b{color:#333}
+
+/* 버튼 */
+.btn{display:inline-block;font-size:15px;padding:12px 18px;border:1px solid #111;border-radius:6px;background:#111;color:#fff;cursor:pointer;font-family:inherit}
+.btn.ghost{background:#fff;color:#111}
+.btn.block{display:block;width:100%;text-align:center}
+.actions{display:flex;gap:8px;margin-top:16px}
+.actions .btn{flex:1;text-align:center}
+
+/* 이름 입력 */
+.namefield{border:1px solid #999;border-radius:6px;padding:12px;font-size:20px;min-height:52px;background:#fafafa}
+.namefield.empty{color:#aaa;font-size:15px}
+.nlen{font-size:12px;color:#888;text-align:right;margin:4px 0 10px}
+.comp{text-decoration:underline}
+
+/* 키보드 (플로우 확인용 — 한글 IME 동작 유지) */
+.kb{margin-top:8px;user-select:none}
+.kbrow{display:flex;gap:4px;justify-content:center;margin-bottom:4px}
+.key{flex:1;max-width:44px;padding:10px 0;text-align:center;border:1px solid #ccc;border-radius:4px;background:#fff;font-size:14px;cursor:pointer}
+.key.fn{background:#eee;font-size:12px}
+.key.fn.on{background:#111;color:#fff}
+.key.wide{max-width:none;flex:3}
+.key.x2{max-width:none;flex:2}
+
+/* 설문 */
+.qhead{display:flex;justify-content:space-between;font-size:13px;color:#666;margin-bottom:6px}
+.qbar{height:4px;background:#e5e5e5;border-radius:2px;margin-bottom:16px}
+.qbar i{display:block;height:100%;background:#111;border-radius:2px;width:0;transition:width .2s}
+.qtext{font-size:17px;font-weight:700;margin-bottom:14px}
+.opt{border:1px solid #bbb;border-radius:6px;padding:12px 14px;margin-bottom:8px;font-size:15px;cursor:pointer;background:#fff}
+.opt:hover{border-color:#111}
+.opt .idx{display:inline-block;width:20px;color:#999;font-size:13px}
+
+/* 분석/보이스/결과 */
+.sync-box{text-align:center;padding:32px 0;font-size:15px;color:#555}
+.transcript{border:1px solid #ccc;border-radius:6px;background:#fafafa;padding:14px;font-size:14px;margin:12px 0}
+.transcript .nm{font-weight:700;display:block;margin-bottom:6px}
+.rcard{border:2px solid #111;border-radius:8px;padding:16px;margin:12px 0}
+.rcard .row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px dashed #ddd}
+.rcard .row:last-child{border-bottom:none}
+.rcard .row b{font-size:15px}
+.qrbox{width:90px;height:90px;border:1px solid #999;display:flex;align-items:center;justify-content:center;font-size:10px;color:#888;text-align:center}
+.rescap{font-size:12px;color:#666;margin-top:8px}
+
+/* 코드 입력 */
+.codefield{display:flex;gap:6px;justify-content:center;margin:14px 0 4px}
+.codefield i{width:44px;height:56px;border:1px solid #999;border-radius:6px;background:#fafafa;font-style:normal;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.codefield i.cur{border-color:#111;border-width:2px}
+.codeerr{font-size:13px;color:#b02020;text-align:center;min-height:20px;margin-bottom:4px}
+.note.warn{border-color:#c66;color:#933}
+
+/* 인쇄 오버레이 */
+.overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:20;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center}
+.overlay.on{display:flex}
+.pbar{width:240px;height:6px;background:#e5e5e5;border-radius:3px;overflow:hidden}
+.pbar i{display:block;height:100%;background:#111;width:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 플로우 맵: 현재 단계 표시 -->
+  <div class="flowmap">
+    <div class="fm-title">NEOSK 키오스크 유저 플로우 · 와이어프레임 (디자인 배제)</div>
+    <ol id="fmap">
+      <li data-s="attract">0 대기</li>
+      <li data-s="code">1 코드 입력</li>
+      <li data-s="enter">2 이름 입력</li>
+      <li data-s="survey">3 설문 10문항</li>
+      <li data-s="sync">4 공명 분석</li>
+      <li data-s="phone">5 보이스</li>
+      <li data-s="result">6 결과 카드</li>
+      <li data-s="print">7 인쇄</li>
+      <li data-s="done">8 완료</li>
+    </ol>
+  </div>
+
+  <!-- 0. ATTRACT 대기화면 -->
+  <div class="screen on" id="attract">
+    <div class="card">
+      <div class="step-tag" id="steptag0">STEP 0 · ATTRACT (대기화면)</div>
+      <h2>화면을 터치해 동기화를 시작하세요</h2>
+      <p class="desc">관람객 유입 화면. 터치하면 참여 코드 입력으로 넘어간다.</p>
+      <button class="btn block" onclick="showCode()">터치 (세션 시작) ▶</button>
+      <div class="note">전환: 터치 → <b>1 코드 입력</b><br>스태프: STEP 0 라벨을 <b>5회 연속 터치</b>하면 코드 없이 시작<br>모든 이후 화면에서 <b>70초 무입력 시 이 화면으로 복귀</b> + 입력 데이터 초기화</div>
+    </div>
+  </div>
+
+  <!-- 1. CODE 참여 코드 입력 -->
+  <div class="screen" id="code">
+    <div class="card">
+      <div class="step-tag" id="steptag1">STEP 1 · CODE (참여 코드 입력)</div>
+      <h2>참여 코드를 입력하세요</h2>
+      <p class="desc">입장 시 받은 6자리 코드를 입력한다. 코드 1개당 1회만 참여할 수 있다.</p>
+      <div class="codefield" id="codefield"></div>
+      <div class="codeerr" id="codeerr"></div>
+      <div class="kb" id="codekb"></div>
+      <button class="btn block" id="codego" onclick="submitCode()" disabled>입장하기 ▶</button>
+      <div class="note"><b>예시 모드(서버 없음).</b> 형식(6자리)만 맞으면 유효한 코드로 처리하고, 이 기기에서 한 번 쓴 코드는 다시 쓸 수 없다. 실제 개발 시에는 발급된 5만 개 코드 목록과 대조한다(키오스크 1대면 내장 목록, 여러 대면 서버 대조).<br>코드 규격: 혼동 문자(0·1·I·L·O) 제외 영숫자 31종 × 6자리 = 약 8.9억 조합 → 무작위 입력 통과 확률 1/17,800<br>스태프: STEP 1 라벨 <b>5회 연속 터치</b> 시 사용 기록 초기화(그 뒤 같은 코드 재사용 가능)</div>
+    </div>
+  </div>
+
+  <!-- 1. ENTER 이름 입력 -->
+  <div class="screen" id="enter">
+    <div class="card">
+      <div class="step-tag">STEP 2 · ENTER (이름 입력)</div>
+      <h2>이름을 입력하세요</h2>
+      <p class="desc">입력한 이름은 STEP 4에서 멤버 보이스가 호명할 때 사용된다. 최대 10자, 한/영 전환 가능.</p>
+      <div class="nlen"><span id="nlen">0 / 10</span></div>
+      <div class="namefield empty" id="namefield"><span id="nameout">이름을 입력하세요</span></div>
+      <div class="kb" id="kb"></div>
+      <div class="actions">
+        <button class="btn ghost" onclick="goSurvey(true)">이름 없이 시작</button>
+        <button class="btn" onclick="goSurvey(false)">신호 보내기 ▶</button>
+      </div>
+      <div class="note">분기: <b>이름 입력 후 진행</b> 또는 <b>이름 없이 시작</b>(호명 생략) → 둘 다 <b>3 설문</b>으로</div>
+    </div>
+  </div>
+
+  <!-- 2. SURVEY 설문 -->
+  <div class="screen" id="survey">
+    <div class="card">
+      <div class="step-tag">STEP 3 · SURVEY (설문 10문항)</div>
+      <div class="qhead"><span id="qlab">Q01</span><span><span id="qn">01</span> / 10</span></div>
+      <div class="qbar"><i id="qfill"></i></div>
+      <div class="qtext" id="qtext"></div>
+      <div id="opts"></div>
+      <div class="note">각 문항 4지선다. 선택 즉시 다음 문항. 뒤로가기 없음.<br>10문항 완료 → <b>4 공명 분석</b> 자동 진행</div>
+    </div>
+  </div>
+
+  <!-- 3. SYNC 분석 -->
+  <div class="screen" id="sync">
+    <div class="card">
+      <div class="step-tag">STEP 4 · SYNC (공명 분석)</div>
+      <h2>공명 주파수 분석 중…</h2>
+      <div class="sync-box">약 2.6초 연출 대기 (원본: 레이더 애니메이션)</div>
+      <div class="note">매칭 로직: 21명 멤버 각자의 실제 설문 답변(sig)과 <b>일치 문항 수 최다</b> 멤버 선정.<br>동률이면 고정 TIE 우선순위로 결정 → <b>같은 답이면 항상 같은 멤버</b> (결정적).<br>완료 → <b>5 보이스</b> 자동 전환</div>
+    </div>
+  </div>
+
+  <!-- 4. PHONE 보이스 -->
+  <div class="screen" id="phone">
+    <div class="card">
+      <div class="step-tag">STEP 5 · PHONE (AI 보이스 링크)</div>
+      <h2>헤드폰을 착용하세요</h2>
+      <p class="desc">매칭된 멤버의 목소리가 입력한 이름을 호명하며 메시지를 전한다. (원본: 녹음/AI 보이스 재생 — 이 버전에서는 텍스트로만 표시)</p>
+      <div class="transcript" id="transcript"></div>
+      <button class="btn block" onclick="showResult()">결과 카드 확인 ▶</button>
+      <div class="note">대사 구성: 호명(이름+아/야) → 자기소개 → 멤버별 고유 메시지<br>전환: 버튼 터치 → <b>6 결과 카드</b></div>
+    </div>
+  </div>
+
+  <!-- 5. RESULT 결과 카드 -->
+  <div class="screen" id="result">
+    <div class="card">
+      <div class="step-tag">STEP 6 · RESULT (결과 포토카드)</div>
+      <h2>당신의 신호가 닿은 멤버</h2>
+      <div class="rcard">
+        <div class="row"><span>매칭 멤버</span><b><span id="pcKo">—</span> (<span id="pcEn">—</span>)</b></div>
+        <div class="row"><span>카드 코드</span><b id="pcCode">RS-00</b></div>
+        <div class="row"><span>신호 일치</span><b id="pcAgree">— / 10</b></div>
+        <div class="row"><span>근접 신호 (2·3위)</span><b id="pcNear">—</b></div>
+        <div class="row" style="align-items:center"><span>QR → 시크릿 풀 인터뷰</span><span class="qrbox">QR<br>(세션별 URL)</span></div>
+      </div>
+      <div class="rescap">원본 카드 요소: 멤버 초상(인화), 국문/영문 이름, 사인, 카드 코드, QR</div>
+      <div class="actions">
+        <button class="btn ghost" onclick="reset()">처음으로</button>
+        <button class="btn" onclick="doPrint()">인쇄하기</button>
+      </div>
+      <div class="note">분기: <b>인쇄하기</b> → 7 인쇄 / <b>처음으로</b> → 0 대기 (데이터 초기화)</div>
+    </div>
+  </div>
+
+  <!-- 7. DONE 완료 -->
+  <div class="screen" id="done">
+    <div class="card">
+      <div class="step-tag">STEP 8 · DONE (완료)</div>
+      <h2>동기화 완료</h2>
+      <p class="desc">4×6 포토카드 수령 안내 후 자동으로 대기화면 복귀.</p>
+      <div class="note">전환: <b>4.2초 후 자동으로 0 대기</b> 복귀 + 데이터 초기화</div>
+    </div>
+  </div>
+
+  <!-- 6. 인쇄 오버레이 -->
+  <div class="overlay" id="printOv">
+    <div class="step-tag">STEP 7 · PRINT (인쇄)</div>
+    <h2 id="ovh">결과물 인쇄 중</h2>
+    <div id="ovs">4×6 포토카드</div>
+    <div class="pbar"><i id="pbar"></i></div>
+  </div>
+
+</div>
+
+<script>
+/* ===== 데이터 (원본 유지 — 매칭 플로우 확인용) ===== */
+const MEMBERS=[
+ {id:1,en:'TAEYONG',ko:'태용',voice:'아무것도 없던 어둠 속에서, 네 신호가 제일 먼저 반짝였어.',sig:[0,0,0,0,0,0,0,0,0,0]},
+ {id:2,en:'RENJUN',ko:'런쥔',voice:'오래 켜 둘수록 환해지는 빛처럼, 천천히 너를 비출게.',sig:[0,3,0,2,0,0,0,2,3,0]},
+ {id:3,en:'JOHNNY',ko:'쟈니',voice:'멈춰 있던 내 시간도, 네 신호에 다시 흐르기 시작했어.',sig:[0,0,3,3,0,3,3,2,2,3]},
+ {id:4,en:'YUTA',ko:'유타',voice:'그 빛 하나 따라오다가, 우리 결국 여기서 만났네.',sig:[3,3,1,2,0,3,2,2,0,3]},
+ {id:5,en:'TEN',ko:'텐',voice:'네가 보낸 이 순간, 난 한 곡의 음악으로 기억할게.',sig:[1,3,0,2,3,2,2,2,0,2]},
+ {id:6,en:'JAEMIN',ko:'재민',voice:'꿈처럼 멈춘 한 장면 속에, 네 얼굴을 담아 둘게.',sig:[2,1,1,1,0,3,2,2,0,3]},
+ {id:7,en:'KUN',ko:'쿤',voice:'사라진 줄 알았던 기억까지, 네가 다시 불러냈어.',sig:[2,0,1,2,0,3,0,1,2,0]},
+ {id:8,en:'HAECHAN',ko:'해찬',voice:'잘 안 보여도 괜찮아, 작은 빛으로 늘 네 옆에 있을게.',sig:[2,1,3,0,2,1,3,1,0,3]},
+ {id:9,en:'SION',ko:'시온',voice:'흩어진 빛이 하나로 모이듯, 네 신호도 내게로 모였어.',sig:[1,2,3,2,3,1,3,1,0,3]},
+ {id:10,en:'CHENLE',ko:'천러',voice:'잊고 있던 장면들이, 네 덕분에 하나씩 떠올라.',sig:[2,1,3,0,0,3,1,1,0,3]},
+ {id:11,en:'YANGYANG',ko:'양양',voice:'아무리 멀리 흩어져 있어도, 우리 시간은 이렇게 겹쳐져.',sig:[0,1,1,2,2,1,3,2,0,3]},
+ {id:12,en:'XIAOJUN',ko:'샤오쥔',voice:'아직 모르는 풍경이라도, 너랑 같이 천천히 펼쳐 보고 싶어.',sig:[3,0,1,0,0,3,3,2,2,3]},
+ {id:13,en:'JISUNG',ko:'지성',voice:'처음 와 보는 곳인데, 네가 있으니 하나도 안 낯설어.',sig:[2,0,0,1,2,3,3,0,2,0]},
+ {id:14,en:'RIKU',ko:'리쿠',voice:'오늘 처음인데 이상하지, 너는 아주 오래 안 사람 같아.',sig:[3,0,3,0,1,3,2,1,1,1]},
+ {id:15,en:'JAEHYUN',ko:'재현',voice:'공중에 떠 있는 빛처럼, 네 곁에 가만히 머물러 있을게.',sig:[0,1,3,0,0,0,2,2,2,0]},
+ {id:16,en:'YUSHI',ko:'유우시',voice:'네 신호들이 모여서, 우리만의 정원이 천천히 자랐어.',sig:[1,2,1,3,1,3,1,2,1,3]},
+ {id:17,en:'HENDERY',ko:'헨드리',voice:'아직 열리지 않은 문 하나, 너랑 같이 열어 보자.',sig:[2,1,1,0,0,3,2,1,3,1]},
+ {id:18,en:'JENO',ko:'제노',voice:'흩어진 모든 빛이 한 곳으로 흐르듯, 결국 너에게 닿았어.',sig:[2,0,3,0,0,3,2,1,0,3]},
+ {id:19,en:'RYO',ko:'료',voice:'가장 깊은 곳에 잠들어 있던 꿈이, 네 신호에 깨어났어.',sig:[3,1,3,0,0,0,2,1,2,3]},
+ {id:20,en:'JAEHEE',ko:'재희',voice:'딱 한순간 모든 시간이 멈췄어, 그게 바로 지금이야.',sig:[3,1,3,3,2,2,3,1,1,3]},
+ {id:21,en:'SAKUYA',ko:'사쿠야',voice:'이제 다음 차원이 열려, 그 문 앞에서 너를 기다릴게.',sig:[0,3,0,2,2,2,2,2,1,3]},
+];
+const Q=[
+ {t:'지금 당신의 눈앞에 떠오르는 빛은?',o:['오로라','윤슬','노을','달빛']},
+ {t:'당신의 마음이 더 가는 물건은?',o:['종이 비행기','모래시계','구슬','나비']},
+ {t:'내 마음이 가장 끌리는 순간은?',o:['만남','교감','환호','몰입']},
+ {t:'지금 당신의 감정과 가장 가까운 단어는?',o:['편안함','그리움','설렘','기쁨']},
+ {t:'함께한 소중한 순간들을 타임캡슐에 담는다면?',o:['사진','편지','노래','빛']},
+ {t:'꿈의 경계를 열기 위해 필요한 것은?',o:['열쇠','기억의 조각','공명','용기']},
+ {t:'마음이 가장 따뜻하게 채워지는 장면은?',o:['눈부시게 쏟아지는 여름밤의 유성우','비 갠 뒤 하늘 위에 그려진 무지개','따스한 햇살 아래 함께 걷는 길','쏟아지는 달빛 아래서 함께 춤추는 밤']},
+ {t:'멀리서 불빛이 깜빡인다면?',o:['뛰어간다','지켜본다','천천히 걸어간다','손을 흔든다']},
+ {t:'나를 위로해 줄 단 하나의 풍경을 고른다면?',o:['끝없는 바다','비밀스러운 정원','무한한 별들의 궤도','멈추지 않는 빛의 물결']},
+ {t:'길을 잃었을 때, 나를 이끌어줄 것 같은 존재는?',o:['밤하늘의 북극성','스쳐 지나가는 바람결','발 밑을 비추는 나비','내 이름을 부르는 목소리']},
+];
+const TIE=['제노','천러','유타','재민','해찬','료','샤오쥔','쟈니','재현','양양','사쿠야','헨드리','쿤','재희','리쿠','런쥔','태용','시온','텐','지성','유우시'];
+
+/* ===== 한글 IME (원본 유지) ===== */
+const CHO="ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
+const JUNG="ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ";
+const JONG=" ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ";
+const VOWJOIN={'ㅗㅏ':'ㅘ','ㅗㅐ':'ㅙ','ㅗㅣ':'ㅚ','ㅜㅓ':'ㅝ','ㅜㅔ':'ㅞ','ㅜㅣ':'ㅟ','ㅡㅣ':'ㅢ'};
+const JONGJOIN={'ㄱㅅ':'ㄳ','ㄴㅈ':'ㄵ','ㄴㅎ':'ㄶ','ㄹㄱ':'ㄺ','ㄹㅁ':'ㄻ','ㄹㅂ':'ㄼ','ㄹㅅ':'ㄽ','ㄹㅌ':'ㄾ','ㄹㅍ':'ㄿ','ㄹㅎ':'ㅀ','ㅂㅅ':'ㅄ'};
+const JONGSPLIT={'ㄳ':['ㄱ','ㅅ'],'ㄵ':['ㄴ','ㅈ'],'ㄶ':['ㄴ','ㅎ'],'ㄺ':['ㄹ','ㄱ'],'ㄻ':['ㄹ','ㅁ'],'ㄼ':['ㄹ','ㅂ'],'ㄽ':['ㄹ','ㅅ'],'ㄾ':['ㄹ','ㅌ'],'ㄿ':['ㄹ','ㅍ'],'ㅀ':['ㄹ','ㅎ'],'ㅄ':['ㅂ','ㅅ']};
+let S="", comp={cho:-1,jung:-1,jong:0};
+function syl(){if(comp.cho>=0&&comp.jung>=0)return String.fromCharCode(0xAC00+(comp.cho*21+comp.jung)*28+comp.jong);
+  if(comp.cho>=0)return CHO[comp.cho];if(comp.jung>=0)return JUNG[comp.jung];return "";}
+function commit(){const c=syl();if(c)S+=c;comp={cho:-1,jung:-1,jong:0};}
+function fullName(){return (S+syl()).slice(0,10);}
+function imeInput(j){
+  const v=JUNG.indexOf(j), c=CHO.indexOf(j), ji=JONG.indexOf(j);
+  if(v>=0){
+    if(comp.cho>=0&&comp.jung<0&&comp.jong===0){comp.jung=v;}
+    else if(comp.jung>=0&&comp.jong===0){const k=VOWJOIN[JUNG[comp.jung]+j];
+      if(k!==undefined){comp.jung=JUNG.indexOf(k);}else{commit();comp={cho:-1,jung:v,jong:0};}}
+    else if(comp.cho>=0&&comp.jung>=0&&comp.jong>0){
+      const jc=JONG[comp.jong], sp=JONGSPLIT[jc];
+      if(sp){comp.jong=JONG.indexOf(sp[0]);const mv=CHO.indexOf(sp[1]);commit();comp={cho:mv,jung:v,jong:0};}
+      else{const mv=CHO.indexOf(jc);comp.jong=0;commit();comp={cho:mv,jung:v,jong:0};}}
+    else{commit();comp={cho:-1,jung:v,jong:0};}
+  } else {
+    if(comp.cho<0&&comp.jung<0){comp.cho=(c>=0?c:0);}
+    else if(comp.cho>=0&&comp.jung<0){commit();comp={cho:(c>=0?c:0),jung:-1,jong:0};}
+    else if(comp.cho>=0&&comp.jung>=0&&comp.jong===0){
+      if(ji>0){comp.jong=ji;}else{commit();comp={cho:(c>=0?c:0),jung:-1,jong:0};}}
+    else if(comp.cho>=0&&comp.jung>=0&&comp.jong>0){
+      const k=JONGJOIN[JONG[comp.jong]+j];
+      if(k!==undefined){comp.jong=JONG.indexOf(k);}else{commit();comp={cho:(c>=0?c:0),jung:-1,jong:0};}}
+    else{commit();comp={cho:(c>=0?c:0),jung:-1,jong:0};}
+  }
+  if(fullName().length>10){backspace();return;}
+  renderName();
+}
+function backspace(){
+  if(comp.jong>0){const jc=JONG[comp.jong],sp=JONGSPLIT[jc];comp.jong=sp?JONG.indexOf(sp[0]):0;}
+  else if(comp.jung>=0){const cur=JUNG[comp.jung];let base=null;
+    for(const k in VOWJOIN){if(VOWJOIN[k]===cur){base=k[0];break;}}
+    comp.jung=base?JUNG.indexOf(base):-1;}
+  else if(comp.cho>=0){comp.cho=-1;}
+  else if(S.length){S=S.slice(0,-1);}
+  renderName();
+}
+function addChar(ch){commit(); if(fullName().length<10) S+=ch; renderName();}
+function renderName(){
+  const out=document.getElementById('nameout'), field=document.getElementById('namefield'), coming=syl();
+  const committed=S, total=(S+coming);
+  if(total.length===0){out.textContent='이름을 입력하세요';field.classList.add('empty');}
+  else{field.classList.remove('empty');
+    out.innerHTML=committed.replace(/</g,'&lt;')+(coming?'<span class="comp">'+coming+'</span>':'');}
+  document.getElementById('nlen').textContent=total.length+' / 10';
+}
+const KO=[["ㅂ","ㅈ","ㄷ","ㄱ","ㅅ","ㅛ","ㅕ","ㅑ","ㅐ","ㅔ"],
+          ["ㅁ","ㄴ","ㅇ","ㄹ","ㅎ","ㅗ","ㅓ","ㅏ","ㅣ"],
+          ["⇧","ㅋ","ㅌ","ㅊ","ㅍ","ㅠ","ㅜ","ㅡ","⌫"]];
+const KO_SH={"ㅂ":"ㅃ","ㅈ":"ㅉ","ㄷ":"ㄸ","ㄱ":"ㄲ","ㅅ":"ㅆ","ㅐ":"ㅒ","ㅔ":"ㅖ"};
+const EN=[["q","w","e","r","t","y","u","i","o","p"],
+          ["a","s","d","f","g","h","j","k","l"],
+          ["⇧","z","x","c","v","b","n","m","⌫"]];
+let kbMode='ko', shift=false;
+function drawKB(){
+  const kb=document.getElementById('kb');kb.innerHTML='';
+  const rows=kbMode==='ko'?KO:EN;
+  rows.forEach(row=>{
+    const r=document.createElement('div');r.className='kbrow';
+    row.forEach(k=>{
+      const el=document.createElement('div');
+      if(k==='⇧'){el.className='key fn'+(shift?' on':'');el.textContent='⇧';el.onclick=()=>{shift=!shift;drawKB();};}
+      else if(k==='⌫'){el.className='key fn';el.textContent='⌫';el.onclick=backspace;}
+      else{el.className='key';let label=k;
+        if(kbMode==='ko'&&shift&&KO_SH[k])label=KO_SH[k];
+        if(kbMode==='en'&&shift)label=k.toUpperCase();
+        el.textContent=label;
+        el.onclick=()=>{const ch=label;if(kbMode==='ko')imeInput(ch);else addChar(ch);if(shift){shift=false;drawKB();}};}
+      r.appendChild(el);
+    });
+    kb.appendChild(r);
+  });
+  const r=document.createElement('div');r.className='kbrow';
+  const langEl=document.createElement('div');langEl.className='key fn x2';langEl.textContent=kbMode==='ko'?'한글 / ABC':'ABC / 한글';
+  langEl.onclick=()=>{kbMode=kbMode==='ko'?'en':'ko';shift=false;commit();drawKB();renderName();};
+  const sp=document.createElement('div');sp.className='key wide';sp.textContent='공백';sp.onclick=()=>addChar(' ');
+  const clr=document.createElement('div');clr.className='key fn x2';clr.textContent='전체삭제';clr.onclick=()=>{S='';comp={cho:-1,jung:-1,jong:0};renderName();};
+  r.appendChild(langEl);r.appendChild(sp);r.appendChild(clr);kb.appendChild(r);
+}
+
+/* ===== 플로우 ===== */
+let qi=0, answers=[], uname='', match=null;
+const STEP_OF={attract:'attract',enter:'enter',survey:'survey',sync:'sync',phone:'phone',result:'result',done:'done'};
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
+  updateMap(id);
+  scrollTo(0,0);
+}
+function updateMap(cur){
+  const order=['attract','code','enter','survey','sync','phone','result','print','done'];
+  const ci=order.indexOf(cur==='done'?'done':cur);
+  document.querySelectorAll('#fmap li').forEach(li=>{
+    const s=li.dataset.s, i=order.indexOf(s);
+    li.classList.toggle('cur',s===cur);
+    li.classList.toggle('done',i<ci&&s!==cur);
+  });
+}
+function resetData(){qi=0;answers=[];uname='';S='';comp={cho:-1,jung:-1,jong:0};match=null;kbMode='ko';shift=false;}
+function startSession(){resetData();show('enter');drawKB();renderName();resetIdle();}
+
+/* ===== 참여 코드 게이트 (난수번호 방식) =====
+   예시 모드: 형식(6자리)만 검사하고, 사용한 코드는 이 기기(localStorage)에 기록해 재사용을 막는다.
+   실제 개발: 발급 코드 5만 개 목록과 대조. 키오스크 1대면 내장 목록, 여러 대면 서버에서 사용 처리. */
+const CODE_LEN=6;
+const CODE_CHARS='23456789ABCDEFGHJKMNPQRSTUVWXYZ'; /* 혼동 문자 0·1·I·L·O 제외 31종 */
+let codeS='';
+function showCode(){codeS='';renderCode();codeErr('');drawCodeKB();show('code');resetIdle();}
+function renderCode(){
+  const f=document.getElementById('codefield');f.innerHTML='';
+  for(let i=0;i<CODE_LEN;i++){
+    const c=document.createElement('i');
+    c.textContent=codeS[i]||'';
+    if(i===codeS.length)c.className='cur';
+    f.appendChild(c);
+  }
+  document.getElementById('codego').disabled=(codeS.length<CODE_LEN);
+}
+function codeErr(msg){document.getElementById('codeerr').textContent=msg;}
+function codeKey(ch){if(codeS.length<CODE_LEN){codeS+=ch;codeErr('');renderCode();}resetIdle();}
+function codeBk(){codeS=codeS.slice(0,-1);codeErr('');renderCode();resetIdle();}
+function drawCodeKB(){
+  const kb=document.getElementById('codekb');kb.innerHTML='';
+  const rows=['23456789','ABCDEFGH','JKMNPQRS','TUVWXYZ'];
+  rows.forEach((row,ri)=>{
+    const r=document.createElement('div');r.className='kbrow';
+    row.split('').forEach(ch=>{
+      const el=document.createElement('div');el.className='key';el.textContent=ch;
+      el.onclick=()=>codeKey(ch);r.appendChild(el);
+    });
+    if(ri===rows.length-1){
+      const bk=document.createElement('div');bk.className='key fn';bk.textContent='⌫';bk.onclick=codeBk;r.appendChild(bk);
+    }
+    kb.appendChild(r);
+  });
+}
+function usedCodes(){try{return JSON.parse(localStorage.getItem('neosk_used_codes')||'[]');}catch(e){return [];}}
+function submitCode(){
+  if(codeS.length<CODE_LEN)return;
+  const used=usedCodes();
+  if(used.includes(codeS)){codeErr('이미 사용된 코드입니다. 스태프에게 문의하세요.');resetIdle();return;}
+  used.push(codeS);localStorage.setItem('neosk_used_codes',JSON.stringify(used));
+  startSession();
+}
+/* 스태프: STEP 0 라벨 5회 연속 터치 → 코드 없이 시작 / STEP 1 라벨 5회 → 사용 기록 초기화 */
+function tapCounter(elId,fn){
+  let n=0,t=null;
+  document.getElementById(elId).addEventListener('click',()=>{
+    n++;clearTimeout(t);t=setTimeout(()=>{n=0;},1500);
+    if(n>=5){n=0;fn();}
+  });
+}
+tapCounter('steptag0',()=>startSession());
+tapCounter('steptag1',()=>{
+  if(confirm('사용된 코드 기록('+usedCodes().length+'건)을 초기화할까요? 초기화하면 같은 코드로 다시 입장할 수 있습니다.')){
+    localStorage.removeItem('neosk_used_codes');codeErr('');alert('초기화 완료');
+  }
+});
+function goSurvey(skip){
+  uname=skip?'':fullName().trim();
+  qi=0;answers=[];renderQ();show('survey');resetIdle();
+}
+function renderQ(){
+  const q=Q[qi];
+  document.getElementById('qn').textContent=String(qi+1).padStart(2,'0');
+  document.getElementById('qlab').textContent='Q'+String(qi+1).padStart(2,'0');
+  document.getElementById('qfill').style.width=(qi/Q.length*100)+'%';
+  document.getElementById('qtext').textContent=q.t;
+  const box=document.getElementById('opts');box.innerHTML='';
+  q.o.forEach((label,idx)=>{const d=document.createElement('div');d.className='opt';
+    d.innerHTML='<span class="idx">'+(idx+1)+'</span><span>'+label+'</span>';
+    d.onclick=()=>pick(idx);box.appendChild(d);});
+}
+function pick(idx){answers[qi]=idx;qi++;resetIdle();
+  if(qi<Q.length){renderQ();}else{document.getElementById('qfill').style.width='100%';doSync();}}
+function compute(){
+  const pool=MEMBERS.filter(m=>m.sig);
+  return pool.map(m=>{let a=0;for(let q=0;q<Q.length;q++)if(answers[q]===m.sig[q])a++;
+    const r=TIE.indexOf(m.ko);
+    return{m,agree:a,score:a*1000-(r<0?500:r)};}).sort((x,y)=>y.score-x.score);
+}
+function doSync(){
+  show('sync');resetIdle();
+  setTimeout(()=>{const sc=compute();match={...sc[0],near:[sc[1].m,sc[2].m]};doPhone();},2600);
+}
+function addressee(n){if(!n)return '';const c=n.charCodeAt(n.length-1);
+  if(c>=0xAC00&&c<=0xD7A3)return n+(((c-0xAC00)%28)===0?'야':'아');return n;}
+function doPhone(){
+  show('phone');resetIdle();
+  const m=match.m, voc=addressee(uname);
+  const ENTRY=(voc?voc+', ':'')+'들려? 공유몽 가장 깊은 곳에서, 네가 보낸 신호를 내가 제일 먼저 받았어.';
+  const LINK='너랑 같은 주파수로 떨리고 있는 나, '+m.ko+'야.';
+  document.getElementById('transcript').innerHTML=
+    '<span class="nm">'+m.ko+' ('+m.en+')</span>"'+ENTRY+'"<br>"'+LINK+'"<br>"'+m.voice+'"';
+}
+function showResult(){
+  const m=match.m, pad=n=>String(n).padStart(2,'0');
+  document.getElementById('pcKo').textContent=m.ko;
+  document.getElementById('pcEn').textContent=m.en;
+  document.getElementById('pcCode').textContent='RS-'+pad(m.id);
+  document.getElementById('pcAgree').textContent=match.agree+' / 10';
+  document.getElementById('pcNear').textContent=match.near[0].ko+' · '+match.near[1].ko;
+  show('result');resetIdle();
+}
+function doPrint(){
+  const ov=document.getElementById('printOv');ov.classList.add('on');updateMap('print');
+  document.getElementById('ovh').textContent='결과물 인쇄 중';
+  const bar=document.getElementById('pbar');bar.style.transition='none';bar.style.width='0';
+  void bar.offsetWidth;bar.style.transition='width 3.4s linear';bar.style.width='100%';resetIdle();
+  setTimeout(()=>{document.getElementById('ovh').textContent='결과물을 받아가세요';},3500);
+  setTimeout(()=>{ov.classList.remove('on');show('done');
+    setTimeout(reset,4200);},5600);
+}
+function reset(){resetData();show('attract');clearTimeout(idleT);}
+
+/* 유휴 타임아웃 (원본과 동일: 70초 → 대기화면 복귀 + 데이터 초기화) */
+let idleT;const IDLE=70000;
+function resetIdle(){clearTimeout(idleT);
+  if(document.getElementById('attract').classList.contains('on'))return;
+  idleT=setTimeout(reset,IDLE);}
+['pointerdown','click'].forEach(ev=>document.addEventListener(ev,resetIdle,true));
+
+updateMap('attract');
+</script>
+</body>
+</html>
