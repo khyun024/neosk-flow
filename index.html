@@ -75,6 +75,8 @@ h2{font-size:18px;margin-bottom:8px}
 .codefield i{width:44px;height:56px;border:1px solid #999;border-radius:6px;background:#fafafa;font-style:normal;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .codefield i.cur{border-color:#111;border-width:2px}
 .codeerr{font-size:13px;color:#b02020;text-align:center;min-height:20px;margin-bottom:4px}
+.nameerr{font-size:13px;color:#b02020;min-height:20px;margin:6px 0 2px}
+.btn:disabled{background:#ddd;border-color:#ddd;color:#999;cursor:default}
 .note.warn{border-color:#c66;color:#933}
 
 /* 인쇄 오버레이 */
@@ -133,15 +135,17 @@ h2{font-size:18px;margin-bottom:8px}
     <div class="card">
       <div class="step-tag">STEP 2 · ENTER (이름 입력)</div>
       <h2>이름을 입력하세요</h2>
-      <p class="desc">입력한 이름은 STEP 4에서 멤버 보이스가 호명할 때 사용된다. 최대 10자, 한/영 전환 가능.</p>
+      <p class="desc">입력한 이름은 STEP 5에서 멤버 보이스가 호명할 때 사용된다. 최대 10자, 한/영 전환 가능.</p>
       <div class="nlen"><span id="nlen">0 / 10</span></div>
       <div class="namefield empty" id="namefield"><span id="nameout">이름을 입력하세요</span></div>
+      <div class="nameerr" id="nameerr"></div>
       <div class="kb" id="kb"></div>
-      <div class="actions">
-        <button class="btn ghost" onclick="goSurvey(true)">이름 없이 시작</button>
-        <button class="btn" onclick="goSurvey(false)">신호 보내기 ▶</button>
-      </div>
-      <div class="note">분기: <b>이름 입력 후 진행</b> 또는 <b>이름 없이 시작</b>(호명 생략) → 둘 다 <b>3 설문</b>으로</div>
+      <button class="btn block" id="namego" onclick="goSurvey()">신호 보내기 ▶</button>
+      <div class="note">이름은 <b>필수</b>다(‘이름 없이 시작’ 없음). 버튼을 누르면 아래를 검사하고, 통과해야 다음으로 넘어간다.<br>
+        · <b>완성된 글자만</b> — 초성·모음이 섞이면(ㅋㅋㅋ, ㅎㅇ, 박ㅅ) 불가<br>
+        · <b>금칙어 차단</b> — 욕설·비속어·성적 표현·혐오 표현. 띄어쓰기(시 발), 반복(시발발), 글자 끼워넣기(시이발)까지 정규화·자모 분해로 검사<br>
+        · 한글·영문 모두 허용. 영문 이름은 호격 조사(아/야) 없이 그대로 호명<br>
+        금칙어 목록은 스크립트 상단 <b>BANNED</b> 배열에서 운영 중에도 추가·삭제 가능</div>
     </div>
   </div>
 
@@ -221,6 +225,23 @@ h2{font-size:18px;margin-bottom:8px}
 </div>
 
 <script>
+/* ===== 이름 금칙어 =====
+   운영 중에도 이 배열만 고치면 된다. 완성형·초성·영문을 함께 넣는다.
+   검사는 정규화(공백 제거·반복 문자 축약·소문자화) 후 부분 문자열 대조. */
+const BANNED=[
+  /* 욕설·비속어 */
+  '시발','씨발','시팔','씨팔','시바','씨바','좆','존나','존나게','썅','썅년','씹',
+  '병신','븅신','등신','지랄','미친','또라이','개새','새끼','개년','잡놈','호로',
+  /* 성적 표현 */
+  '섹스','자지','보지','강간','창녀','걸레','야동','성기','정액',
+  /* 혐오·비하 */
+  '일베','한남','김치녀','틀딱','짱깨','쪽바리','흑형','장애인새',
+  /* 초성 우회 */
+  'ㅅㅂ','ㅆㅂ','ㅄ','ㅂㅅ','ㅈㄹ','ㅁㅊ','ㅈㄴ','ㄱㅅㄲ','ㅗ',
+  /* 영문 */
+  'fuck','shit','bitch','dick','pussy','asshole','bastard','sex','porn','nigg'
+];
+
 /* ===== 데이터 (원본 유지 — 매칭 플로우 확인용) ===== */
 const MEMBERS=[
  {id:1,en:'TAEYONG',ko:'태용',voice:'아무것도 없던 어둠 속에서, 네 신호가 제일 먼저 반짝였어.',sig:[0,0,0,0,0,0,0,0,0,0]},
@@ -312,6 +333,7 @@ function renderName(){
   else{field.classList.remove('empty');
     out.innerHTML=committed.replace(/</g,'&lt;')+(coming?'<span class="comp">'+coming+'</span>':'');}
   document.getElementById('nlen').textContent=total.length+' / 10';
+  const e=document.getElementById('nameerr');if(e)e.textContent='';
 }
 const KO=[["ㅂ","ㅈ","ㄷ","ㄱ","ㅅ","ㅛ","ㅕ","ㅑ","ㅐ","ㅔ"],
           ["ㅁ","ㄴ","ㅇ","ㄹ","ㅎ","ㅗ","ㅓ","ㅏ","ㅣ"],
@@ -424,9 +446,50 @@ tapCounter('steptag1',()=>{
     localStorage.removeItem('neosk_used_codes');codeErr('');alert('초기화 완료');
   }
 });
-function goSurvey(skip){
-  uname=skip?'':fullName().trim();
-  qi=0;answers=[];renderQ();show('survey');resetIdle();
+/* 정규화: 소문자 → 공백·기호 제거 → 연속 반복 문자 축약(시발발발 → 시발) */
+function normName(s){
+  return s.toLowerCase()
+    .replace(/[^가-힣ㄱ-ㅎㅏ-ㅣa-z0-9]/g,'')
+    .replace(/(.)\1+/g,'$1');
+}
+/* 자모 분해: 시이발 → ㅅㅣ(ㅇ)ㅣㅂㅏㄹ → 묵음 ㅇ 제거·반복 축약 → ㅅㅣㅂㅏㄹ (= 시발)
+   글자를 끼워 넣는 우회를 잡기 위한 2차 검사 */
+function toJamo(s){
+  let o='';
+  for(const ch of s.toLowerCase()){
+    const c=ch.charCodeAt(0)-0xAC00;
+    if(c>=0&&c<=11171){
+      o+=CHO[Math.floor(c/588)]+JUNG[Math.floor((c%588)/28)]+JONG[c%28].trim();
+    }else o+=ch;
+  }
+  return o.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣa-z0-9]/g,'').replace(/ㅇ/g,'').replace(/(.)\1+/g,'$1');
+}
+const JAMO_ONLY=/^[ㄱ-ㅎㅏ-ㅣ]+$/;
+function bannedHit(s){
+  const n=normName(s), j=toJamo(s);
+  return BANNED.find(w=>
+    n.includes(normName(w)) || (!JAMO_ONLY.test(w) && j.includes(toJamo(w)))
+  )||null;
+}
+/* 검사 결과 {ok, msg} */
+function validateName(raw){
+  const t=raw.trim();
+  if(!t) return {ok:false,msg:'이름을 입력하세요.'};
+  /* 완성된 한글 또는 영문만 허용 — 초성·모음(ㄱ~ㅎ, ㅏ~ㅣ)이 남아 있으면 거부 */
+  if(!/^[가-힣A-Za-z][가-힣A-Za-z ]*$/.test(t))
+    return {ok:false,msg:'완성된 글자로 입력하세요. (초성·모음만은 사용할 수 없습니다)'};
+  const hit=bannedHit(t);
+  if(hit) return {ok:false,msg:'사용할 수 없는 단어가 포함되어 있습니다. 다른 이름을 입력해 주세요.'};
+  return {ok:true,msg:''};
+}
+function nameErr(msg){document.getElementById('nameerr').textContent=msg;}
+function goSurvey(){
+  const v=validateName(fullName());
+  resetIdle();
+  if(!v.ok){nameErr(v.msg);return;}
+  nameErr('');
+  uname=fullName().trim();
+  qi=0;answers=[];renderQ();show('survey');
 }
 function renderQ(){
   const q=Q[qi];
