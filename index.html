@@ -87,6 +87,15 @@ h2{font-size:18px;margin-bottom:8px}
 .btn:disabled{background:#ddd;border-color:#ddd;color:#999;cursor:default}
 .note.warn{border-color:#c66;color:#933}
 
+/* 보이스 재생 표시 */
+.playing{font-size:13px;color:#666;text-align:center;margin:10px 0 2px}
+
+/* 인쇄 상태 스트립 (백그라운드) */
+.printstrip{display:none;background:#fff;border:1px solid #ccc;border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.printstrip.on{display:block}
+.ps-h{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:8px}
+.ps-h span{font-size:11px;color:#999}
+
 /* 인쇄 오버레이 */
 .overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:20;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center}
 .overlay.on{display:flex}
@@ -108,8 +117,7 @@ h2{font-size:18px;margin-bottom:8px}
       <li data-s="sync">4 공명 분석</li>
       <li data-s="result">5 결과 공개</li>
       <li data-s="phone">6 보이스</li>
-      <li data-s="print">7 인쇄</li>
-      <li data-s="done">8 완료</li>
+      <li data-s="done">7 완료</li>
     </ol>
   </div>
 
@@ -195,7 +203,8 @@ h2{font-size:18px;margin-bottom:8px}
       <button class="btn block" onclick="playVoice()">목소리 듣기 ▶</button>
       <div class="note">화면 구성: 상단 문구 + 멤버 이름(<span id="pcEn">—</span>) + 멤버 사진 + 헤드폰 착용 안내<br>
         <b>삭제됨</b>: 신호 일치 개수, 근접 신호(2·3위), 화면 QR코드<br>
-        전환: 버튼 터치 → <b>6 보이스</b> (결과를 먼저 보여준 뒤 목소리 재생)<br>
+        <b>인쇄는 이 화면이 뜨는 순간 자동 시작</b>된다(하단 상태 표시). 그래서 ‘인쇄하기’ 버튼이 없다.<br>
+        전환: <b>목소리 듣기</b>를 눌러야 재생된다(놓치지 않도록 자동 재생하지 않음) → <b>6 보이스</b><br>
         <b>확인 필요</b>: 화면에 띄우는 사진을 실제 인쇄될 포토카드 사진과 같은 컷으로 할지, 화면용과 인쇄용을 다르게 갈지</div>
     </div>
   </div>
@@ -207,31 +216,27 @@ h2{font-size:18px;margin-bottom:8px}
       <h2 id="voiceh">— 의 목소리</h2>
       <p class="desc">매칭된 멤버의 목소리가 입력한 이름을 호명하며 메시지를 전한다. (실제: 녹음/AI 보이스 재생 — 이 버전에서는 텍스트로만 표시)</p>
       <div class="transcript" id="transcript"></div>
-      <div class="actions">
-        <button class="btn ghost" onclick="reset()">처음으로</button>
-        <button class="btn" onclick="doPrint()">인쇄하기</button>
-      </div>
+      <div class="playing" id="playing">▶ 재생 중…</div>
       <div class="note">대사 구성: 호명(이름+아/야) → 자기소개 → 멤버별 고유 메시지<br>
+        <b>버튼 없음</b> — 재생이 끝나면 자동으로 <b>7 완료</b>로 넘어간다(‘인쇄하기’·‘처음으로’ 삭제)<br>
         인쇄 포토카드 요소(화면과 별개): 멤버 초상, 국문·영문 이름, 친필 손글씨, 친필 사인, 카드 코드, QR<br>
-        분기: <b>인쇄하기</b> → 7 인쇄 / <b>처음으로</b> → 0 대기 (데이터 초기화)</div>
+        중간 이탈 시: 70초 무입력이면 대기화면 복귀 + 데이터 초기화</div>
     </div>
   </div>
 
 <!-- 7. DONE 완료 -->
   <div class="screen" id="done">
     <div class="card">
-      <div class="step-tag">STEP 8 · DONE (완료)</div>
-      <h2>동기화 완료</h2>
-      <p class="desc">4×6 포토카드 수령 안내 후 자동으로 대기화면 복귀.</p>
-      <div class="note">전환: <b>4.2초 후 자동으로 0 대기</b> 복귀 + 데이터 초기화</div>
+      <div class="step-tag">STEP 7 · DONE (완료)</div>
+      <h2>포토카드를 받아가세요</h2>
+      <p class="desc">출력구에서 4×6 포토카드를 수령한다. 안내 후 자동으로 대기화면으로 돌아간다.</p>
+      <div class="note">전환: <b>4.2초 후 자동으로 0 대기</b> 복귀 + 데이터(이름·답변) 초기화</div>
     </div>
   </div>
 
-  <!-- 6. 인쇄 오버레이 -->
-  <div class="overlay" id="printOv">
-    <div class="step-tag">STEP 7 · PRINT (인쇄)</div>
-    <h2 id="ovh">결과물 인쇄 중</h2>
-    <div id="ovs">4×6 포토카드</div>
+  <!-- 인쇄 상태 (STEP 5에서 자동 시작 · 화면을 가리지 않는 백그라운드 작업) -->
+  <div class="printstrip" id="printStrip">
+    <div class="ps-h"><b id="psText">포토카드 출력 중…</b><span>PRINT · 백그라운드 자동 진행</span></div>
     <div class="pbar"><i id="pbar"></i></div>
   </div>
 
@@ -391,7 +396,7 @@ function show(id){
   scrollTo(0,0);
 }
 function updateMap(cur){
-  const order=['attract','code','enter','survey','sync','result','phone','print','done'];
+  const order=['attract','code','enter','survey','sync','result','phone','done'];
   const ci=order.indexOf(cur==='done'?'done':cur);
   document.querySelectorAll('#fmap li').forEach(li=>{
     const s=li.dataset.s, i=order.indexOf(s);
@@ -535,7 +540,11 @@ function showResult(){
   document.getElementById('pcKo').textContent=m.ko;
   document.getElementById('pcEn').textContent=m.en;
   show('result');resetIdle();
+  startPrint(); /* 결과 공개 = 인쇄 자동 시작 */
 }
+/* 목소리는 버튼을 눌러야 재생된다(놓치지 않도록). 재생이 끝나면 자동으로 완료로 넘어간다. */
+let voiceT=null, doneT=null;
+const VOICE_MS=9000; /* 시연용 재생 길이 — 실제로는 음원 종료 이벤트로 대체 */
 function playVoice(){
   const m=match.m, voc=addressee(uname);
   const ENTRY=(voc?voc+', ':'')+'들려? 공유몽 가장 깊은 곳에서, 네가 보낸 신호를 내가 제일 먼저 받았어.';
@@ -543,18 +552,27 @@ function playVoice(){
   document.getElementById('voiceh').textContent=m.ko+' 의 목소리';
   document.getElementById('transcript').innerHTML=
     '<span class="nm">'+m.ko+' ('+m.en+')</span>"'+ENTRY+'"<br>"'+LINK+'"<br>"'+m.voice+'"';
+  document.getElementById('playing').textContent='▶ 재생 중…';
   show('phone');resetIdle();
+  clearTimeout(voiceT);
+  voiceT=setTimeout(()=>{
+    document.getElementById('playing').textContent='재생 완료';
+    show('done');clearTimeout(doneT);doneT=setTimeout(reset,4200);
+  },VOICE_MS);
 }
-function doPrint(){
-  const ov=document.getElementById('printOv');ov.classList.add('on');updateMap('print');
-  document.getElementById('ovh').textContent='결과물 인쇄 중';
+/* 인쇄: 결과가 공개되는 순간 자동 시작. 화면을 가리지 않고 상태만 표시한다. */
+let printT=[];
+function startPrint(){
+  const strip=document.getElementById('printStrip');strip.classList.add('on');
+  document.getElementById('psText').textContent='포토카드 출력 중…';
   const bar=document.getElementById('pbar');bar.style.transition='none';bar.style.width='0';
-  void bar.offsetWidth;bar.style.transition='width 3.4s linear';bar.style.width='100%';resetIdle();
-  setTimeout(()=>{document.getElementById('ovh').textContent='결과물을 받아가세요';},3500);
-  setTimeout(()=>{ov.classList.remove('on');show('done');
-    setTimeout(reset,4200);},5600);
+  void bar.offsetWidth;bar.style.transition='width 3.4s linear';bar.style.width='100%';
+  printT.push(setTimeout(()=>{document.getElementById('psText').textContent='포토카드 출력 완료 · 출력구를 확인하세요';},3500));
 }
-function reset(){resetData();show('attract');clearTimeout(idleT);}
+function clearFlowTimers(){printT.forEach(clearTimeout);printT=[];clearTimeout(voiceT);clearTimeout(doneT);}
+function reset(){clearFlowTimers();resetData();
+  document.getElementById('printStrip').classList.remove('on');
+  show('attract');clearTimeout(idleT);}
 
 /* 유휴 타임아웃 (원본과 동일: 70초 → 대기화면 복귀 + 데이터 초기화) */
 let idleT;const IDLE=70000;
