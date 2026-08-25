@@ -243,6 +243,7 @@ body.lite #globes svg{stroke:var(--ink)}
 #phone .tbox .bf{position:absolute;top:-64px;left:-30px;width:130px;filter:drop-shadow(0 0 18px #fff)}
 #phone .tbox .nm{font-family:'Galmuri';font-weight:700;font-size:34px;display:block;margin-bottom:20px}
 #phone .tbox .tx{font-weight:700;font-size:38px;line-height:1.75;white-space:pre-wrap}
+#phone .tbox .tcur{display:inline-block;width:.62em;margin-left:4px;animation:blink .75s steps(2) infinite}
 #phone .bars{display:flex;gap:10px;align-items:flex-end;height:70px;justify-content:center;margin-top:40px}
 #phone .bars i{width:12px;background:var(--lime);height:12px}
 
@@ -796,7 +797,7 @@ function showResult(){
   BF.card(); /* 나비: 카드 헤더 자리에 고정으로 앉아 살짝 날갯짓 */
 }
 /* 목소리(TTS) 미사용 — 대사 텍스트만 표시. 실제 전시에서는 멤버 녹음 음원 재생으로 대체 */
-const VOICE_MS=10000;
+const VOICE_MS=11500;
 function playVoice(){
   const m=match.m, voc=addressee(uname);
   const ENTRY=(voc?voc+', ':'')+'들려? 공유몽 가장 깊은 곳에서, 네가 보낸 신호를 내가 제일 먼저 받았어.';
@@ -900,18 +901,37 @@ function startWaves(){
   if(!waveRAF)fr();
 }
 function stopWaves(){if(waveRAF){cancelAnimationFrame(waveRAF);waveRAF=null;}}
-/* 대사 타이핑 */
+/* 대사 타이핑 — 레트로 터미널 로그 스타일
+   : '>' 프롬프트 → 대기 비트(> · · ·) → 줄 단위 타이핑, 블록 커서 점멸, 불규칙 리듬 */
 let typeT=[];
 function typeLines(lines){
   typeT.forEach(clearTimeout);typeT=[];
-  const el=document.getElementById('vtx');el.textContent='';
-  let li=0,ci=0,acc='';
+  const el=document.getElementById('vtx');el.innerHTML='';
+  const seq=[{type:'dots'}, ...lines.map(t=>({type:'line',text:t}))];
+  let si=0, ci=0, dots=0, out='';
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  function render(cur){
+    el.innerHTML=esc(out).replace(/\n/g,'<br>')+(cur?'<span class="tcur">▮</span>':'');
+  }
   function step(){
-    if(li>=lines.length)return;
-    const line=lines[li];
-    acc+=line[ci];el.textContent=acc;ci++;
-    if(ci>=line.length){acc+='\n';li++;ci=0;typeT.push(setTimeout(step,420));}
-    else typeT.push(setTimeout(step,34));
+    const item=seq[si];
+    if(!item){render(false);return;}
+    if(item.type==='dots'){ /* 수신 대기 비트 */
+      if(dots===0)out+='> ';
+      out+='· ';dots++;render(true);
+      if(dots>=3){out+='\n';si++;typeT.push(setTimeout(step,620));}
+      else typeT.push(setTimeout(step,430));
+      return;
+    }
+    if(ci===0)out+='> ';
+    const ch=item.text[ci];out+=ch;ci++;render(true);
+    if(ci>=item.text.length){out+='\n';si++;ci=0;typeT.push(setTimeout(step,680));}
+    else{
+      let d=26+Math.random()*28;               /* 기본 타건 속도 (불규칙) */
+      if(',.?!'.includes(ch))d+=140;           /* 문장부호 뒤 호흡 */
+      else if(ch===' ')d+=40;
+      typeT.push(setTimeout(step,d));
+    }
   }
   step();
 }
