@@ -679,7 +679,7 @@ function resetData(){qi=0;answers=[];uname='';S='';comp={cho:-1,jung:-1,jong:0};
 document.getElementById('attract').addEventListener('click',()=>{show('brief');ruler(1.2);resetIdle();
   clearTimeout(briefT);briefT=setTimeout(goCode,5500);});
 document.getElementById('brief').addEventListener('click',goCode);
-function goCode(){clearTimeout(briefT);renderCode();codeWarn('');drawCodeKB();show('code');ruler(1.5);resetIdle();BF.hide();}
+function goCode(){clearTimeout(briefT);renderCode();codeWarn('');drawCodeKB();show('code');ruler(1.5);resetIdle();}
 function startSession(){resetData();drawKB();renderName();show('enter');ruler(2);resetIdle();}
 function goSurvey(){
   const v=validateName(fullName());resetIdle();
@@ -708,7 +708,7 @@ function compute(){
 function doSync(){
   show('sync');ruler(3.2);resetIdle();startFreq();
   setTimeout(()=>{const sc=compute();match={...sc[0],near:[sc[1].m,sc[2].m]};
-    stopFreq();BF.sweep(()=>{});setTimeout(showResult,900);},3600);
+    stopFreq();BF.sweep(()=>BF.hide());setTimeout(showResult,1100);},3600);
 }
 function addressee(n){if(!n)return '';const c=n.charCodeAt(n.length-1);
   if(c>=0xAC00&&c<=0xD7A3)return n+(((c-0xAC00)%28)===0?'야':'아');return n;}
@@ -719,7 +719,6 @@ function showResult(){
   document.getElementById('resKo').textContent=m.ko;
   document.getElementById('resCode').textContent='RS-'+pad(m.id);
   flash();lite(true);show('result');ruler(4);resetIdle();
-  BF.hoverCard();
   startPrint();
 }
 function startPrint(){
@@ -737,7 +736,7 @@ function playVoice(){
   const lines=['"'+ENTRY+'"','"'+LINK+'"','"'+m.voice+'"'];
   document.getElementById('vnm').textContent=m.ko+' ('+m.en+')';
   lite(false);show('phone');ruler(4.4);resetIdle();
-  BF.hoverVoice();startWaves();typeLines(lines);
+  startWaves();typeLines(lines);
   let ended=false;const finish=()=>{if(ended)return;ended=true;clearTimeout(voiceT);gotoDone();};
   clearTimeout(voiceT);voiceT=setTimeout(finish,VOICE_MAX);
   try{
@@ -760,7 +759,7 @@ function reset(){
   printT.forEach(clearTimeout);printT=[];clearTimeout(voiceT);clearTimeout(doneT);clearTimeout(briefT);
   stopWaves();stopFreq();stopPickup();try{speechSynthesis.cancel();}catch(e){}
   document.getElementById('printStrip').classList.remove('on');
-  resetData();lite(false);show('attract');ruler(1);clearTimeout(idleT);BF.attract();
+  resetData();lite(false);show('attract');ruler(1);clearTimeout(idleT);BF.hide();
 }
 
 /* ================= 캔버스 연출 ================= */
@@ -798,9 +797,12 @@ function startFreq(){
   const W=cv.width,H=cv.height;const data=[];let x=0;let v=H*0.6;
   function fr(){
     if(!document.getElementById('sync').classList.contains('on')){freqRAF=null;return;}
-    v+=(Math.random()-0.5)*90; v=Math.max(H*0.08,Math.min(H*0.95,v));
-    if(Math.random()<0.1)v=H*(0.15+Math.random()*0.5);
-    data.push(v);if(data.length>240)data.shift();
+    for(let k=0;k<2;k++){
+      v+=(Math.random()-0.5)*90; v=Math.max(H*0.08,Math.min(H*0.95,v));
+      if(Math.random()<0.1)v=H*(0.15+Math.random()*0.5);
+      data.push(v);
+    }
+    if(data.length>240)data.splice(0,data.length-240);
     ctx.clearRect(0,0,W,H);
     ctx.strokeStyle='rgba(224,228,95,.28)';ctx.lineWidth=1;
     for(let gy=0;gy<=8;gy++){ctx.beginPath();ctx.moveTo(0,gy*H/8);ctx.lineTo(W,gy*H/8);ctx.stroke();}
@@ -894,24 +896,23 @@ function stopPickup(){if(pickRAF){cancelAnimationFrame(pickRAF);pickRAF=null;}}
 
 /* ================= 나비 (2D 폴백 → three.js가 대체) ================= */
 const BF={
-  el:document.getElementById('bf2d'), mode:'attract', impl:null,
+  el:document.getElementById('bf2d'), mode:'hide', impl:null,
   pos:{x:820,y:420,s:1},
-  attract(){this.mode='attract';this._show();},
-  hide(){this.mode='hide';this.el.style.opacity=0;if(this.impl)this.impl.setMode('hide');},
-  sweep(cb){this.mode='sweep';this._t0=performance.now();this._cb=cb;this._show();if(this.impl)this.impl.setMode('sweep');},
-  hoverCard(){this.mode='card';this._show();if(this.impl)this.impl.setMode('card');},
-  hoverVoice(){this.mode='voice';this._show();if(this.impl)this.impl.setMode('voice');},
-  hoverDone(){this.mode='done';this._show();if(this.impl)this.impl.setMode('done');},
-  _show(){if(!this.impl)this.el.style.opacity=1;if(this.impl)this.impl.setMode(this.mode);},
+  hide(){this.mode='hide';this.el.style.opacity=0;},
+  sweep(cb){this.mode='sweep';this._t0=performance.now();this._cb=cb;this._show();},
+  hoverDone(){this.mode='done';this._show();},
+  _show(){if(!this.impl)this.el.style.opacity=1;},
+  /* 나비는 두 순간에만 등장한다:
+     ① sweep — 매칭이 끝나는 순간 화면을 가로질러 결과로 안내
+     ② done  — 완료 화면 중앙에서 크게 맴돌기
+     (결과 카드·대사 박스의 작은 나비는 정적 2D 디자인 요소로 별도) */
   target(now){
     const t=now/1000;
     switch(this.mode){
-      case 'attract':return{x:540+Math.sin(t*.5)*330,y:560+Math.sin(t*.83)*180,s:.9};
-      case 'sweep':{const u=Math.min(1,(now-this._t0)/1600);
+      case 'sweep':{const u=Math.min(1,(now-this._t0)/2000);
         if(u>=1&&this._cb){const cb=this._cb;this._cb=null;cb();}
-        return{x:-160+u*1400,y:1500-u*1100+Math.sin(u*9)*70,s:1};}
-      case 'card':return{x:868+Math.sin(t*1.7)*16,y:305+Math.sin(t*2.3)*12,s:.62};
-      case 'voice':return{x:952+Math.sin(t*1.6)*14,y:1078+Math.sin(t*2.1)*10,s:.55};
+        const e=u*u*(3-2*u);
+        return{x:-160+e*1420,y:1560-e*1240+Math.sin(u*7)*80,s:.85+.35*Math.sin(u*Math.PI)};}
       case 'done':return{x:540+Math.sin(t*.7)*70,y:1150+Math.sin(t*1.1)*52,s:1.5};
       default:return null;
     }
@@ -947,7 +948,7 @@ tapCounter(document.getElementById('codeTitle'),()=>{
 new MutationObserver(()=>{if(document.getElementById('enter').classList.contains('on'))drawLens();})
   .observe(document.getElementById('enter'),{attributes:true});
 
-ruler(1);BF.attract();
+ruler(1);BF.hide();
 </script>
 
 <!-- ================= three.js 나비 (FBX) ================= -->
