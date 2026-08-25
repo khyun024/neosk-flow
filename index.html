@@ -26,11 +26,12 @@ body.lite #stage{background:var(--lime)}
 #ruler{position:absolute;top:0;left:0;right:0;height:104px;padding:26px 44px 0;z-index:40;color:var(--lime);transition:color .5s}
 body.lite #ruler{color:var(--ink)}
 #ruler .hid{font-size:15px;line-height:1.25;letter-spacing:.04em}
-#ruler .track{position:relative;height:3px;background:currentColor;opacity:.35;margin-top:14px}
-#ruler .fill{position:absolute;top:23px;left:44px;height:9px;background:currentColor;width:0;transition:width 1s cubic-bezier(.6,0,.2,1);margin-top:14px}
+#ruler .trackwrap{position:relative;height:9px;margin-top:14px}
+#ruler .track{position:absolute;left:0;right:0;top:50%;height:3px;transform:translateY(-50%);background:currentColor;opacity:.35}
+#ruler .fill{position:absolute;left:0;top:0;height:9px;background:currentColor;width:0;transition:width 1s cubic-bezier(.6,0,.2,1)}
 #ruler .labs{display:flex;justify-content:space-between;font-size:14px;margin-top:9px;letter-spacing:.05em}
-#ruler .ticks{position:absolute;left:44px;right:44px;top:60px;height:12px}
-#ruler .ticks i{position:absolute;top:-6px;width:1.5px;height:12px;background:currentColor;opacity:.8}
+#ruler .ticks{position:absolute;inset:0}
+#ruler .ticks i{position:absolute;top:50%;transform:translateY(-50%);width:1.5px;height:15px;background:currentColor;opacity:.8}
 
 #globes{position:absolute;bottom:44px;left:0;right:0;display:flex;justify-content:center;gap:34px;z-index:40}
 #globes svg{width:52px;height:52px;stroke:var(--lime);transition:stroke .5s}
@@ -52,7 +53,7 @@ body.lite #globes svg{stroke:var(--ink)}
 .tag.inv{background:var(--ink);color:var(--lime)}
 .chv{letter-spacing:-2px}
 .btn{display:flex;align-items:center;justify-content:center;gap:14px;border:none;cursor:pointer;
-  font-family:'Pretendard';font-weight:800;color:var(--ink);
+  font-family:'Pretendard';font-weight:700;color:var(--ink);
   background:var(--lime) repeating-linear-gradient(0deg,rgba(7,4,4,.13) 0 2px,transparent 2px 6px);
   box-shadow:0 0 0 2px var(--ink),0 0 34px rgba(224,228,95,.35)}
 .btn:active{transform:translate(2px,2px)}
@@ -90,14 +91,14 @@ body.lite #globes svg{stroke:var(--ink)}
 #attract .touch{position:absolute;left:64px;right:64px;top:1284px;text-align:center}
 #attract .touch .bar{display:flex;align-items:center;justify-content:center;gap:26px;background:var(--lime);color:var(--ink);
   padding:22px 0;font-size:44px;letter-spacing:.16em;box-shadow:0 0 44px rgba(224,228,95,.4)}
-#attract .touch .sub{display:inline-block;margin-top:26px;background:var(--lime);color:var(--ink);font-weight:800;font-size:30px;padding:10px 26px}
+#attract .touch .sub{display:inline-block;margin-top:26px;background:var(--lime);color:var(--ink);font-weight:700;font-size:30px;padding:10px 26px}
 #attract .foot{position:absolute;bottom:120px;left:0;right:0;display:flex;justify-content:center;gap:22px;color:var(--lime);font-size:26px;align-items:center}
 #attract .rbars{position:absolute;right:52px;bottom:190px;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
 #attract .rbars i{height:7px;background:var(--lime);opacity:.85}
 
 /* ---------- BRIEF ---------- */
 #brief{padding:300px 90px 0}
-#brief .ln{color:var(--lime);font-weight:800;font-size:47px;line-height:1.75;animation:fadeUp .7s ease both}
+#brief .ln{color:var(--lime);font-weight:700;font-size:47px;line-height:1.75;animation:fadeUp .7s ease both}
 #brief .b2{animation-delay:.5s}
 #brief .spiral .orbits{transform-origin:585px 320px;animation:spSway 16s ease-in-out infinite}
 @keyframes spSway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
@@ -114,7 +115,7 @@ body.lite #globes svg{stroke:var(--ink)}
 .hudhead{position:absolute;top:150px;right:64px;display:flex;align-items:center;gap:18px}
 .hudhead .ex{background:var(--ink);color:var(--lime);border:2px solid var(--lime);font-size:30px;padding:6px 12px}
 .hudhead .t{background:var(--lime);color:var(--ink);font-size:42px;letter-spacing:.2em;padding:8px 22px}
-.tilt{position:absolute;top:262px;left:64px;background:var(--lime);color:var(--ink);font-weight:800;font-size:44px;padding:16px 30px;
+.tilt{position:absolute;top:262px;left:64px;background:var(--lime);color:var(--ink);font-weight:700;font-size:44px;padding:16px 30px;
   clip-path:polygon(0 0,100% 0,97% 100%,0 100%)}
 .hudbox{position:absolute;left:64px;right:64px;border:2px solid var(--lime);background:rgba(224,228,95,.03)}
 .hudbar{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;border-bottom:2px solid var(--lime)}
@@ -126,7 +127,7 @@ body.lite #globes svg{stroke:var(--ink)}
 #code .slots i{width:118px;height:150px;border:2px solid var(--lime);background:#0d0d0b;color:#fff;
   font-family:'Galmuri';font-size:74px;display:flex;align-items:center;justify-content:center}
 #code .slots i.cur{box-shadow:0 0 24px rgba(224,228,95,.5) inset;border-width:3px}
-.warnbar{margin:14px 26px 0;background:var(--lime);color:var(--ink);font-weight:800;font-size:28px;padding:12px 20px;visibility:hidden}
+.warnbar{margin:14px 26px 0;background:var(--lime);color:var(--ink);font-weight:700;font-size:28px;padding:12px 20px;visibility:hidden}
 .warnbar.on{visibility:visible;animation:shake .4s}
 @keyframes shake{25%{transform:translateX(-10px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
 .kb{padding:20px 22px 26px}
@@ -144,7 +145,7 @@ body.lite #globes svg{stroke:var(--ink)}
 #enter .wavebox{margin:24px 26px 0;border:1px solid rgba(224,228,95,.5);padding:26px 20px 14px;background:rgba(224,228,95,.02)}
 #enter .wavebox .cap{color:var(--lime);font-size:24px;letter-spacing:.3em;margin-top:14px}
 #enter .namefield{margin:22px 26px 0;background:#0d0d0b;border:1px solid rgba(224,228,95,.4);height:150px;
-  display:flex;align-items:center;padding:0 34px;font-size:64px;font-weight:800;color:#fff}
+  display:flex;align-items:center;padding:0 34px;font-size:64px;font-weight:700;color:#fff}
 #enter .namefield.empty{color:#4a4a38}
 #enter .namefield .comp{text-decoration:underline;text-underline-offset:10px}
 #enter .car{display:inline-block;width:5px;height:64px;background:var(--lime);margin-left:8px;animation:blink 1s steps(2) infinite}
@@ -163,14 +164,14 @@ body.lite #globes svg{stroke:var(--ink)}
 #survey .cells i.fill{background:var(--lime);opacity:1;box-shadow:0 0 16px rgba(224,228,95,.55)}
 #survey .cells i.cur{opacity:1;animation:blink 1.1s steps(2) infinite}
 #survey .siglab{font-family:'Galmuri';color:var(--lime);font-size:27px;letter-spacing:.16em;margin-left:26px}
-#survey .qtext{color:#fff;font-weight:800;font-size:56px;line-height:1.35;min-height:160px}
+#survey .qtext{color:#fff;font-weight:700;font-size:56px;line-height:1.35;min-height:160px}
 #survey .opts{margin-top:30px}
 #survey .opt{display:flex;align-items:center;gap:30px;border:2px solid rgba(224,228,95,.65);border-radius:18px;
   background:rgba(13,13,11,.86);padding:34px 38px;margin-bottom:26px;cursor:pointer}
 #survey .opt:active,#survey .opt.sel{background:var(--lime)}
 #survey .opt:active .lb,#survey .opt.sel .lb{color:var(--ink)}
 #survey .opt:active .num,#survey .opt.sel .num{background:var(--ink);color:var(--lime)}
-#survey .num{width:64px;height:64px;border-radius:50%;background:var(--lime);color:var(--ink);font-weight:800;font-size:34px;
+#survey .num{width:64px;height:64px;border-radius:50%;background:var(--lime);color:var(--ink);font-weight:700;font-size:34px;
   display:flex;align-items:center;justify-content:center;flex:none}
 #survey .lb{color:#fff;font-weight:700;font-size:38px;line-height:1.3}
 #survey .ftag{position:absolute;bottom:150px;left:0}
@@ -205,9 +206,9 @@ body.lite #globes svg{stroke:var(--ink)}
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
 #result .frame .rs{font-family:'Galmuri';color:#9aa03e;font-size:30px;letter-spacing:.3em}
 #result .frame .big{font-family:'Galmuri';font-weight:700;color:var(--ink);font-size:120px;letter-spacing:.02em;line-height:1.05;text-align:center}
-#result .frame .kon{font-weight:800;color:var(--ink);font-size:56px;margin-top:6px}
+#result .frame .kon{font-weight:700;color:var(--ink);font-size:56px;margin-top:6px}
 #result .frame .note{position:absolute;bottom:34px;color:#b9bd8f;font-size:22px;letter-spacing:.2em}
-#result .hp{margin:44px 150px 0;background:var(--ink);color:var(--lime);text-align:center;font-weight:800;font-size:46px;padding:30px 0;
+#result .hp{margin:44px 150px 0;background:var(--ink);color:var(--lime);text-align:center;font-weight:700;font-size:46px;padding:30px 0;
   display:flex;align-items:center;justify-content:center;gap:22px}
 #result .listen{margin:26px 150px 0;padding:30px 0;font-size:44px;width:calc(100% - 300px)}
 
@@ -218,7 +219,7 @@ body.lite #globes svg{stroke:var(--ink)}
 #phone .vrow{display:flex;justify-content:space-between;align-items:center;padding:0 64px;margin-top:6px}
 #phone .vrow .l{color:var(--lime);font-family:'Galmuri';font-size:30px;letter-spacing:.24em;display:flex;gap:18px}
 #phone .vrow .r{color:var(--lime);font-family:'Galmuri';font-size:26px;letter-spacing:.14em}
-#phone .hpq{color:#fff;font-weight:800;font-size:44px;text-align:center;margin-top:44px}
+#phone .hpq{color:#fff;font-weight:700;font-size:44px;text-align:center;margin-top:44px}
 #phone .tbox{position:relative;margin:36px 64px 0;background:#dde25c;color:var(--ink);min-height:430px;padding:44px 40px;
   background-image:radial-gradient(rgba(7,4,4,.22) 1.6px,transparent 1.6px);background-size:56px 56px}
 #phone .tbox .bf{position:absolute;top:-64px;left:-30px;width:130px;filter:drop-shadow(0 0 18px #fff)}
@@ -230,16 +231,16 @@ body.lite #globes svg{stroke:var(--ink)}
 /* ---------- DONE (LITE) ---------- */
 #done{padding-top:140px}
 #done .b1{margin-left:64px;color:var(--ink);font-family:'Galmuri';font-size:32px;letter-spacing:.3em}
-#done .b2{margin:12px 64px 0;background:var(--ink);color:var(--lime);font-weight:800;font-size:50px;padding:18px 30px;display:inline-block}
+#done .b2{margin:12px 64px 0;background:var(--ink);color:var(--lime);font-weight:700;font-size:50px;padding:18px 30px;display:inline-block}
 #done .b3{margin-left:64px;margin-top:14px;color:var(--ink);font-family:'Galmuri';font-size:28px;letter-spacing:.34em}
 #done .sy{margin:40px 64px 0;color:var(--ink);font-family:'Galmuri';font-weight:700;font-size:66px;letter-spacing:.06em;line-height:1.4}
-#done .b4{margin:26px 64px 0;background:var(--ink);color:var(--lime);font-weight:800;font-size:44px;padding:16px 30px;display:inline-block}
+#done .b4{margin:26px 64px 0;background:var(--ink);color:var(--lime);font-weight:700;font-size:44px;padding:16px 30px;display:inline-block}
 #done .res{position:absolute;right:64px;bottom:648px;color:var(--ink);font-family:'Galmuri';font-size:24px;line-height:1.8;text-align:left}
 #done .wire{position:absolute;top:640px;right:-140px;width:760px;height:700px;pointer-events:none;opacity:.65}
 #done .cir{position:absolute;left:-120px;bottom:560px;width:420px;height:420px;pointer-events:none;opacity:.7}
 /* 픽업 시뮬레이션 */
 #pickup{position:absolute;left:64px;right:64px;bottom:120px;background:rgba(7,4,4,.06);border:2px dashed rgba(7,4,4,.5);padding:26px 30px 18px}
-#pickup .cap{color:var(--ink);font-weight:800;font-size:38px;display:flex;align-items:center;gap:18px}
+#pickup .cap{color:var(--ink);font-weight:700;font-size:38px;display:flex;align-items:center;gap:18px}
 #pickup .cap .ic{font-family:'Galmuri';background:var(--ink);color:var(--lime);padding:6px 14px;font-size:28px}
 #pickup svg{display:block;width:100%;margin-top:10px}
 #pickup .lbl{font-family:'Galmuri';font-size:19px;fill:#3a3c12}
@@ -251,9 +252,11 @@ body.lite #globes svg{stroke:var(--ink)}
   <!-- 상단 눈금 -->
   <div id="ruler">
     <div class="hid pix">HOURS<br>IN DREAM</div>
-    <div class="track"></div>
-    <div class="fill" id="rulerFill"></div>
-    <div class="ticks" id="rulerTicks"></div>
+    <div class="trackwrap">
+      <div class="track"></div>
+      <div class="fill" id="rulerFill"></div>
+      <div class="ticks" id="rulerTicks"></div>
+    </div>
     <div class="labs pix"><span>1.0</span><span>2.0</span><span>3.0</span><span>4.0</span><span>5.0</span></div>
   </div>
 
@@ -558,7 +561,7 @@ addEventListener('resize',fit);fit();
     s.style.animationDuration=(2.2+Math.random()*2.6)+'s';
     st.appendChild(s);}
 })();
-function ruler(v){const f=Math.max(0,Math.min(1,(v-1)/4));document.getElementById('rulerFill').style.width=`calc((100% - 88px) * ${f})`;}
+function ruler(v){const f=Math.max(0,Math.min(1,(v-1)/4));document.getElementById('rulerFill').style.width=(f*100)+'%';}
 
 /* ================= 한글 IME ================= */
 const CHO="ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
