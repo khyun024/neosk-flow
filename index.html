@@ -41,9 +41,6 @@ body.lite #globes svg{stroke:var(--ink)}
 #noise{position:absolute;inset:0;z-index:60;pointer-events:none;opacity:.05;mix-blend-mode:overlay}
 #scan{position:absolute;inset:0;z-index:61;pointer-events:none;opacity:.10;
   background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.55) 3px 4px)}
-#flash{position:absolute;inset:0;z-index:70;pointer-events:none;background:#fff;opacity:0}
-#flash.go{animation:flash .5s ease-out}
-@keyframes flash{0%{opacity:.9}100%{opacity:0}}
 #bfWrap{position:absolute;inset:0;z-index:55;pointer-events:none}
 #bfWrap canvas{position:absolute;inset:0}
 #bf2d{position:absolute;width:120px;opacity:0;filter:drop-shadow(0 0 22px #fff) drop-shadow(0 0 60px rgba(255,255,255,.7));transition:opacity .6s;will-change:transform}
@@ -61,12 +58,32 @@ body.lite #globes svg{stroke:var(--ink)}
 .btn:active{transform:translate(2px,2px)}
 .blink{animation:blink 1.15s steps(2) infinite}
 @keyframes blink{50%{opacity:.25}}
-.glitch{position:relative}
-.glitch.hit{animation:glitchy .34s steps(2) 2}
-@keyframes glitchy{25%{transform:translate(-3px,1px) skewX(2deg)}50%{transform:translate(3px,-2px)}75%{transform:translate(-2px,2px) skewX(-2deg)}}
+/* 화면 전환: 부드러운 페이드 (플래시·글리치 없음) */
+.screen.on{animation:scrIn .55s ease both}
+@keyframes scrIn{from{opacity:0}to{opacity:1}}
+.fadeup{animation:fadeUp .45s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
 /* ---------- ATTRACT ---------- */
-#attract .logo{position:absolute;top:390px;left:0;width:1080px;pointer-events:none}
+#attract .logo{position:absolute;top:390px;left:0;width:1080px;pointer-events:none;
+  animation:logoFloat 7s ease-in-out infinite}
+@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+#attract .halo{position:absolute;top:660px;left:270px;width:540px;height:540px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(224,228,95,.16) 0%,rgba(224,228,95,.05) 45%,transparent 70%);
+  animation:haloPulse 5s ease-in-out infinite}
+@keyframes haloPulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.12)}}
+#attract .ripwrap{position:absolute;top:442px;left:40px;width:1000px;height:1000px;pointer-events:none}
+#attract .stars i{position:absolute;width:5px;height:5px;background:var(--lime);border-radius:50%;
+  animation:tw 3s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.06;transform:scale(.7)}50%{opacity:.9;transform:scale(1.25)}}
+#attract .sat{position:absolute;top:0;left:0;width:14px;height:14px;border-radius:50%;background:var(--lime);
+  box-shadow:0 0 18px rgba(224,228,95,.9);pointer-events:none;
+  offset-path:ellipse(430px 128px at 540px 942px);animation:satMove 16s linear infinite}
+#attract .sat.s2{width:9px;height:9px;offset-path:ellipse(500px 180px at 540px 942px);
+  animation-duration:23s;animation-delay:-8s;opacity:.7}
+@keyframes satMove{from{offset-distance:0%}to{offset-distance:100%}}
+#attract .touch .bar{animation:barGlow 2.6s ease-in-out infinite}
+@keyframes barGlow{0%,100%{box-shadow:0 0 26px rgba(224,228,95,.25)}50%{box-shadow:0 0 70px rgba(224,228,95,.65)}}
 #attract .kick{position:absolute;top:168px;left:88px;color:var(--lime);font-size:24px;letter-spacing:.1em;display:flex;align-items:center;gap:20px}
 #attract .kick svg{width:64px;height:64px}
 #attract .orb{position:absolute;top:330px;left:0;right:0;display:flex;justify-content:center;gap:28px}
@@ -251,9 +268,26 @@ body.lite #globes svg{stroke:var(--ink)}
       <svg viewBox="0 0 34 34" fill="none" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
       <svg viewBox="0 0 34 34" fill="none" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
     </div>
+    <div class="halo"></div>
     <img class="logo" src="assets/logo.svg" alt="">
+    <svg class="ripwrap" viewBox="0 0 1000 1000" fill="none">
+      <circle cx="500" cy="500" r="20" stroke="#E0E45F" stroke-width="1.6">
+        <animate attributeName="r" values="20;470" dur="4.6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".7;0" dur="4.6s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="500" cy="500" r="20" stroke="#E0E45F" stroke-width="1.6">
+        <animate attributeName="r" values="20;470" dur="4.6s" begin="1.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;.7;0" keyTimes="0;.05;1" dur="4.6s" begin="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="500" cy="500" r="20" stroke="#E0E45F" stroke-width="1.6">
+        <animate attributeName="r" values="20;470" dur="4.6s" begin="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;.7;0" keyTimes="0;.05;1" dur="4.6s" begin="3s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+    <div class="sat"></div><div class="sat s2"></div>
+    <div class="stars" id="stars"></div>
     <div class="touch">
-      <div class="bar pix glitch" id="touchBar"><span class="chv">▶▶</span> TOUCH TO SYNCHRONIZE</div>
+      <div class="bar pix" id="touchBar"><span class="chv">▶▶</span> TOUCH TO SYNCHRONIZE</div>
       <div class="sub">당신의 신호와 공명하는 멤버를 찾습니다</div>
     </div>
     <div class="rbars" id="rbars"></div>
@@ -333,7 +367,7 @@ body.lite #globes svg{stroke:var(--ink)}
     <div class="cascade" id="cascade"></div>
     <div class="qwrap">
       <div class="qbar"><i id="qfill"></i></div>
-      <div class="qtext glitch" id="qtext"></div>
+      <div class="qtext" id="qtext"></div>
       <div class="opts" id="opts"></div>
     </div>
     <div class="ftag ntag pix" style="position:absolute;bottom:150px;left:0;padding-left:64px"><span class="chv">▶▶</span>&nbsp; NEO SIGNAL</div>
@@ -371,7 +405,7 @@ body.lite #globes svg{stroke:var(--ink)}
         <div class="note">MEMBER PORTRAIT · 실제 전시 시 멤버 초상</div>
       </div>
     </div>
-    <div class="hp glitch" id="hpCue">헤드폰을 착용하세요</div>
+    <div class="hp" id="hpCue">헤드폰을 착용하세요</div>
     <button class="btn listen" onclick="playVoice()">목소리 듣기 <span class="pix chv">▶▶</span></button>
   </div>
 
@@ -435,13 +469,13 @@ body.lite #globes svg{stroke:var(--ink)}
         <text class="lbl" x="806" y="118" text-anchor="end" transform="rotate(-90 806 118)"></text>
         <text class="lbl" x="938" y="180" transform="rotate(90 938 180)">OPENING</text>
         <!-- 카드 -->
-        <g id="pkCard"><rect x="-32" y="-4" width="64" height="9" rx="2" fill="#070404"/><rect x="-28" y="-2" width="56" height="5" rx="1" fill="#E0E45F"/></g>
-        <!-- 손 -->
-        <g id="pkHand" opacity="0">
-          <path d="M0 0 h150 v14 h28 v12 h-28 v14 h-150 z" fill="#070404" opacity=".85"/>
-          <text x="34" y="20" fill="#E0E45F" font-size="17" font-family="Galmuri">HAND</text>
+        <g id="pkCard"><rect x="-32" y="-5" width="64" height="10" rx="2" fill="#070404"/><rect x="-28" y="-3" width="56" height="6" rx="1" fill="#E0E45F"/></g>
+        <!-- 팔: 개구부를 지나 안쪽 트레이까지 (pivot 바깥 → 손끝) -->
+        <g id="pkArm" opacity="0">
+          <line id="armLine" x1="1000" y1="168" x2="920" y2="172" stroke="#070404" stroke-width="24" stroke-linecap="round" opacity=".88"/>
+          <circle id="armTip" cx="920" cy="172" r="16" fill="#070404"/>
         </g>
-        <!-- 진행 화살표 -->
+        <!-- 진행 화살표 (안쪽 방향 안내) -->
         <path id="pkArrow" d="M905 172 h-160" stroke="#070404" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#ah)"/>
         <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#070404"/></marker></defs>
       </svg>
@@ -471,7 +505,6 @@ body.lite #globes svg{stroke:var(--ink)}
   <!-- 오버레이 -->
   <svg id="noise"><filter id="nz"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2"><animate attributeName="seed" values="1;9" dur=".6s" repeatCount="indefinite" calcMode="discrete"/></feTurbulence></filter><rect width="100%" height="100%" filter="url(#nz)"/></svg>
   <div id="scan"></div>
-  <div id="flash"></div>
 </div>
 
 <script>
@@ -525,6 +558,14 @@ addEventListener('resize',fit);fit();
   for(let i=0;i<=4;i++){const b=document.createElement('i');b.style.left=(i*25)+'%';t.appendChild(b);}
   const rb=document.getElementById('rbars');
   for(let i=0;i<14;i++){const b=document.createElement('i');b.style.width=(8+Math.round(Math.random()*40))+'px';b.style.opacity=(0.25+i*0.05);rb.appendChild(b);}
+  /* 어트랙트 별 반짝임 */
+  const st=document.getElementById('stars');
+  for(let i=0;i<30;i++){const s=document.createElement('i');
+    s.style.left=(30+Math.random()*1020)+'px';
+    s.style.top=(240+Math.random()*1280)+'px';
+    s.style.animationDelay=(Math.random()*3)+'s';
+    s.style.animationDuration=(2.2+Math.random()*2.6)+'s';
+    st.appendChild(s);}
 })();
 function ruler(v){const f=Math.max(0,Math.min(1,(v-1)/4));document.getElementById('rulerFill').style.width=`calc((100% - 88px) * ${f})`;}
 
@@ -665,14 +706,13 @@ function submitCode(){
   const used=usedCodes();
   if(used.includes(codeS)){codeWarn('[!] 이미 사용된 코드입니다 · 스태프에게 문의하세요');return;}
   used.push(codeS);localStorage.setItem('neosk_used_codes',JSON.stringify(used));
-  flash();startSession();
+  startSession();
 }
 
 /* ================= 플로우 ================= */
 let qi=0, answers=[], uname='', match=null;
 let voiceT=null, doneT=null, briefT=null, printT=[];
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));}
-function flash(){const f=document.getElementById('flash');f.classList.remove('go');void f.offsetWidth;f.classList.add('go');}
 function lite(on){document.body.classList.toggle('lite',on);document.body.classList.toggle('dark',!on);}
 function resetData(){qi=0;answers=[];uname='';S='';comp={cho:-1,jung:-1,jong:0};match=null;kbMode='ko';shift=false;codeS='';}
 
@@ -692,8 +732,9 @@ function renderQ(){
   const q=Q[qi];
   document.getElementById('qfill').style.width=(qi/Q.length*100)+'%';
   const qt=document.getElementById('qtext');qt.textContent=q.t;
-  qt.classList.remove('hit');void qt.offsetWidth;qt.classList.add('hit');
+  qt.classList.remove('fadeup');void qt.offsetWidth;qt.classList.add('fadeup');
   const box=document.getElementById('opts');box.innerHTML='';
+  box.classList.remove('fadeup');void box.offsetWidth;box.classList.add('fadeup');
   q.o.forEach((label,idx)=>{const d=document.createElement('div');d.className='opt';
     d.innerHTML='<span class="num">'+(idx+1)+'</span><span class="lb">'+label+'</span>';
     d.onclick=()=>{d.classList.add('sel');setTimeout(()=>pick(idx),170);};box.appendChild(d);});
@@ -718,7 +759,7 @@ function showResult(){
   document.getElementById('resEn').textContent=m.en;
   document.getElementById('resKo').textContent=m.ko;
   document.getElementById('resCode').textContent='RS-'+pad(m.id);
-  flash();lite(true);show('result');ruler(4);resetIdle();
+  lite(true);show('result');ruler(4);resetIdle();
   startPrint();
 }
 function startPrint(){
@@ -750,10 +791,10 @@ function playVoice(){
 }
 function gotoDone(){
   stopWaves();try{speechSynthesis.cancel();}catch(e){}
-  flash();lite(true);show('done');ruler(5);
+  lite(true);show('done');ruler(5);
   document.getElementById('printStrip').classList.remove('on');
   BF.hoverDone();startPickup();
-  clearTimeout(doneT);doneT=setTimeout(reset,16000);
+  clearTimeout(doneT);doneT=setTimeout(reset,22000);
 }
 function reset(){
   printT.forEach(clearTimeout);printT=[];clearTimeout(voiceT);clearTimeout(doneT);clearTimeout(briefT);
@@ -870,24 +911,37 @@ function typeLines(lines){
 /* ================= 픽업 시뮬레이션 ================= */
 let pickRAF=null;
 function startPickup(){
-  const card=document.getElementById('pkCard'), hand=document.getElementById('pkHand');
+  const card=document.getElementById('pkCard'), arm=document.getElementById('pkArm'),
+        line=document.getElementById('armLine'), tip=document.getElementById('armTip'),
+        arrow=document.getElementById('pkArrow');
   const t0=performance.now();
   function lerp(a,b,u){return a+(b-a)*u;}
   function ease(u){return u<0?0:u>1?1:u*u*(3-2*u);}
+  /* 10초 주기:
+     0.00–0.14 카드가 슈트를 타고 내부 트레이로 낙하
+     0.14–0.26 대기 (화살표: 안쪽 방향 안내)
+     0.26–0.44 팔이 개구부로 들어가 트레이의 카드 쪽으로
+     0.44–0.54 카드 잡기
+     0.54–0.76 팔이 카드와 함께 개구부 밖으로
+     0.76–1.00 비움 (다음 반복 대기) */
   function fr(now){
     if(!document.getElementById('done').classList.contains('on')){pickRAF=null;return;}
-    const t=((now-t0)%6400)/6400;
-    /* 0~.2 카드 슈트 낙하 → 트레이 / .3~.5 손 진입 / .5~.62 잡기 / .62~.85 손+카드 퇴장 */
-    let cx,cy,rot=15,hx=940,ho=0;
-    if(t<.2){const u=ease(t/.2);cx=lerp(300,600,u);cy=lerp(150,232,u);rot=lerp(15,0,u);}
-    else{cx=600;cy=232;rot=0;}
-    if(t>=.3&&t<.5){const u=ease((t-.3)/.2);hx=lerp(940,600,u);ho=1;}
-    else if(t>=.5&&t<.62){hx=600;ho=1;}
-    else if(t>=.62&&t<.85){const u=ease((t-.62)/.23);hx=lerp(600,960,u);ho=1;cx=hx;cy=lerp(232,180,u);}
-    else if(t>=.85){ho=0;cx=-100;cy=-100;}
+    const t=((now-t0)%10000)/10000;
+    let cx=-200,cy=-200,rot=0, tipx=920,tipy=172, armOn=0, arrowOn=1;
+    if(t<.14){const u=ease(t/.14);cx=lerp(300,600,u);cy=lerp(150,228,u);rot=lerp(14,0,u);}
+    else if(t<.26){cx=600;cy=228;}
+    else if(t<.44){const u=ease((t-.26)/.18);cx=600;cy=228;armOn=1;arrowOn=0;
+      tipx=lerp(915,614,u);tipy=lerp(176,212,u);}
+    else if(t<.54){cx=600;cy=228;armOn=1;arrowOn=0;
+      tipx=614;tipy=214+Math.sin((t-.44)*90)*2;}
+    else if(t<.76){const u=ease((t-.54)/.22);armOn=1;arrowOn=0;
+      tipx=lerp(614,975,u);tipy=lerp(212,168,u);cx=tipx-4;cy=tipy+12;}
+    /* t>=.76 : 카드·팔 모두 화면 밖, 화살표만 */
     card.setAttribute('transform',`translate(${cx} ${cy}) rotate(${rot})`);
-    hand.setAttribute('transform',`translate(${hx-170} 158)`);
-    hand.setAttribute('opacity',ho);
+    line.setAttribute('x2',tipx);line.setAttribute('y2',tipy);
+    tip.setAttribute('cx',tipx);tip.setAttribute('cy',tipy);
+    arm.setAttribute('opacity',armOn);
+    arrow.style.opacity=arrowOn?'1':'0';
     pickRAF=requestAnimationFrame(fr);
   }
   if(!pickRAF)pickRAF=requestAnimationFrame(fr);
@@ -895,25 +949,40 @@ function startPickup(){
 function stopPickup(){if(pickRAF){cancelAnimationFrame(pickRAF);pickRAF=null;}}
 
 /* ================= 나비 (2D 폴백 → three.js가 대체) ================= */
+function bez(p0,p1,p2,p3,u){const w=1-u;
+  return{x:w*w*w*p0[0]+3*w*w*u*p1[0]+3*w*u*u*p2[0]+u*u*u*p3[0],
+         y:w*w*w*p0[1]+3*w*w*u*p1[1]+3*w*u*u*p2[1]+u*u*u*p3[1]};}
 const BF={
   el:document.getElementById('bf2d'), mode:'hide', impl:null,
   pos:{x:820,y:420,s:1},
   hide(){this.mode='hide';this.el.style.opacity=0;},
-  sweep(cb){this.mode='sweep';this._t0=performance.now();this._cb=cb;this._show();},
-  hoverDone(){this.mode='done';this._show();},
-  _show(){if(!this.impl)this.el.style.opacity=1;},
+  sweep(cb){this.mode='sweep';this._t0=performance.now();this._cb=cb;},
+  hoverDone(){this.mode='done';this._t0=performance.now();},
   /* 나비는 두 순간에만 등장한다:
-     ① sweep — 매칭이 끝나는 순간 화면을 가로질러 결과로 안내
-     ② done  — 완료 화면 중앙에서 크게 맴돌기
-     (결과 카드·대사 박스의 작은 나비는 정적 2D 디자인 요소로 별도) */
+     ① sweep — 매칭 완료 순간, 좌하단에서 우상단으로 부드러운 S곡선 통과(페이드 인/아웃)
+     ② done  — 완료 화면, 우상단에서 곡선으로 내려와 중앙에 정착
+     (결과 카드·대사 박스의 작은 나비는 정적 2D 디자인 요소) */
   target(now){
-    const t=now/1000;
     switch(this.mode){
-      case 'sweep':{const u=Math.min(1,(now-this._t0)/2000);
+      case 'sweep':{
+        const u=Math.min(1,(now-this._t0)/2600);
         if(u>=1&&this._cb){const cb=this._cb;this._cb=null;cb();}
         const e=u*u*(3-2*u);
-        return{x:-160+e*1420,y:1560-e*1240+Math.sin(u*7)*80,s:.85+.35*Math.sin(u*Math.PI)};}
-      case 'done':return{x:540+Math.sin(t*.7)*70,y:1150+Math.sin(t*1.1)*52,s:1.5};
+        const p=bez([-140,1160],[260,760],[700,1060],[1230,360],e);
+        const a=Math.max(0,Math.min(1,u/.15)*Math.min(1,(1-u)/.15));
+        return{x:p.x,y:p.y,s:.72,a};
+      }
+      case 'done':{
+        const t=now-this._t0;
+        const a=Math.min(1,t/600);
+        if(t<2400){
+          const u=t/2400, e=u*u*(3-2*u);
+          const p=bez([1170,240],[820,430],[240,780],[540,1150],e);
+          return{x:p.x,y:p.y,s:.9+.35*e,a};
+        }
+        const k=t/1000;
+        return{x:540+Math.sin(k*.6)*64,y:1150+Math.sin(k*.95)*46,s:1.25,a:1};
+      }
       default:return null;
     }
   }
@@ -922,9 +991,10 @@ const BF={
   requestAnimationFrame(bf2dLoop);
   if(BF.impl)return;
   const p=BF.target(performance.now());
-  if(!p){return;}
-  const flap=0.55+0.45*Math.abs(Math.sin(performance.now()/90));
+  if(!p){BF.el.style.opacity=0;return;}
+  const flap=0.55+0.45*Math.abs(Math.sin(performance.now()/110));
   BF.pos=p;
+  BF.el.style.opacity=(p.a??1);
   BF.el.style.transform=`translate(${p.x-60}px,${p.y-55}px) scale(${p.s*flap},${p.s})`;
 })();
 
@@ -991,9 +1061,10 @@ try{
 
   /* FBX 로드 */
   const group=new THREE.Group();scene.add(group);
+  const bmat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1});
   let mixer=null, loaded=false;
   new FBXLoader().load('butterfly.fbx',obj=>{
-    obj.traverse(c=>{if(c.isMesh){c.material=new THREE.MeshBasicMaterial({color:0xffffff});c.frustumCulled=false;}});
+    obj.traverse(c=>{if(c.isMesh){c.material=bmat;c.frustumCulled=false;}});
     const box=new THREE.Box3().setFromObject(obj);
     const size=box.getSize(new THREE.Vector3()).length()||1;
     const k=170/size;obj.scale.setScalar(k);
@@ -1003,7 +1074,7 @@ try{
     group.add(obj);
     if(obj.animations&&obj.animations.length){
       mixer=new THREE.AnimationMixer(obj);
-      const act=mixer.clipAction(obj.animations[0]);act.timeScale=1.4;act.play();
+      const act=mixer.clipAction(obj.animations[0]);act.timeScale=1.15;act.play();
     }
     loaded=true;
     BF.impl=impl;              /* 2D 폴백 비활성 */
@@ -1012,10 +1083,10 @@ try{
 
   const impl={setMode(){}};    /* 모드는 BF.target에서 읽음 */
   const clock=new THREE.Clock();
-  let prev={x:540,y:560};
+  let prev={x:540,y:560}, fc=0;
   function toWorld(p){return{x:p.x-540,y:-(p.y-960)};}
   function frame(){
-    requestAnimationFrame(frame);
+    requestAnimationFrame(frame);fc++;
     const dt=clock.getDelta();
     if(mixer)mixer.update(dt);
     const lite=document.body.classList.contains('lite');
@@ -1024,23 +1095,30 @@ try{
     group.visible=vis;trail.visible=vis;
     glowA.visible=vis&&!lite;glowN.visible=vis&&lite;
     if(!vis){renderer.render(scene,cam);return;}
+    const a=t.a??1;
+    bmat.opacity=a;
+    glowA.material.opacity=.9*a;glowN.material.opacity=.7*a;
     const w=toWorld(t);
-    /* 위치·기울기 */
-    const dx=w.x-prev.x, dy=w.y-prev.y;
-    group.position.x+= (w.x-group.position.x)*0.12;
-    group.position.y+= (w.y-group.position.y)*0.12;
-    group.rotation.z=THREE.MathUtils.lerp(group.rotation.z,Math.max(-0.6,Math.min(0.6,-dx*0.02)),0.1);
+    /* 등장 순간 순간이동 방지: 알파가 0에 가까우면 목표 위치로 즉시 스냅 */
+    if(a<0.05){group.position.x=w.x;group.position.y=w.y;}
+    const dx=w.x-prev.x;
+    group.position.x+=(w.x-group.position.x)*0.16;
+    group.position.y+=(w.y-group.position.y)*0.16;
+    group.rotation.z=THREE.MathUtils.lerp(group.rotation.z,Math.max(-0.5,Math.min(0.5,-dx*0.018)),0.08);
     group.scale.setScalar(t.s);
     glowA.position.copy(group.position);glowN.position.copy(group.position);
-    glowA.scale.setScalar(300*t.s);glowN.scale.setScalar(240*t.s);
+    glowA.scale.setScalar(280*t.s);glowN.scale.setScalar(220*t.s);
     prev=w;
-    /* 트레일 방출 */
-    tpos[ti*3]=group.position.x+(Math.random()-0.5)*26;
-    tpos[ti*3+1]=group.position.y+(Math.random()-0.5)*26;
-    tpos[ti*3+2]=0;
-    tlife[ti]=1;ti=(ti+1)%N;
-    for(let i=0;i<N;i++){tlife[i]*=0.965;const v=tlife[i];
-      const tw=(Math.random()<0.02?1.6:1);
+    /* 트레일: 이동 중엔 매 프레임, 정지 호버 중엔 드문드문 */
+    const emit=(BF.mode==='sweep')||fc%3===0;
+    if(emit&&a>0.1){
+      tpos[ti*3]=group.position.x+(Math.random()-0.5)*24;
+      tpos[ti*3+1]=group.position.y+(Math.random()-0.5)*24;
+      tpos[ti*3+2]=0;
+      tlife[ti]=a;ti=(ti+1)%N;
+    }
+    for(let i=0;i<N;i++){tlife[i]*=0.958;const v=tlife[i];
+      const tw=(Math.random()<0.02?1.5:1);
       tcol[i*3]=v*tw;tcol[i*3+1]=v*tw;tcol[i*3+2]=v*tw*(lite?0.4:1);}
     tgeo.attributes.position.needsUpdate=true;tgeo.attributes.color.needsUpdate=true;
     renderer.render(scene,cam);
