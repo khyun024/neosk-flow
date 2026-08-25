@@ -248,8 +248,7 @@ body.lite #globes svg{stroke:var(--ink)}
 #done .b3{position:absolute;top:352px;left:64px;color:var(--ink);font-family:'Galmuri';font-size:28px;letter-spacing:.34em}
 #done .sy{position:absolute;top:864px;left:64px;color:var(--ink);font-family:'Galmuri';font-weight:700;font-size:66px;letter-spacing:.06em;line-height:1.4}
 #done .b4{position:absolute;top:1078px;left:64px;background:var(--ink);color:var(--lime);font-weight:700;font-size:44px;padding:16px 30px;white-space:nowrap}
-#done .res{position:absolute;right:64px;top:1178px;color:var(--ink);font-family:'Galmuri';font-size:23px;line-height:1.75;text-align:left}
-#done .res img{display:block;width:250px;margin-top:12px}
+#done .donehome{position:absolute;left:64px;top:1268px;width:540px;padding:24px 0;font-size:38px}
 /* 픽업 시뮬레이션 */
 #pickup{position:absolute;left:64px;right:64px;bottom:120px;background:rgba(7,4,4,.06);border:2px dashed rgba(7,4,4,.5);padding:26px 30px 18px}
 #pickup .cap{color:var(--ink);font-weight:700;font-size:38px;display:flex;align-items:center;gap:18px}
@@ -460,6 +459,7 @@ body.lite #globes svg{stroke:var(--ink)}
     <div class="b3">DREAM.DATA TRANSFERRED</div>
     <div class="sy"><span class="chv">▶▶</span>SYNCHRONIZING<br>&nbsp;&nbsp;RESONANCE<span style="letter-spacing:.4em">...</span></div>
     <div class="b4">다른 차원에서, 우리 꼭 다시 만나.</div>
+    <button class="btn donehome" onclick="reset()">처음으로 돌아가기 <span class="pix chv">▶▶</span></button>
 
     <div id="pickup">
       <div class="cap"><span class="ic">PICK-UP</span> 출력구에 손을 살짝 넣어 포토카드를 꺼내 주세요</div>
@@ -563,11 +563,12 @@ addEventListener('resize',fit);fit();
   for(let i=0;i<=4;i++){const b=document.createElement('i');b.style.left=(i*25)+'%';t.appendChild(b);}
   const rb=document.getElementById('rbars');
   for(let i=0;i<14;i++){const b=document.createElement('i');b.style.width=(8+Math.round(Math.random()*40))+'px';b.style.opacity=(0.25+i*0.05);rb.appendChild(b);}
-  /* 어트랙트 별 반짝임 */
+  /* 어트랙트 별 반짝임 — 로고 워드마크·터치 바와 겹치지 않는 두 밴드에만 생성 */
   const st=document.getElementById('stars');
-  for(let i=0;i<30;i++){const s=document.createElement('i');
+  for(let i=0;i<26;i++){const s=document.createElement('i');
+    const band=Math.random()<0.62?[240,560]:[1140,1240];
     s.style.left=(30+Math.random()*1020)+'px';
-    s.style.top=(240+Math.random()*1280)+'px';
+    s.style.top=(band[0]+Math.random()*(band[1]-band[0]))+'px';
     s.style.animationDelay=(Math.random()*3)+'s';
     s.style.animationDuration=(2.2+Math.random()*2.6)+'s';
     st.appendChild(s);}
@@ -787,7 +788,7 @@ function gotoDone(){
   stopWaves();
   lite(true);show('done');ruler(5);
   BF.done();startPickup();
-  clearTimeout(doneT);doneT=setTimeout(reset,22000);
+  clearTimeout(doneT);doneT=setTimeout(reset,20000); /* 20초 무입력 시 자동으로 처음으로 */
 }
 function reset(){
   clearTimeout(voiceT);clearTimeout(doneT);clearTimeout(briefT);
