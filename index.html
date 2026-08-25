@@ -200,7 +200,7 @@ body.lite #globes svg{stroke:var(--ink)}
 #result .panel{position:relative;margin:40px 150px 0;background:#e6ea69;border:2px solid rgba(7,4,4,.2);border-radius:36px;
   box-shadow:0 24px 80px rgba(7,4,4,.18);padding:44px 46px 40px}
 #result .ph{display:flex;justify-content:space-between;align-items:flex-start}
-#result .ph .ko{font-family:'Galmuri';font-weight:700;color:var(--ink);font-size:44px;letter-spacing:.12em}
+#result .ph .ko{font-family:'Pretendard';font-weight:800;color:var(--ink);font-size:46px;letter-spacing:.01em}
 #result .ph .en{font-family:'Galmuri';color:var(--ink);font-size:30px;letter-spacing:.34em;margin-top:14px}
 #result .ph img{width:120px;margin:-8px -6px 0 0;filter:drop-shadow(0 4px 18px rgba(255,255,255,.9))}
 #result .frame{position:relative;margin-top:30px;background:#fff;border-radius:30px;height:920px;overflow:hidden;
@@ -953,8 +953,9 @@ const BF={
     const t=now-this._t0;
     switch(this.mode){
       case 'card':{
+        /* 카드 패널 우상단 모서리(930,190)에 걸쳐 앉는다 */
         const a=Math.min(1,t/700);
-        return{x:865,y:299+Math.sin(t/1100)*3,s:.55,a};
+        return{x:928,y:202+Math.sin(t/1100)*3,s:.55,a};
       }
       case 'done':{
         const C={x:540,y:1030};
