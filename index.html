@@ -953,31 +953,38 @@ const BF={
   pos:{x:865,y:300,s:.55},
   hide(){this.mode='hide';this.el.style.opacity=0;},
   card(){this.mode='card';this._t0=performance.now();},
-  done(){this.mode='done';this._t0=performance.now();},
-  /* card : 결과 화면 — 카드 헤더 자리에 고정으로 앉아 살짝 날갯짓 (이동 없음)
-     done : 완료 화면 — 중앙에 가만히 머물다가(0~5초)
-            왼쪽으로 아주 천천히, 잔잔한 상하 물결을 타며 유려하게 날아가 퇴장(5~12초) */
+  done(){this.mode='done';this._t0=performance.now();
+    /* '다른 차원에서, 우리 꼭 다시 만나.' 바의 위쪽 가장자리에 앉을 자리를 실측 */
+    try{
+      const r=document.querySelector('#done .b4').getBoundingClientRect();
+      const sr=stage.getBoundingClientRect();
+      const k=1080/sr.width;
+      this._perch={x:(r.right-sr.left)*k-96, y:(r.top-sr.top)*k-38};
+    }catch(e){this._perch={x:620,y:840};}
+  },
+  /* card : 결과 화면 — 카드 패널 우상단 모서리에 걸쳐 앉아 살짝 날갯짓 (이동 없음)
+     done : 완료 화면 — '우리 꼭 다시 만나.' 바 위에 앉아 있다가(0~6초)
+            왼쪽 위로 아주 천천히, 잔잔한 물결을 타며 유려하게 날아가 퇴장(6~13초) */
   target(now){
     const t=now-this._t0;
     switch(this.mode){
       case 'card':{
-        /* 카드 패널 우상단 모서리(930,190)에 걸쳐 앉는다 */
         const a=Math.min(1,t/700);
         return{x:928,y:202+Math.sin(t/1100)*3,s:.55,a};
       }
       case 'done':{
-        const C={x:540,y:1030};
-        if(t<5000){ /* 머물기 */
+        const P=this._perch||{x:620,y:840};
+        if(t<6000){ /* 바 위에 앉아 날갯짓 */
           const a=Math.min(1,t/700);
-          return{x:C.x+Math.sin(t/1600)*6,y:C.y+Math.sin(t/1150)*9,s:1.15,a};
+          return{x:P.x,y:P.y+Math.sin(t/1200)*3,s:.8,a};
         }
-        const u=(t-5000)/7000;
+        const u=(t-6000)/7000;
         if(u>=1)return null; /* 퇴장 완료 */
         const e=u*u*(3-2*u);
-        const p=bez([C.x,C.y],[400,985],[150,860],[-220,720],e);
-        const fl=Math.sin(t/470)*22*(1-e*.45); /* 나비 특유의 잔잔한 상하 흔들림 */
+        const p=bez([P.x,P.y],[P.x-180,P.y-90],[220,P.y-220],[-220,P.y-330],e);
+        const fl=Math.sin(t/470)*20*e; /* 날아오르면서 물결이 서서히 생긴다 */
         const a=u<.72?1:Math.max(0,1-(u-.72)/.28);
-        return{x:p.x,y:p.y+fl,s:1.15-.12*e,a};
+        return{x:p.x,y:p.y+fl,s:.8+.15*e,a};
       }
       default:return null;
     }
