@@ -155,8 +155,16 @@ body.lite #globes svg{stroke:var(--ink)}
 #survey{padding-top:150px}
 #survey .cascade{position:relative;height:560px;overflow:hidden}
 #survey .ntag{position:absolute;font-family:'Galmuri';font-size:35px;letter-spacing:.3em;background:var(--lime);color:var(--ink);padding:12px 26px;white-space:nowrap}
-#survey .lbleed{position:absolute;left:-30px;top:100px;width:168px;height:67px;background:var(--lime)}
 #survey .dotp{position:absolute;opacity:.8;pointer-events:none}
+/* NEO SIGNAL 티커: 신호가 흐르는 전광판 — 잘림 없이 무한 루프 */
+#survey .ticker{position:absolute;left:0;right:0;overflow:hidden;white-space:nowrap}
+#survey .ticker .tk{display:inline-block;white-space:nowrap;font-family:'Galmuri';font-size:35px;letter-spacing:.3em;
+  will-change:transform;animation:tickMove 36s linear infinite}
+#survey .t1{top:40px;background:var(--lime);padding:14px 0}
+#survey .t1 .tk{color:var(--ink)}
+#survey .t2{top:150px;border-top:2px solid rgba(224,228,95,.8);border-bottom:2px solid rgba(224,228,95,.8);padding:12px 0}
+#survey .t2 .tk{color:var(--lime);animation-duration:52s;animation-direction:reverse;opacity:.9}
+@keyframes tickMove{to{transform:translateX(-50%)}}
 #survey .qwrap{padding:0 84px}
 /* 진행 표시: NEO SIGNAL 수신 셀 (답할 때마다 한 칸씩 점등) */
 #survey .sigprog{display:flex;align-items:center;margin-bottom:34px}
@@ -368,13 +376,16 @@ body.lite #globes svg{stroke:var(--ink)}
 
   <!-- SURVEY -->
   <div class="screen" id="survey">
-    <img class="dotp" src="assets/dots1.svg" style="top:118px;left:150px;width:270px" alt="">
-    <img class="dotp" src="assets/dots1.svg" style="top:118px;left:420px;width:270px;opacity:.6" alt="">
-    <img class="dotp" src="assets/dots1.svg" style="top:118px;left:690px;width:270px;opacity:.75" alt="">
-    <img class="dotp" src="assets/dots2.svg" style="top:388px;left:36px;width:220px;opacity:.5" alt="">
-    <img class="dotp" src="assets/dots2.svg" style="top:430px;left:500px;width:200px;opacity:.45" alt="">
-    <img class="dotp" src="assets/dots2.svg" style="top:400px;left:780px;width:240px;opacity:.7" alt="">
-    <div class="cascade" id="cascade"></div>
+    <img class="dotp" src="assets/dots1.svg" style="top:262px;left:64px;width:270px" alt="">
+    <img class="dotp" src="assets/dots1.svg" style="top:262px;left:410px;width:270px;opacity:.55" alt="">
+    <img class="dotp" src="assets/dots1.svg" style="top:262px;left:750px;width:270px;opacity:.75" alt="">
+    <img class="dotp" src="assets/dots2.svg" style="top:470px;left:64px;width:220px;opacity:.5" alt="">
+    <img class="dotp" src="assets/dots2.svg" style="top:500px;left:460px;width:200px;opacity:.45" alt="">
+    <img class="dotp" src="assets/dots2.svg" style="top:462px;left:790px;width:230px;opacity:.7" alt="">
+    <div class="cascade" id="cascade">
+      <div class="ticker t1"><div class="tk" id="tk1"></div></div>
+      <div class="ticker t2"><div class="tk" id="tk2"></div></div>
+    </div>
     <div class="qwrap">
       <div class="sigprog"><div class="cells" id="sigcells"></div><span class="siglab" id="siglab">SIGNAL 01 / 10</span></div>
       <div class="qtext" id="qtext"></div>
@@ -886,15 +897,12 @@ function typeLines(lines){
   }
   step();
 }
-/* 설문 NEO SIGNAL 캐스케이드 — 시안처럼 계단식, 아래 두 개는 우측 가장자리로 자연 클리핑 */
-(()=>{const c=document.getElementById('cascade');
-  const b=document.createElement('div');b.className='lbleed';c.appendChild(b); /* 좌측 가장자리 옐로 블록 */
-  [[64,26],[420,100],[790,174],[1010,248]].forEach(p=>{
-    const d=document.createElement('div');d.className='ntag pix';
-    d.style.left=p[0]+'px';d.style.top=p[1]+'px';
-    d.innerHTML='<span class="chv">▶▶</span>&nbsp; NEO SIGNAL';
-    c.appendChild(d);});
-})();
+/* 설문 NEO SIGNAL 티커 — 동일 콘텐츠 2배 복제로 이음새 없는 무한 루프 */
+(()=>{['tk1','tk2'].forEach(id=>{
+  const el=document.getElementById(id);
+  let s='';for(let i=0;i<8;i++)s+='<span class="chv">▶▶</span>&nbsp;&nbsp;NEO&nbsp;SIGNAL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+  el.innerHTML=s+s;
+});})();
 
 /* ================= 픽업 시뮬레이션 ================= */
 let pickRAF=null;
