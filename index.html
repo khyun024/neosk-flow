@@ -65,9 +65,7 @@ body.lite #globes svg{stroke:var(--ink)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
 /* ---------- ATTRACT ---------- */
-#attract .logo{position:absolute;top:390px;left:0;width:1080px;pointer-events:none;
-  animation:logoFloat 7s ease-in-out infinite}
-@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+#attract .logo{position:absolute;top:390px;left:0;width:1080px;pointer-events:none}
 #attract .halo{position:absolute;top:660px;left:270px;width:540px;height:540px;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,rgba(224,228,95,.16) 0%,rgba(224,228,95,.05) 45%,transparent 70%);
   animation:haloPulse 5s ease-in-out infinite}
@@ -99,7 +97,14 @@ body.lite #globes svg{stroke:var(--ink)}
 
 /* ---------- BRIEF ---------- */
 #brief{padding:300px 90px 0}
-#brief .ln{color:var(--lime);font-weight:800;font-size:47px;line-height:1.75}
+#brief .ln{color:var(--lime);font-weight:800;font-size:47px;line-height:1.75;animation:fadeUp .7s ease both}
+#brief .b2{animation-delay:.5s}
+#brief .spiral .orbits{transform-origin:585px 320px;animation:spSway 16s ease-in-out infinite}
+@keyframes spSway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+#brief .hex{animation:hexP 2.4s ease-in-out infinite}
+#brief .hex.h2{animation-delay:1.2s}
+@keyframes hexP{0%,100%{opacity:.55}50%{opacity:1}}
+#brief .co{animation:fadeUp .7s ease .9s both}
 #brief .hl{font-family:'Galmuri';background:var(--lime);color:var(--ink);padding:2px 14px;letter-spacing:.06em}
 #brief .spiral{position:absolute;top:640px;left:-60px;width:1200px;height:760px;pointer-events:none}
 #brief .co{position:absolute;color:var(--lime);font-family:'Galmuri';font-size:22px;line-height:1.5}
@@ -151,8 +156,13 @@ body.lite #globes svg{stroke:var(--ink)}
 #survey .ntag{position:absolute;font-family:'Galmuri';font-size:34px;letter-spacing:.24em;background:var(--lime);color:var(--ink);padding:10px 24px;white-space:nowrap}
 #survey .dotfield{position:absolute;top:120px;left:0;width:1080px;height:520px;object-fit:cover;object-position:top;opacity:.75;pointer-events:none}
 #survey .qwrap{padding:0 84px}
-#survey .qbar{width:140px;height:16px;background:var(--lime);margin-bottom:34px;position:relative}
-#survey .qbar i{position:absolute;left:0;top:0;bottom:0;background:#fff;mix-blend-mode:difference}
+/* 진행 표시: NEO SIGNAL 수신 셀 (답할 때마다 한 칸씩 점등) */
+#survey .sigprog{display:flex;align-items:center;margin-bottom:34px}
+#survey .cells{display:flex;gap:9px}
+#survey .cells i{width:46px;height:20px;border:2px solid var(--lime);transform:skewX(-18deg);opacity:.55}
+#survey .cells i.fill{background:var(--lime);opacity:1;box-shadow:0 0 16px rgba(224,228,95,.55)}
+#survey .cells i.cur{opacity:1;animation:blink 1.1s steps(2) infinite}
+#survey .siglab{font-family:'Galmuri';color:var(--lime);font-size:27px;letter-spacing:.16em;margin-left:26px}
 #survey .qtext{color:#fff;font-weight:800;font-size:56px;line-height:1.35;min-height:160px}
 #survey .opts{margin-top:30px}
 #survey .opt{display:flex;align-items:center;gap:30px;border:2px solid rgba(224,228,95,.65);border-radius:18px;
@@ -201,15 +211,6 @@ body.lite #globes svg{stroke:var(--ink)}
   display:flex;align-items:center;justify-content:center;gap:22px}
 #result .listen{margin:26px 150px 0;padding:30px 0;font-size:44px;width:calc(100% - 300px)}
 
-/* 인쇄 상태 스트립 */
-#printStrip{position:absolute;left:64px;right:64px;bottom:20px;z-index:45;display:none}
-#printStrip.on{display:block}
-#printStrip .row{display:flex;align-items:center;gap:24px;background:var(--ink);padding:20px 28px}
-#printStrip .pt{color:var(--lime);font-family:'Galmuri';font-size:30px;letter-spacing:.12em;flex:1}
-#printStrip img{width:150px;opacity:.9}
-#printStrip .pb{height:8px;background:rgba(224,228,95,.25);margin-top:0}
-#printStrip .pb i{display:block;height:100%;width:0;background:var(--lime)}
-
 /* ---------- VOICE ---------- */
 #phone{padding-top:170px}
 #phone .head{color:var(--lime);font-family:'Galmuri';font-size:34px;letter-spacing:.28em;padding-left:64px;display:flex;gap:20px}
@@ -234,6 +235,8 @@ body.lite #globes svg{stroke:var(--ink)}
 #done .sy{margin:40px 64px 0;color:var(--ink);font-family:'Galmuri';font-weight:700;font-size:66px;letter-spacing:.06em;line-height:1.4}
 #done .b4{margin:26px 64px 0;background:var(--ink);color:var(--lime);font-weight:800;font-size:44px;padding:16px 30px;display:inline-block}
 #done .res{position:absolute;right:64px;bottom:648px;color:var(--ink);font-family:'Galmuri';font-size:24px;line-height:1.8;text-align:left}
+#done .donebf{position:absolute;top:920px;left:426px;width:228px;pointer-events:none;
+  filter:drop-shadow(0 0 26px rgba(255,255,255,.95)) drop-shadow(0 0 80px rgba(255,255,255,.55))}
 #done .wire{position:absolute;top:640px;right:-140px;width:760px;height:700px;pointer-events:none;opacity:.65}
 #done .cir{position:absolute;left:-120px;bottom:560px;width:420px;height:420px;pointer-events:none;opacity:.7}
 /* 픽업 시뮬레이션 */
@@ -303,7 +306,7 @@ body.lite #globes svg{stroke:var(--ink)}
   <div class="screen" id="brief">
     <div class="ln">당신은 공중정원을 완성하기 위해 초대된<br><span class="hl">SYNCHRONIZER</span> 입니다.</div>
     <svg class="spiral" viewBox="0 0 1200 760" fill="none" id="spiralSvg">
-      <g stroke="#E0E45F" stroke-width="1.4" opacity=".9">
+      <g class="orbits" stroke="#E0E45F" stroke-width="1.4" opacity=".9">
         <ellipse cx="560" cy="380" rx="540" ry="150" transform="rotate(-14 560 380)"/>
         <ellipse cx="580" cy="340" rx="460" ry="128" transform="rotate(-10 580 340)"/>
         <ellipse cx="600" cy="300" rx="380" ry="106" transform="rotate(-6 600 300)"/>
@@ -313,8 +316,8 @@ body.lite #globes svg{stroke:var(--ink)}
       </g>
       <path d="M330 520 L430 470 L680 470" stroke="#E0E45F" stroke-width="1.4"/>
       <path d="M840 250 L900 200 L1160 200" stroke="#E0E45F" stroke-width="1.4"/>
-      <path d="M420 462 l16 9 -0.2 18 -16 9 -16-9 0-18z" fill="#E0E45F"/>
-      <path d="M888 192 l16 9 -0.2 18 -16 9 -16-9 0-18z" fill="#E0E45F"/>
+      <path class="hex" d="M420 462 l16 9 -0.2 18 -16 9 -16-9 0-18z" fill="#E0E45F"/>
+      <path class="hex h2" d="M888 192 l16 9 -0.2 18 -16 9 -16-9 0-18z" fill="#E0E45F"/>
     </svg>
     <div class="co pix" style="top:1090px;left:120px">■ NEO /*<br>&nbsp;&nbsp;DIMENSION</div>
     <div class="co pix" style="top:820px;right:96px;text-align:right">37°32'40.2"N<br>127°02'40.0"E</div>
@@ -366,7 +369,7 @@ body.lite #globes svg{stroke:var(--ink)}
     <img class="dotfield" src="assets/dots1.svg" style="top:120px;left:0;width:1080px" alt="">
     <div class="cascade" id="cascade"></div>
     <div class="qwrap">
-      <div class="qbar"><i id="qfill"></i></div>
+      <div class="sigprog"><div class="cells" id="sigcells"></div><span class="siglab" id="siglab">SIGNAL 01 / 10</span></div>
       <div class="qtext" id="qtext"></div>
       <div class="opts" id="opts"></div>
     </div>
@@ -396,7 +399,6 @@ body.lite #globes svg{stroke:var(--ink)}
           <div class="ko">당신의 신호가 닿은 멤버</div>
           <div class="en">YOUR RESONANCE</div>
         </div>
-        <img src="assets/butterfly2d.svg" alt="">
       </div>
       <div class="frame">
         <div class="rs" id="resCode">RS-00</div>
@@ -434,6 +436,7 @@ body.lite #globes svg{stroke:var(--ink)}
     <div class="sy"><span class="chv">▶▶</span>SYNCHRONIZING<br>&nbsp;&nbsp;RESONANCE<span style="letter-spacing:.4em">...</span></div>
     <div class="b4">다른 차원에서, 우리 꼭 다시 만나.</div>
     <div class="res pix">┌ DREAM COORDINATES<br>: NEO DIMENSION<br><br>RESONANCE = 100%;<br>EMPATHY = 100%;</div>
+    <img class="donebf" src="assets/butterfly2d.svg" alt="">
     <svg class="wire" viewBox="0 0 760 700" fill="none" stroke="#070404" stroke-width="1.3" opacity=".8">
       <ellipse cx="560" cy="350" rx="420" ry="330" stroke-dasharray="3 5"/>
       <ellipse cx="600" cy="350" rx="330" ry="330"/>
@@ -448,7 +451,7 @@ body.lite #globes svg{stroke:var(--ink)}
     </svg>
 
     <div id="pickup">
-      <div class="cap"><span class="ic">PICK-UP</span> 출력구 안쪽에 손을 넣어 포토카드를 꺼내 주세요</div>
+      <div class="cap"><span class="ic">PICK-UP</span> 출력구에 손을 살짝 넣어 포토카드를 꺼내 주세요</div>
       <svg viewBox="0 0 940 300">
         <!-- 키오스크 단면: 오른쪽이 전면(개구부), 카드는 안쪽 트레이에 떨어짐 -->
         <rect x="20" y="20" width="900" height="250" fill="none" stroke="#070404" stroke-width="3"/>
@@ -456,13 +459,13 @@ body.lite #globes svg{stroke:var(--ink)}
         <!-- 프린터 -->
         <rect x="60" y="70" width="220" height="90" fill="#070404"/>
         <text x="82" y="122" fill="#E0E45F" font-size="24" font-weight="700">PHOTO PRINTER</text>
-        <!-- 슈트 -->
-        <path d="M280 140 L520 205" stroke="#070404" stroke-width="4"/>
-        <path d="M280 175 L505 240" stroke="#070404" stroke-width="4"/>
-        <text class="lbl" x="330" y="150" transform="rotate(15 330 150)">DROP CHUTE</text>
-        <!-- 내부 트레이 -->
-        <path d="M505 240 L700 240 L700 200" fill="none" stroke="#070404" stroke-width="4"/>
-        <text class="lbl" x="520" y="268">INNER TRAY (내부 트레이)</text>
+        <!-- 슈트: 카드가 전면(개구부) 쪽까지 미끄러져 내려온다 -->
+        <path d="M280 140 L640 214" stroke="#070404" stroke-width="4"/>
+        <path d="M280 175 L625 249" stroke="#070404" stroke-width="4"/>
+        <text class="lbl" x="360" y="162" transform="rotate(11 360 162)">DROP CHUTE</text>
+        <!-- 트레이: 개구부 바로 안쪽 -->
+        <path d="M625 249 L862 249 L862 205" fill="none" stroke="#070404" stroke-width="4"/>
+        <text class="lbl" x="530" y="266">TRAY · 개구부 바로 안쪽</text>
         <!-- 전면 벽 + 개구부 -->
         <path d="M920 20 L920 130" stroke="#070404" stroke-width="8"/>
         <path d="M920 214 L920 270" stroke="#070404" stroke-width="8"/>
@@ -476,19 +479,10 @@ body.lite #globes svg{stroke:var(--ink)}
           <circle id="armTip" cx="920" cy="172" r="16" fill="#070404"/>
         </g>
         <!-- 진행 화살표 (안쪽 방향 안내) -->
-        <path id="pkArrow" d="M905 172 h-160" stroke="#070404" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#ah)"/>
+        <path id="pkArrow" d="M905 172 h-90" stroke="#070404" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#ah)"/>
         <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#070404"/></marker></defs>
       </svg>
     </div>
-  </div>
-
-  <!-- 인쇄 상태 -->
-  <div id="printStrip">
-    <div class="row">
-      <span class="pt" id="psText"><span class="chv">▶▶</span>PRINTING... <span style="opacity:.75">결과물 인쇄 중..</span></span>
-      <img src="assets/halftone.svg" alt="">
-    </div>
-    <div class="pb"><i id="pbar"></i></div>
   </div>
 
   <!-- 하단 글로브 -->
@@ -711,7 +705,7 @@ function submitCode(){
 
 /* ================= 플로우 ================= */
 let qi=0, answers=[], uname='', match=null;
-let voiceT=null, doneT=null, briefT=null, printT=[];
+let voiceT=null, doneT=null, briefT=null;
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));}
 function lite(on){document.body.classList.toggle('lite',on);document.body.classList.toggle('dark',!on);}
 function resetData(){qi=0;answers=[];uname='';S='';comp={cho:-1,jung:-1,jong:0};match=null;kbMode='ko';shift=false;codeS='';}
@@ -730,7 +724,11 @@ function goSurvey(){
 function renderQ(){
   ruler(2+qi/Q.length);
   const q=Q[qi];
-  document.getElementById('qfill').style.width=(qi/Q.length*100)+'%';
+  const cells=document.getElementById('sigcells');cells.innerHTML='';
+  for(let i=0;i<Q.length;i++){const c=document.createElement('i');
+    if(i<qi)c.className='fill';else if(i===qi)c.className='cur';
+    cells.appendChild(c);}
+  document.getElementById('siglab').textContent='SIGNAL '+String(qi+1).padStart(2,'0')+' / 10';
   const qt=document.getElementById('qtext');qt.textContent=q.t;
   qt.classList.remove('fadeup');void qt.offsetWidth;qt.classList.add('fadeup');
   const box=document.getElementById('opts');box.innerHTML='';
@@ -749,7 +747,7 @@ function compute(){
 function doSync(){
   show('sync');ruler(3.2);resetIdle();startFreq();
   setTimeout(()=>{const sc=compute();match={...sc[0],near:[sc[1].m,sc[2].m]};
-    stopFreq();BF.sweep(()=>BF.hide());setTimeout(showResult,1100);},3600);
+    stopFreq();setTimeout(showResult,400);},3600);
 }
 function addressee(n){if(!n)return '';const c=n.charCodeAt(n.length-1);
   if(c>=0xAC00&&c<=0xD7A3)return n+(((c-0xAC00)%28)===0?'야':'아');return n;}
@@ -760,14 +758,7 @@ function showResult(){
   document.getElementById('resKo').textContent=m.ko;
   document.getElementById('resCode').textContent='RS-'+pad(m.id);
   lite(true);show('result');ruler(4);resetIdle();
-  startPrint();
-}
-function startPrint(){
-  const strip=document.getElementById('printStrip');strip.classList.add('on');
-  document.getElementById('psText').innerHTML='<span class="chv">▶▶</span>PRINTING... <span style="opacity:.75">결과물 인쇄 중..</span>';
-  const bar=document.getElementById('pbar');bar.style.transition='none';bar.style.width='0';
-  void bar.offsetWidth;bar.style.transition='width 3.6s linear';bar.style.width='100%';
-  printT.push(setTimeout(()=>{document.getElementById('psText').innerHTML='<span class="chv">▶▶</span>PRINT COMPLETE <span style="opacity:.75">· 카드가 내부 트레이로 이동했습니다</span>';},3800));
+  BF.card(); /* 나비: 카드 헤더 자리에 고정으로 앉아 살짝 날갯짓 */
 }
 const VOICE_MAX=14000, VOICE_MIN=6500;
 function playVoice(){
@@ -777,7 +768,7 @@ function playVoice(){
   const lines=['"'+ENTRY+'"','"'+LINK+'"','"'+m.voice+'"'];
   document.getElementById('vnm').textContent=m.ko+' ('+m.en+')';
   lite(false);show('phone');ruler(4.4);resetIdle();
-  startWaves();typeLines(lines);
+  BF.hide();startWaves();typeLines(lines);
   let ended=false;const finish=()=>{if(ended)return;ended=true;clearTimeout(voiceT);gotoDone();};
   clearTimeout(voiceT);voiceT=setTimeout(finish,VOICE_MAX);
   try{
@@ -792,14 +783,12 @@ function playVoice(){
 function gotoDone(){
   stopWaves();try{speechSynthesis.cancel();}catch(e){}
   lite(true);show('done');ruler(5);
-  document.getElementById('printStrip').classList.remove('on');
-  BF.hoverDone();startPickup();
+  BF.hide();startPickup();
   clearTimeout(doneT);doneT=setTimeout(reset,22000);
 }
 function reset(){
-  printT.forEach(clearTimeout);printT=[];clearTimeout(voiceT);clearTimeout(doneT);clearTimeout(briefT);
+  clearTimeout(voiceT);clearTimeout(doneT);clearTimeout(briefT);
   stopWaves();stopFreq();stopPickup();try{speechSynthesis.cancel();}catch(e){}
-  document.getElementById('printStrip').classList.remove('on');
   resetData();lite(false);show('attract');ruler(1);clearTimeout(idleT);BF.hide();
 }
 
@@ -917,26 +906,26 @@ function startPickup(){
   const t0=performance.now();
   function lerp(a,b,u){return a+(b-a)*u;}
   function ease(u){return u<0?0:u>1?1:u*u*(3-2*u);}
-  /* 10초 주기:
-     0.00–0.14 카드가 슈트를 타고 내부 트레이로 낙하
-     0.14–0.26 대기 (화살표: 안쪽 방향 안내)
-     0.26–0.44 팔이 개구부로 들어가 트레이의 카드 쪽으로
-     0.44–0.54 카드 잡기
-     0.54–0.76 팔이 카드와 함께 개구부 밖으로
-     0.76–1.00 비움 (다음 반복 대기) */
+  /* 10초 주기 — 트레이가 개구부 바로 안쪽이라 손을 살짝만 넣는다:
+     0.00–0.14 카드가 슈트를 타고 전면 트레이로 낙하
+     0.14–0.28 대기 (화살표: 안쪽 방향 안내)
+     0.28–0.42 손끝이 개구부로 살짝 들어감 (얕은 진입)
+     0.42–0.52 카드 잡기
+     0.52–0.72 손이 카드와 함께 바로 밖으로
+     0.72–1.00 비움 (다음 반복 대기) */
   function fr(now){
     if(!document.getElementById('done').classList.contains('on')){pickRAF=null;return;}
     const t=((now-t0)%10000)/10000;
     let cx=-200,cy=-200,rot=0, tipx=920,tipy=172, armOn=0, arrowOn=1;
-    if(t<.14){const u=ease(t/.14);cx=lerp(300,600,u);cy=lerp(150,228,u);rot=lerp(14,0,u);}
-    else if(t<.26){cx=600;cy=228;}
-    else if(t<.44){const u=ease((t-.26)/.18);cx=600;cy=228;armOn=1;arrowOn=0;
-      tipx=lerp(915,614,u);tipy=lerp(176,212,u);}
-    else if(t<.54){cx=600;cy=228;armOn=1;arrowOn=0;
-      tipx=614;tipy=214+Math.sin((t-.44)*90)*2;}
-    else if(t<.76){const u=ease((t-.54)/.22);armOn=1;arrowOn=0;
-      tipx=lerp(614,975,u);tipy=lerp(212,168,u);cx=tipx-4;cy=tipy+12;}
-    /* t>=.76 : 카드·팔 모두 화면 밖, 화살표만 */
+    if(t<.14){const u=ease(t/.14);cx=lerp(300,800,u);cy=lerp(150,240,u);rot=lerp(12,0,u);}
+    else if(t<.28){cx=800;cy=240;}
+    else if(t<.42){const u=ease((t-.28)/.14);cx=800;cy=240;armOn=1;arrowOn=0;
+      tipx=lerp(918,816,u);tipy=lerp(174,224,u);}
+    else if(t<.52){cx=800;cy=240;armOn=1;arrowOn=0;
+      tipx=816;tipy=226+Math.sin((t-.42)*90)*2;}
+    else if(t<.72){const u=ease((t-.52)/.2);armOn=1;arrowOn=0;
+      tipx=lerp(816,975,u);tipy=lerp(224,168,u);cx=tipx-4;cy=tipy+12;}
+    /* t>=.72 : 카드·팔 모두 화면 밖, 화살표만 */
     card.setAttribute('transform',`translate(${cx} ${cy}) rotate(${rot})`);
     line.setAttribute('x2',tipx);line.setAttribute('y2',tipy);
     tip.setAttribute('cx',tipx);tip.setAttribute('cy',tipy);
@@ -949,42 +938,18 @@ function startPickup(){
 function stopPickup(){if(pickRAF){cancelAnimationFrame(pickRAF);pickRAF=null;}}
 
 /* ================= 나비 (2D 폴백 → three.js가 대체) ================= */
-function bez(p0,p1,p2,p3,u){const w=1-u;
-  return{x:w*w*w*p0[0]+3*w*w*u*p1[0]+3*w*u*u*p2[0]+u*u*u*p3[0],
-         y:w*w*w*p0[1]+3*w*w*u*p1[1]+3*w*u*u*p2[1]+u*u*u*p3[1]};}
 const BF={
   el:document.getElementById('bf2d'), mode:'hide', impl:null,
-  pos:{x:820,y:420,s:1},
+  pos:{x:865,y:300,s:.55},
   hide(){this.mode='hide';this.el.style.opacity=0;},
-  sweep(cb){this.mode='sweep';this._t0=performance.now();this._cb=cb;},
-  hoverDone(){this.mode='done';this._t0=performance.now();},
-  /* 나비는 두 순간에만 등장한다:
-     ① sweep — 매칭 완료 순간, 좌하단에서 우상단으로 부드러운 S곡선 통과(페이드 인/아웃)
-     ② done  — 완료 화면, 우상단에서 곡선으로 내려와 중앙에 정착
-     (결과 카드·대사 박스의 작은 나비는 정적 2D 디자인 요소) */
+  card(){this.mode='card';this._t0=performance.now();},
+  /* 나비는 결과 화면 한 곳에만: 카드 헤더 오른쪽 자리에 고정으로 앉아
+     페이드 인 후 제자리에서 살짝 날갯짓만 한다 (이동 없음) */
   target(now){
-    switch(this.mode){
-      case 'sweep':{
-        const u=Math.min(1,(now-this._t0)/2600);
-        if(u>=1&&this._cb){const cb=this._cb;this._cb=null;cb();}
-        const e=u*u*(3-2*u);
-        const p=bez([-140,1160],[260,760],[700,1060],[1230,360],e);
-        const a=Math.max(0,Math.min(1,u/.15)*Math.min(1,(1-u)/.15));
-        return{x:p.x,y:p.y,s:.72,a};
-      }
-      case 'done':{
-        const t=now-this._t0;
-        const a=Math.min(1,t/600);
-        if(t<2400){
-          const u=t/2400, e=u*u*(3-2*u);
-          const p=bez([1170,240],[820,430],[240,780],[540,1150],e);
-          return{x:p.x,y:p.y,s:.9+.35*e,a};
-        }
-        const k=t/1000;
-        return{x:540+Math.sin(k*.6)*64,y:1150+Math.sin(k*.95)*46,s:1.25,a:1};
-      }
-      default:return null;
-    }
+    if(this.mode!=='card')return null;
+    const t=now-this._t0;
+    const a=Math.min(1,t/700);
+    return{x:865,y:299+Math.sin(t/1100)*3,s:.55,a};
   }
 };
 (function bf2dLoop(){
@@ -1092,35 +1057,19 @@ try{
     const lite=document.body.classList.contains('lite');
     const t=BF.target(performance.now());
     const vis=!!t&&loaded;
-    group.visible=vis;trail.visible=vis;
+    group.visible=vis;trail.visible=false; /* 파티클 트레일 미사용 (고정 착지 연출) */
     glowA.visible=vis&&!lite;glowN.visible=vis&&lite;
     if(!vis){renderer.render(scene,cam);return;}
     const a=t.a??1;
     bmat.opacity=a;
-    glowA.material.opacity=.9*a;glowN.material.opacity=.7*a;
+    glowA.material.opacity=.85*a;glowN.material.opacity=.5*a;
     const w=toWorld(t);
-    /* 등장 순간 순간이동 방지: 알파가 0에 가까우면 목표 위치로 즉시 스냅 */
-    if(a<0.05){group.position.x=w.x;group.position.y=w.y;}
-    const dx=w.x-prev.x;
-    group.position.x+=(w.x-group.position.x)*0.16;
-    group.position.y+=(w.y-group.position.y)*0.16;
-    group.rotation.z=THREE.MathUtils.lerp(group.rotation.z,Math.max(-0.5,Math.min(0.5,-dx*0.018)),0.08);
+    group.position.x=w.x;group.position.y=w.y; /* 위치 고정 (관성 없음) */
+    group.rotation.z=0;
     group.scale.setScalar(t.s);
     glowA.position.copy(group.position);glowN.position.copy(group.position);
-    glowA.scale.setScalar(280*t.s);glowN.scale.setScalar(220*t.s);
+    glowA.scale.setScalar(190*t.s);glowN.scale.setScalar(160*t.s);
     prev=w;
-    /* 트레일: 이동 중엔 매 프레임, 정지 호버 중엔 드문드문 */
-    const emit=(BF.mode==='sweep')||fc%3===0;
-    if(emit&&a>0.1){
-      tpos[ti*3]=group.position.x+(Math.random()-0.5)*24;
-      tpos[ti*3+1]=group.position.y+(Math.random()-0.5)*24;
-      tpos[ti*3+2]=0;
-      tlife[ti]=a;ti=(ti+1)%N;
-    }
-    for(let i=0;i<N;i++){tlife[i]*=0.958;const v=tlife[i];
-      const tw=(Math.random()<0.02?1.5:1);
-      tcol[i*3]=v*tw;tcol[i*3+1]=v*tw;tcol[i*3+2]=v*tw*(lite?0.4:1);}
-    tgeo.attributes.position.needsUpdate=true;tgeo.attributes.color.needsUpdate=true;
     renderer.render(scene,cam);
   }
   frame();
