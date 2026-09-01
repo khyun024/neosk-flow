@@ -38,13 +38,12 @@ body.lite #ruler{color:var(--ink)}
 #grainOv{position:absolute;inset:-40px;z-index:60;pointer-events:none;opacity:.13;mix-blend-mode:screen;
   background:url('assets/kv_grain.png');background-size:900px;
   will-change:transform;
-  animation:grainJit 2.2s step-end infinite} /* 스냅 주기·이동폭 최소화 (모바일 피드백 2차) */
+  animation:grainJit 18s ease-in-out infinite} /* 아주 느린 연속 유영 — 점프 없음, 미세한 살아있는 느낌만 */
 body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 @keyframes grainJit{
   0%{transform:translate(0,0)}
-  25%{transform:translate(-4px,3px)}
-  50%{transform:translate(3px,-4px)}
-  75%{transform:translate(4px,3px)}
+  33%{transform:translate(-5px,4px)}
+  66%{transform:translate(4px,-5px)}
   100%{transform:translate(0,0)}}
 #scan{position:absolute;inset:0;z-index:61;pointer-events:none;opacity:.10;
   background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.55) 3px 4px)}
