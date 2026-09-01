@@ -6,19 +6,18 @@
 <meta name="robots" content="noindex, nofollow">
 <title>NEOSK · THE LINK — SYNCHRONIZER</title>
 <style>
-/* ============ NCT 2026 NEO DIMENSION KV — 0831 최종 포스터(컬러·그리드 수정) 반영 ============
-   KEY : NEON GREEN #CFFF3B / BLACK #070404 / WHITE  (메인 포스터 실측 샘플링)
-   FONT: Barlow Semi Condensed(영문 디스플레이) + Pretendard(한글 본문)   */
-@font-face{font-family:'Barlow Semi Condensed';src:url('BarlowSemiCondensed-400.woff2') format('woff2');font-weight:400;font-display:swap}
-@font-face{font-family:'Barlow Semi Condensed';src:url('BarlowSemiCondensed-600.woff2') format('woff2');font-weight:600;font-display:swap}
-@font-face{font-family:'Barlow Semi Condensed';src:url('BarlowSemiCondensed-700.woff2') format('woff2');font-weight:700;font-display:swap}
+/* ============ NCT 2026 NEO DIMENSION KV ============
+   KEY : PANTONE 379C #E0E45F / BLACK #070404 / WHITE
+   FONT: Galmuri11(픽셀) + Pretendard(본문)          */
+@font-face{font-family:'Galmuri';src:url('Galmuri11.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Galmuri';src:url('Galmuri11-Bold.woff2') format('woff2');font-weight:700;font-display:swap}
 @font-face{font-family:'Pretendard';src:url('Pretendard.woff2') format('woff2-variations');font-weight:45 920;font-display:swap}
 
-:root{--lime:#CFFF3B;--ink:#070404;--dim:rgba(207,255,59,.34)}
+:root{--lime:#E0E45F;--ink:#070404;--dim:rgba(224,228,95,.34)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;background:#000}
 body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif}
-.pix{font-family:'Barlow Semi Condensed','Pretendard',sans-serif;font-weight:600}
+.pix{font-family:'Galmuri','Pretendard',monospace}
 
 #stage{position:absolute;width:1080px;height:1920px;transform-origin:0 0;background:var(--ink);overflow:hidden;transition:background .5s}
 body.lite #stage{background:var(--lime)}
@@ -34,15 +33,13 @@ body.lite #ruler{color:var(--ink)}
 #ruler .ticks{position:absolute;inset:0}
 #ruler .ticks i{position:absolute;top:50%;transform:translateY(-50%);width:1.5px;height:15px;background:currentColor;opacity:.8}
 
-/* 포스터 그레인/스캔라인 — 실제 KV 그레인 텍스처를 미세 지터로 재생 (필름 셰이더 느낌) */
-#grainOv{position:absolute;inset:-40px;z-index:60;pointer-events:none;opacity:.13;mix-blend-mode:screen;
-  background:url('assets/kv_grain.png');background-size:900px;
-  animation:grainJit .42s steps(6) infinite}
-body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
-@keyframes grainJit{
-  0%{transform:translate(0,0)}17%{transform:translate(-14px,9px)}34%{transform:translate(9px,-13px)}
-  51%{transform:translate(-7px,-8px)}68%{transform:translate(12px,11px)}85%{transform:translate(-10px,4px)}
-  100%{transform:translate(0,0)}}
+#globes{position:absolute;bottom:44px;left:0;right:0;display:flex;justify-content:center;gap:34px;z-index:40}
+#globes svg{width:52px;height:52px;stroke:var(--lime);transition:stroke .5s}
+body.lite #globes svg{stroke:var(--ink)}
+#globes svg:nth-child(1){opacity:.25}#globes svg:nth-child(2){opacity:.45}#globes svg:nth-child(3){opacity:.7}
+
+/* 노이즈/스캔라인 */
+#noise{position:absolute;inset:0;z-index:60;pointer-events:none;opacity:.05;mix-blend-mode:overlay}
 #scan{position:absolute;inset:0;z-index:61;pointer-events:none;opacity:.10;
   background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.55) 3px 4px)}
 #bfWrap{position:absolute;inset:0;z-index:55;pointer-events:none}
@@ -52,13 +49,13 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
 /* ---------- 화면 공통 ---------- */
 .screen{position:absolute;inset:0;display:none;z-index:10}
 .screen.on{display:block}
-.tag{display:inline-flex;align-items:center;gap:14px;background:var(--lime);color:var(--ink);padding:10px 22px;font-size:26px;letter-spacing:.18em;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.07) 0 2px,transparent 2px 6px)}
-.tag.inv{background:var(--ink);color:var(--lime);background-image:repeating-linear-gradient(0deg,rgba(207,255,59,.06) 0 2px,transparent 2px 6px)}
+.tag{display:inline-flex;align-items:center;gap:14px;background:var(--lime);color:var(--ink);padding:10px 20px;font-size:26px;letter-spacing:.14em}
+.tag.inv{background:var(--ink);color:var(--lime)}
 .chv{letter-spacing:-2px}
 .btn{display:flex;align-items:center;justify-content:center;gap:14px;border:none;cursor:pointer;
   font-family:'Pretendard';font-weight:700;color:var(--ink);
   background:var(--lime) repeating-linear-gradient(0deg,rgba(7,4,4,.13) 0 2px,transparent 2px 6px);
-  box-shadow:0 0 0 2px var(--ink),0 0 34px rgba(207,255,59,.35)}
+  box-shadow:0 0 0 2px var(--ink),0 0 34px rgba(224,228,95,.35)}
 .btn:active{transform:translate(2px,2px)}
 .blink{animation:blink 1.15s steps(2) infinite}
 @keyframes blink{50%{opacity:.25}}
@@ -68,75 +65,59 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
 .fadeup{animation:fadeUp .45s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
-/* ---------- ATTRACT — 0831 최종 포스터 컴포지션 ----------
-   파트너 로고(좌상) · 바코드 HUD(우상) · 센터 헤드라인 · 와이드 히어로(오빗+로고)
-   · 원근 그리드 플로어(드리프트) · 좌우 하단 세로 텍스트 */
-#attract .aptn{position:absolute;left:56px;top:122px;width:430px;pointer-events:none;opacity:.92}
-#attract .akick{position:absolute;left:50%;transform:translateX(-50%);top:230px;width:850px;pointer-events:none;
-  animation:headGlow 3.4s ease-in-out infinite}
-@keyframes headGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(207,255,59,.18))}50%{filter:drop-shadow(0 0 26px rgba(207,255,59,.45))}}
-#attract .argt{position:absolute;right:22px;top:132px;width:80px;pointer-events:none}
-#attract .argv{position:absolute;right:26px;bottom:150px;width:56px;pointer-events:none}
-#attract .alft{position:absolute;left:26px;bottom:150px;width:58px;pointer-events:none}
-#attract .hero{position:absolute;top:436px;left:-110px;width:1300px;height:632px;pointer-events:none;transform:scale(.9)}
-#attract .hero img{position:absolute;inset:0;width:100%}
-#attract .hero .hrip{position:absolute;inset:0;width:100%;height:100%}
-#attract .kvsat{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--lime);
-  box-shadow:0 0 14px rgba(207,255,59,.9);offset-path:ellipse(635px 259px at 650px 316px);animation:satMove 18s linear infinite}
-#attract .kvsat.s2{width:8px;height:8px;offset-path:ellipse(696px 302px at 650px 316px);animation-duration:26s;animation-delay:-10s;opacity:.65}
+/* ---------- ATTRACT ---------- */
+#attract .logo{position:absolute;top:390px;left:0;width:1080px;pointer-events:none}
+#attract .halo{position:absolute;top:660px;left:270px;width:540px;height:540px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(224,228,95,.16) 0%,rgba(224,228,95,.05) 45%,transparent 70%);
+  animation:haloPulse 5s ease-in-out infinite}
+@keyframes haloPulse{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.12)}}
+#attract .ripwrap{position:absolute;top:442px;left:40px;width:1000px;height:1000px;pointer-events:none}
+#attract .stars i{position:absolute;width:5px;height:5px;background:var(--lime);border-radius:50%;
+  animation:tw 3s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.06;transform:scale(.7)}50%{opacity:.9;transform:scale(1.25)}}
+#attract .sat{position:absolute;top:0;left:0;width:14px;height:14px;border-radius:50%;background:var(--lime);
+  box-shadow:0 0 18px rgba(224,228,95,.9);pointer-events:none;
+  offset-path:ellipse(430px 128px at 540px 942px);animation:satMove 16s linear infinite}
+#attract .sat.s2{width:9px;height:9px;offset-path:ellipse(500px 180px at 540px 942px);
+  animation-duration:23s;animation-delay:-8s;opacity:.7}
 @keyframes satMove{from{offset-distance:0%}to{offset-distance:100%}}
-/* 그리드 플로어: 포스터 하단 그리드가 천천히 흐른다 */
-#attract .agrid{position:absolute;left:0;right:0;bottom:96px;height:400px;pointer-events:none;opacity:.85;
-  background:url('assets/kv_grid.png') repeat-x;background-size:auto 100%;
-  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 22%,#000 82%,transparent 100%);
-  mask-image:linear-gradient(180deg,transparent 0,#000 22%,#000 82%,transparent 100%);
-  animation:gridDrift 34s linear infinite}
-@keyframes gridDrift{from{background-position-x:0}to{background-position-x:-1925px}}
 #attract .touch .bar{animation:barGlow 2.6s ease-in-out infinite}
-@keyframes barGlow{0%,100%{box-shadow:0 0 26px rgba(207,255,59,.25)}50%{box-shadow:0 0 70px rgba(207,255,59,.65)}}
-#attract .touch{position:absolute;left:84px;right:84px;top:1234px;text-align:center}
+@keyframes barGlow{0%,100%{box-shadow:0 0 26px rgba(224,228,95,.25)}50%{box-shadow:0 0 70px rgba(224,228,95,.65)}}
+#attract .kick{position:absolute;top:168px;left:88px;color:var(--lime);font-size:24px;letter-spacing:.1em;display:flex;align-items:center;gap:20px}
+#attract .kick svg{width:64px;height:64px}
+#attract .orb{position:absolute;top:330px;left:0;right:0;display:flex;justify-content:center;gap:28px}
+#attract .orb svg{width:56px;height:56px;stroke:var(--lime)}
+#attract .orb svg:nth-child(1){opacity:.3}#attract .orb svg:nth-child(2){opacity:.5}#attract .orb svg:nth-child(3){opacity:.75}
+#attract .touch{position:absolute;left:64px;right:64px;top:1284px;text-align:center}
 #attract .touch .bar{display:flex;align-items:center;justify-content:center;gap:26px;background:var(--lime);color:var(--ink);
-  padding:22px 0;font-size:44px;letter-spacing:.16em;box-shadow:0 0 44px rgba(207,255,59,.4);background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.07) 0 2px,transparent 2px 6px)}
-#attract .touch .sub{display:inline-block;margin-top:26px;background:var(--lime);color:var(--ink);font-weight:700;font-size:30px;padding:10px 28px;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.07) 0 2px,transparent 2px 6px)}
+  padding:22px 0;font-size:44px;letter-spacing:.16em;box-shadow:0 0 44px rgba(224,228,95,.4)}
+#attract .touch .sub{display:inline-block;margin-top:26px;background:var(--lime);color:var(--ink);font-weight:700;font-size:30px;padding:10px 26px}
+#attract .foot{position:absolute;bottom:120px;left:0;right:0;display:flex;justify-content:center;gap:22px;color:var(--lime);font-size:26px;align-items:center}
+#attract .rbars{position:absolute;right:52px;bottom:190px;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+#attract .rbars i{height:7px;background:var(--lime);opacity:.85}
 
 /* ---------- BRIEF ---------- */
 #brief{padding:300px 90px 0}
 #brief .ln{color:var(--lime);font-weight:700;font-size:47px;line-height:1.75;animation:fadeUp .7s ease both}
 #brief .b2{animation-delay:.5s}
 #brief .spiral .orbits{transform-origin:585px 320px;animation:spSway 16s ease-in-out infinite}
-#brief .spiral .orbits path{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:spiralDraw 1s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes spiralDraw{to{stroke-dashoffset:0}}
-#brief .spiral .orbits path:nth-child(1){animation-delay:.55s}
-#brief .spiral .orbits path:nth-child(2){animation-delay:.66s}
-#brief .spiral .orbits path:nth-child(3){animation-delay:.77s}
-#brief .spiral .orbits path:nth-child(4){animation-delay:.88s}
-#brief .spiral .orbits path:nth-child(5){animation-delay:.99s}
-#brief .spiral .orbits path:nth-child(6){animation-delay:1.1s}
-#brief .spiral .orbits path:nth-child(7){animation-delay:1.21s}
-#brief .spiral .orbits path:nth-child(8){animation-delay:1.32s}
 @keyframes spSway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
-#brief .hex{opacity:0;animation:hexIn .4s ease 2.4s forwards,hexP 2.4s ease-in-out 2.8s infinite}
-#brief .hex.h2{animation-delay:2.4s,4s}
-@keyframes hexIn{to{opacity:1}}
+#brief .hex{animation:hexP 2.4s ease-in-out infinite}
+#brief .hex.h2{animation-delay:1.2s}
 @keyframes hexP{0%,100%{opacity:.55}50%{opacity:1}}
-#brief .co{animation:fadeUp .5s ease 3.3s both}
-#brief .hl{font-family:'Barlow Semi Condensed','Pretendard';background:var(--lime);color:var(--ink);padding:2px 16px;letter-spacing:.06em;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.07) 0 2px,transparent 2px 6px)}
-#brief .spiral{position:absolute;top:553px;left:-1px;width:809px;height:742px;pointer-events:none}
-#brief .a2line{position:absolute;pointer-events:none}
-#brief .a2line path{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:lineDraw .4s ease 2.8s forwards}
-@keyframes lineDraw{to{stroke-dashoffset:0}}
-#brief .a2hex{position:absolute;pointer-events:none}
-#brief .bullet{position:absolute;background:var(--lime);opacity:0;animation:fadeUp .5s ease 3.3s both}
-#brief .co{position:absolute;color:var(--lime);font-family:'Barlow Semi Condensed','Pretendard';font-size:19px;line-height:1.05;letter-spacing:.02em}
+#brief .co{animation:fadeUp .7s ease .9s both}
+#brief .hl{font-family:'Galmuri';background:var(--lime);color:var(--ink);padding:2px 14px;letter-spacing:.06em}
+#brief .spiral{position:absolute;top:640px;left:-60px;width:1200px;height:760px;pointer-events:none}
+#brief .co{position:absolute;color:var(--lime);font-family:'Galmuri';font-size:22px;line-height:1.5}
 #brief .b2{position:absolute;top:1460px;left:90px;right:90px}
 
 /* ---------- CODE / ENTER 공통 HUD ---------- */
 .hudhead{position:absolute;top:150px;right:64px;display:flex;align-items:center;gap:18px}
 .hudhead .ex{background:var(--ink);color:var(--lime);border:2px solid var(--lime);font-size:30px;padding:6px 12px}
-.hudhead .t{background:var(--lime);color:var(--ink);font-size:42px;letter-spacing:.2em;padding:8px 26px;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.07) 0 2px,transparent 2px 6px)}
+.hudhead .t{background:var(--lime);color:var(--ink);font-size:42px;letter-spacing:.2em;padding:8px 22px}
 .tilt{position:absolute;top:262px;left:64px;background:var(--lime);color:var(--ink);font-weight:700;font-size:44px;padding:16px 30px;
-  clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,97% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.07) 0 2px,transparent 2px 6px)}
-.hudbox{position:absolute;left:64px;right:64px;border:2px solid var(--lime);background:rgba(207,255,59,.03)}
+  clip-path:polygon(0 0,100% 0,97% 100%,0 100%)}
+.hudbox{position:absolute;left:64px;right:64px;border:2px solid var(--lime);background:rgba(224,228,95,.03)}
 .hudbar{display:flex;align-items:center;justify-content:space-between;padding:18px 26px;border-bottom:2px solid var(--lime)}
 .hudbar .l{color:var(--lime);font-size:30px;letter-spacing:.22em;display:flex;gap:18px;align-items:center}
 .hudbar .r{color:var(--lime);font-size:22px;line-height:1.2;display:flex;align-items:center;gap:12px;text-align:left}
@@ -144,15 +125,15 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
 /* 코드 입력 */
 #code .slots{display:flex;gap:16px;justify-content:center;padding:44px 0 8px}
 #code .slots i{width:118px;height:150px;border:2px solid var(--lime);background:#0d0d0b;color:#fff;
-  font-family:'Barlow Semi Condensed','Pretendard';font-size:74px;display:flex;align-items:center;justify-content:center}
-#code .slots i.cur{box-shadow:0 0 24px rgba(207,255,59,.5) inset;border-width:3px}
-.warnbar{display:none;margin:14px 26px 0;background:var(--lime);color:var(--ink);font-weight:700;font-size:28px;padding:12px 22px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.07) 0 2px,transparent 2px 6px)}
-.warnbar.on{display:block;animation:shake .4s}
+  font-family:'Galmuri';font-size:74px;display:flex;align-items:center;justify-content:center}
+#code .slots i.cur{box-shadow:0 0 24px rgba(224,228,95,.5) inset;border-width:3px}
+.warnbar{margin:14px 26px 0;background:var(--lime);color:var(--ink);font-weight:700;font-size:28px;padding:12px 20px;visibility:hidden}
+.warnbar.on{visibility:visible;animation:shake .4s}
 @keyframes shake{25%{transform:translateX(-10px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
 .kb{padding:20px 22px 26px}
 .kbrow{display:flex;gap:10px;justify-content:center;margin-bottom:10px}
 .key{flex:1;max-width:96px;height:96px;background:#0d0d0b;border:1px solid #2e2e20;color:var(--lime);
-  font-family:'Barlow Semi Condensed','Pretendard';font-size:38px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  font-family:'Galmuri';font-size:38px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .key:active{background:var(--lime);color:var(--ink)}
 .key.fn{background:#1a1a12;font-size:30px}
 .key.fn.onk{background:var(--lime);color:var(--ink)}
@@ -161,122 +142,140 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
 .gobtn{margin:10px 26px 30px;padding:26px 0;font-size:42px;width:calc(100% - 52px)}
 
 /* 이름 입력 */
-#enter .wavebox{margin:24px 26px 0;border:1px solid rgba(207,255,59,.5);padding:26px 20px 14px;background:rgba(207,255,59,.02)}
-#enter .wavebox .lensSvg{display:block;width:100%;height:auto}
-#enter .wavebox .lensSweep{animation:lensReveal 3.2s ease-in-out infinite}
-@keyframes lensReveal{0%{clip-path:inset(0 100% 0 0)}75%,100%{clip-path:inset(0 0% 0 0)}}
-#enter .wavebox .cap{color:var(--lime);font-size:24px;letter-spacing:.3em;margin-top:28px}
-#enter .namefield{margin:22px 26px 0;background:#0d0d0b;border:1px solid rgba(207,255,59,.4);height:150px;
+#enter .wavebox{margin:24px 26px 0;border:1px solid rgba(224,228,95,.5);padding:26px 20px 14px;background:rgba(224,228,95,.02)}
+#enter .wavebox .cap{color:var(--lime);font-size:24px;letter-spacing:.3em;margin-top:14px}
+#enter .namefield{margin:22px 26px 0;background:#0d0d0b;border:1px solid rgba(224,228,95,.4);height:150px;
   display:flex;align-items:center;padding:0 34px;font-size:64px;font-weight:700;color:#fff}
 #enter .namefield.empty{color:#4a4a38}
 #enter .namefield .comp{text-decoration:underline;text-underline-offset:10px}
 #enter .car{display:inline-block;width:5px;height:64px;background:var(--lime);margin-left:8px;animation:blink 1s steps(2) infinite}
-#enter .nlen{position:absolute;right:100px;margin-top:-40px;color:var(--dim);font-family:'Barlow Semi Condensed','Pretendard';font-size:24px}
+#enter .nlen{position:absolute;right:100px;margin-top:-40px;color:var(--dim);font-family:'Galmuri';font-size:24px}
 
-/* ---------- SURVEY — KV 그리드 배경 + 단일 티커 + 노치 옵션 (260826 리배치) ---------- */
-#survey .sbg{position:absolute;top:110px;left:0;width:1080px;opacity:.32;pointer-events:none}
+/* ---------- SURVEY ---------- */
+#survey{padding-top:150px}
+#survey .cascade{position:relative;height:560px;overflow:hidden}
+#survey .ntag{position:absolute;font-family:'Galmuri';font-size:35px;letter-spacing:.3em;background:var(--lime);color:var(--ink);padding:12px 26px;white-space:nowrap}
+/* 회전 지구본 (좌우 도트 패치 사이 중앙) */
+#survey .dotp{position:absolute;opacity:.85;pointer-events:none}
+#survey .globewrap{position:absolute;top:420px;left:0;width:1080px;height:240px;display:flex;align-items:center;justify-content:center;perspective:900px;pointer-events:none}
+#survey .globe3d{position:relative;width:210px;height:210px;transform-style:preserve-3d;animation:spinY 14s linear infinite;filter:drop-shadow(0 0 22px rgba(224,228,95,.25))}
+#survey .globe3d i{position:absolute;inset:0;border:2px solid var(--lime);border-radius:50%;opacity:.75}
+#survey .globe3d .lat{opacity:.5}
+#survey .globewrap .shell{position:absolute;left:50%;top:50%;width:210px;height:210px;margin:-105px 0 0 -105px;
+  border:2.5px solid var(--lime);border-radius:50%}
+#survey .globewrap .shell.s2{width:212px;height:76px;margin:-38px 0 0 -106px;border-width:1.5px;opacity:.6}
+@keyframes spinY{to{transform:rotateY(360deg)}}
+/* NEO SIGNAL 티커: 신호가 흐르는 전광판 — 잘림 없이 무한 루프 */
 #survey .ticker{position:absolute;left:0;right:0;overflow:hidden;white-space:nowrap}
-#survey .ticker .tk{display:inline-block;white-space:nowrap;font-family:'Barlow Semi Condensed','Pretendard';font-weight:600;font-size:35px;letter-spacing:.3em;
+#survey .ticker .tk{display:inline-block;white-space:nowrap;font-family:'Galmuri';font-size:35px;letter-spacing:.3em;
   will-change:transform;animation:tickMove 36s linear infinite}
-#survey .t1{top:150px;background:var(--lime);padding:14px 0}
+#survey .t1{top:40px;background:var(--lime);padding:14px 0}
 #survey .t1 .tk{color:var(--ink)}
+#survey .t2{top:150px;border-top:2px solid rgba(224,228,95,.8);border-bottom:2px solid rgba(224,228,95,.8);padding:12px 0}
+#survey .t2 .tk{color:var(--lime);animation-duration:52s;animation-direction:reverse;opacity:.9}
 @keyframes tickMove{to{transform:translateX(-50%)}}
-#survey .qwrap{position:absolute;top:400px;left:0;right:0;padding:0 84px}
+#survey .qwrap{padding:0 84px}
 /* 진행 표시: NEO SIGNAL 수신 셀 (답할 때마다 한 칸씩 점등) */
-#survey .sigprog{display:flex;align-items:center;margin-bottom:44px}
+#survey .sigprog{display:flex;align-items:center;margin-bottom:34px}
 #survey .cells{display:flex;gap:9px}
-#survey .cells i{width:42px;height:22px;border:2px solid var(--lime);background:rgba(207,255,59,.07);transform:skewX(-18deg);opacity:.32}
-#survey .cells i.fill{background:var(--lime);opacity:1;box-shadow:0 0 16px rgba(207,255,59,.55)}
+#survey .cells i{width:42px;height:22px;border:2px solid var(--lime);background:rgba(224,228,95,.07);transform:skewX(-18deg);opacity:.32}
+#survey .cells i.fill{background:var(--lime);opacity:1;box-shadow:0 0 16px rgba(224,228,95,.55)}
 #survey .cells i.cur{opacity:.95;animation:blink 1.1s steps(2) infinite}
-#survey .siglab{font-family:'Barlow Semi Condensed','Pretendard';color:var(--lime);font-size:27px;letter-spacing:.16em;margin-left:26px}
+#survey .siglab{font-family:'Galmuri';color:var(--lime);font-size:27px;letter-spacing:.16em;margin-left:26px}
 #survey .qtext{color:#fff;font-weight:800;font-size:56px;line-height:1.35;min-height:160px}
-#survey .opts{margin-top:44px}
-#survey .opt{display:flex;align-items:center;gap:30px;border:2px solid rgba(207,255,59,.65);
-  background:rgba(13,13,11,.9);padding:40px 38px;margin-bottom:28px;cursor:pointer;
-  clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%)}
+#survey .opts{margin-top:30px}
+#survey .opt{display:flex;align-items:center;gap:30px;border:2px solid rgba(224,228,95,.65);border-radius:18px;
+  background:rgba(13,13,11,.86);padding:34px 38px;margin-bottom:26px;cursor:pointer}
 #survey .opt:active,#survey .opt.sel{background:var(--lime)}
 #survey .opt:active .lb,#survey .opt.sel .lb{color:var(--ink)}
 #survey .opt:active .num,#survey .opt.sel .num{background:var(--ink);color:var(--lime)}
-#survey .num{width:62px;height:46px;transform:skewX(-14deg);background:var(--lime);color:var(--ink);font-weight:700;font-size:32px;
-  font-family:'Barlow Semi Condensed','Pretendard';display:flex;align-items:center;justify-content:center;flex:none}
+#survey .num{width:64px;height:64px;border-radius:50%;background:var(--lime);color:var(--ink);font-weight:700;font-size:34px;
+  display:flex;align-items:center;justify-content:center;flex:none}
 #survey .lb{color:#fff;font-weight:600;font-size:38px;line-height:1.3}
-#survey .ntag{font-family:'Barlow Semi Condensed','Pretendard';font-size:35px;letter-spacing:.3em;background:var(--lime);color:var(--ink);padding:12px 30px;white-space:nowrap;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.07) 0 2px,transparent 2px 6px)}
 #survey .ftag{position:absolute;bottom:150px;left:0}
 
 /* ---------- SYNC ---------- */
 #sync{padding-top:170px}
-#sync .head{color:var(--lime);font-family:'Barlow Semi Condensed','Pretendard';font-size:34px;letter-spacing:.28em;padding-left:64px;display:flex;gap:20px}
+#sync .head{color:var(--lime);font-family:'Galmuri';font-size:34px;letter-spacing:.28em;padding-left:64px;display:flex;gap:20px}
 #sync .zone{position:relative;height:640px}
 #sync .gridplane{position:absolute;left:-140px;top:60px;width:760px;height:560px;perspective:900px}
 #sync .gp{width:100%;height:100%;transform:rotateX(58deg);background:
-  linear-gradient(rgba(207,255,59,.5) 1px,transparent 1px) 0 0/94px 94px,
-  linear-gradient(90deg,rgba(207,255,59,.5) 1px,transparent 1px) 0 0/94px 94px}
+  linear-gradient(rgba(224,228,95,.5) 1px,transparent 1px) 0 0/94px 94px,
+  linear-gradient(90deg,rgba(224,228,95,.5) 1px,transparent 1px) 0 0/94px 94px}
 #sync .radar{position:absolute;left:60px;top:210px;width:340px;height:340px}
 #sync .radar i{position:absolute;inset:0;border:2px solid var(--lime);border-radius:50%;animation:ping 2.4s ease-out infinite}
 #sync .radar i:nth-child(2){animation-delay:.8s}#sync .radar i:nth-child(3){animation-delay:1.6s}
 @keyframes ping{0%{transform:scale(.12);opacity:1}100%{transform:scale(1);opacity:0}}
-#sync .map{position:absolute;right:64px;top:64px;width:430px;filter:drop-shadow(0 0 20px rgba(207,255,59,.2))}
+#sync .map{position:absolute;right:64px;top:64px;width:430px;filter:drop-shadow(0 0 20px rgba(224,228,95,.2))}
 #sync .dots{position:absolute;right:70px;top:390px;width:330px;opacity:.8}
-#sync .stat{margin:0 64px;background:var(--lime);color:var(--ink);font-family:'Barlow Semi Condensed','Pretendard';font-size:40px;letter-spacing:.1em;
-  padding:24px 34px;line-height:1.5;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.07) 0 2px,transparent 2px 6px)}
+#sync .stat{margin:0 64px;background:var(--lime);color:var(--ink);font-family:'Galmuri';font-size:40px;letter-spacing:.1em;
+  padding:24px 30px;line-height:1.5}
 #sync #freq{display:block;margin:40px auto 0;background:transparent}
 
 /* ---------- RESULT (LITE) ---------- */
-#result{padding-top:230px}
-#result .panel{position:relative;margin:40px 150px 0;background:#d8e42e;border:2px solid rgba(7,4,4,.2);border-radius:36px;
+#result{padding-top:150px}
+#result .panel{position:relative;margin:40px 150px 0;background:#e6ea69;border:2px solid rgba(7,4,4,.2);border-radius:36px;
   box-shadow:0 24px 80px rgba(7,4,4,.18);padding:44px 46px 40px}
 #result .ph{display:flex;justify-content:space-between;align-items:flex-start}
 #result .ph .ko{font-family:'Pretendard';font-weight:800;color:var(--ink);font-size:46px;letter-spacing:.01em}
-#result .ph .en{font-family:'Barlow Semi Condensed','Pretendard';color:var(--ink);font-size:30px;letter-spacing:.34em;margin-top:14px}
+#result .ph .en{font-family:'Galmuri';color:var(--ink);font-size:30px;letter-spacing:.34em;margin-top:14px}
 #result .ph img{width:120px;margin:-8px -6px 0 0;filter:drop-shadow(0 4px 18px rgba(255,255,255,.9))}
 #result .frame{position:relative;margin-top:30px;background:#fff;border-radius:30px;height:920px;overflow:hidden;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
-#result .frame .big{font-family:'Barlow Semi Condensed','Pretendard';font-weight:700;color:var(--ink);font-size:120px;letter-spacing:.02em;line-height:1.05;text-align:center}
+#result .frame .rs{font-family:'Galmuri';color:#9aa03e;font-size:30px;letter-spacing:.3em}
+#result .frame .big{font-family:'Galmuri';font-weight:700;color:var(--ink);font-size:120px;letter-spacing:.02em;line-height:1.05;text-align:center}
 #result .frame .kon{font-weight:700;color:var(--ink);font-size:56px;margin-top:6px}
-#result .frame .note{position:absolute;bottom:34px;color:#8e9a00;font-size:27px;font-weight:700;letter-spacing:.06em}
-#result .hp{margin:44px 150px 0;background:var(--ink);color:var(--lime);text-align:center;font-weight:700;font-size:46px;padding:30px 0;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(207,255,59,.06) 0 2px,transparent 2px 6px);
+#result .frame .note{position:absolute;bottom:34px;color:#b9bd8f;font-size:22px;letter-spacing:.2em}
+#result .hp{margin:44px 150px 0;background:var(--ink);color:var(--lime);text-align:center;font-weight:700;font-size:46px;padding:30px 0;
   display:flex;align-items:center;justify-content:center;gap:22px}
 #result .listen{margin:26px 150px 0;padding:30px 0;font-size:44px;width:calc(100% - 300px)}
 
 /* ---------- VOICE ---------- */
 #phone{padding-top:170px}
-#phone .head{color:var(--lime);font-family:'Barlow Semi Condensed','Pretendard';font-size:34px;letter-spacing:.28em;padding-left:64px;display:flex;gap:20px}
+#phone .head{color:var(--lime);font-family:'Galmuri';font-size:34px;letter-spacing:.28em;padding-left:64px;display:flex;gap:20px}
 #phone #waves{display:block;margin-top:10px}
 #phone .vrow{display:flex;justify-content:space-between;align-items:center;padding:0 64px;margin-top:6px}
-#phone .vrow .l{color:var(--lime);font-family:'Barlow Semi Condensed','Pretendard';font-size:30px;letter-spacing:.24em;display:flex;gap:18px}
-#phone .vrow .r{color:var(--lime);font-family:'Barlow Semi Condensed','Pretendard';font-size:26px;letter-spacing:.14em}
-#phone .tbox{position:relative;margin:36px 64px 0;background:#cfdc1e;color:var(--ink);min-height:430px;padding:44px 40px;
+#phone .vrow .l{color:var(--lime);font-family:'Galmuri';font-size:30px;letter-spacing:.24em;display:flex;gap:18px}
+#phone .vrow .r{color:var(--lime);font-family:'Galmuri';font-size:26px;letter-spacing:.14em}
+#phone .hpq{color:#fff;font-weight:700;font-size:44px;text-align:center;margin-top:44px}
+#phone .tbox{position:relative;margin:36px 64px 0;background:#dde25c;color:var(--ink);min-height:430px;padding:44px 40px;
   background-image:radial-gradient(rgba(7,4,4,.22) 1.6px,transparent 1.6px);background-size:56px 56px}
-#phone .tbox .nm{font-family:'Barlow Semi Condensed','Pretendard';font-weight:700;font-size:34px;display:block;margin-bottom:20px}
+#phone .tbox .bf{position:absolute;top:-64px;left:-30px;width:130px;filter:drop-shadow(0 0 18px #fff)}
+#phone .tbox .nm{font-family:'Galmuri';font-weight:700;font-size:34px;display:block;margin-bottom:20px}
 #phone .tbox .tx{font-weight:700;font-size:38px;line-height:1.75;white-space:pre-wrap}
-.tcur{display:inline-block;width:.62em;margin-left:4px;animation:blink .75s steps(2) infinite}
-#phone .hp{margin:44px 64px 0;background:var(--ink);border:1px solid rgba(207,255,59,.45);color:var(--lime);text-align:center;font-weight:700;font-size:46px;padding:29px 0;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(207,255,59,.06) 0 2px,transparent 2px 6px);
-  display:flex;align-items:center;justify-content:center;gap:22px}/* ---------- DONE (LITE) — 시안 7_완료 BG 에셋 사용 ---------- */
+#phone .tbox .tcur{display:inline-block;width:.62em;margin-left:4px;animation:blink .75s steps(2) infinite}
+#phone .bars{display:flex;gap:10px;align-items:flex-end;height:70px;justify-content:center;margin-top:40px}
+#phone .bars i{width:12px;background:var(--lime);height:12px}
+
+/* ---------- DONE (LITE) — 시안 7_완료 BG 에셋 사용 ---------- */
 #done .bg{position:absolute;pointer-events:none}
 #done .bgGrid{top:430px;left:30px;width:837px;opacity:.85}
 #done .bgGlobe{top:430px;right:-170px;width:750px}
 #done .bgCir{left:-150px;top:1170px;width:460px;opacity:.9}
 #done .bgS3{right:64px;top:1100px;width:290px}
-#done .b1{position:absolute;top:186px;left:64px;color:var(--ink);font-family:'Pretendard';font-weight:800;font-size:32px;letter-spacing:.14em}
-#done .b2{position:absolute;top:234px;left:64px;background:var(--ink);color:var(--lime);font-weight:700;font-size:50px;padding:18px 34px;white-space:nowrap;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(207,255,59,.06) 0 2px,transparent 2px 6px)}
-#done .sy{position:absolute;top:864px;left:64px;color:var(--ink);font-family:'Barlow Semi Condensed','Pretendard';font-weight:700;font-size:66px;letter-spacing:.06em;line-height:1.4}
-#done .b4{position:absolute;top:1078px;left:64px;background:var(--ink);color:var(--lime);font-weight:700;font-size:44px;padding:16px 34px;white-space:nowrap;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(207,255,59,.06) 0 2px,transparent 2px 6px)}/* ---------- PICK UP (분리 페이지 — 260826 피드백) ---------- */
-#pickup .pk-tag{position:absolute;top:296px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:18px;
-  border:2px solid #CFFF3B;color:#CFFF3B;font-size:32px;letter-spacing:.26em;padding:14px 30px;white-space:nowrap}
-#pickup .pk-big{position:absolute;top:388px;left:0;right:0;text-align:center;color:#CFFF3B;font-weight:700;font-size:250px;
-  letter-spacing:.03em;line-height:1;text-shadow:0 0 70px rgba(207,255,59,.45)}
-#pickup .pk-sub{position:absolute;top:702px;left:0;right:0;text-align:center;color:#fff;font-weight:700;font-size:52px}
-#pickup .pk-guide{position:absolute;top:806px;left:0;right:0;text-align:center;color:#CFFF3B;font-weight:700;font-size:44px;line-height:1.65}
-#pickup .pk-guide b{background:#CFFF3B;color:#070404;padding:2px 18px;font-weight:800;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.07) 0 2px,transparent 2px 6px)}
-#pickup .pk-arr{position:absolute;left:50%;width:250px;margin-left:-125px;opacity:0;animation:arrFall 1.8s ease-in-out infinite}
-#pickup .a1{top:1074px}#pickup .a2{top:1236px;animation-delay:.3s}#pickup .a3{top:1398px;animation-delay:.6s}
-@keyframes arrFall{0%{opacity:0;transform:translateY(-30px)}35%{opacity:1}70%{opacity:1}100%{opacity:0;transform:translateY(30px)}}
-#pickup .pk-slot{position:absolute;top:1596px;left:50%;transform:translateX(-50%);width:540px;height:48px;
-  border:3px solid #CFFF3B;border-radius:24px;box-shadow:0 0 40px rgba(207,255,59,.4);animation:slotGlow 1.8s ease-in-out infinite}
-#pickup .pk-slotlab{position:absolute;top:1668px;left:0;right:0;text-align:center;color:#CFFF3B;font-size:28px;letter-spacing:.3em}
-@keyframes slotGlow{0%,100%{box-shadow:0 0 26px rgba(207,255,59,.25)}50%{box-shadow:0 0 74px rgba(207,255,59,.7)}}</style>
+#done .b1{position:absolute;top:186px;left:64px;color:var(--ink);font-family:'Galmuri';font-size:32px;letter-spacing:.3em}
+#done .b2{position:absolute;top:234px;left:64px;background:var(--ink);color:var(--lime);font-weight:700;font-size:50px;padding:18px 30px;white-space:nowrap}
+#done .b3{position:absolute;top:352px;left:64px;color:var(--ink);font-family:'Galmuri';font-size:28px;letter-spacing:.34em}
+#done .sy{position:absolute;top:864px;left:64px;color:var(--ink);font-family:'Galmuri';font-weight:700;font-size:66px;letter-spacing:.06em;line-height:1.4}
+#done .b4{position:absolute;top:1078px;left:64px;background:var(--ink);color:var(--lime);font-weight:700;font-size:44px;padding:16px 30px;white-space:nowrap}
+/* RE-SYNC 버튼: 완료 화면의 블랙 바 계열, 크게 잘 보이도록 */
+#done .donehome{position:absolute;left:64px;top:1248px;width:630px;display:flex;align-items:center;justify-content:center;gap:22px;
+  background:var(--ink);color:var(--lime);border:none;cursor:pointer;
+  font-family:'Galmuri';font-size:40px;letter-spacing:.14em;padding:32px 0;
+  box-shadow:9px 9px 0 rgba(7,4,4,.25);animation:homePulse 2.6s ease-in-out infinite}
+#done .donehome:active{transform:translate(3px,3px);box-shadow:5px 5px 0 rgba(7,4,4,.25)}
+#done .donehome .kr{font-family:'Pretendard';font-weight:700;letter-spacing:0;font-size:36px;opacity:.95}
+@keyframes homePulse{0%,100%{outline:3px solid rgba(7,4,4,0);outline-offset:6px}50%{outline:3px solid rgba(7,4,4,.55);outline-offset:6px}}
+/* 픽업 시뮬레이션 */
+#pickup{position:absolute;left:64px;right:64px;bottom:120px;background:rgba(7,4,4,.06);border:2px dashed rgba(7,4,4,.5);padding:26px 30px 18px}
+#pickup .cap{color:var(--ink);font-weight:700;font-size:38px;display:flex;align-items:center;gap:18px}
+#pickup .cap .ic{font-family:'Galmuri';background:var(--ink);color:var(--lime);padding:6px 14px;font-size:28px}
+#pickup svg{display:block;width:100%;margin-top:10px}
+#pickup .lbl{font-family:'Galmuri';font-size:19px;fill:#3a3c12}
+</style>
 </head>
-<body class="dark"><div id="stage">
+<body class="dark">
+<div id="stage">
 
   <!-- 상단 눈금 -->
   <div id="ruler">
@@ -291,62 +290,66 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
 
   <!-- ATTRACT -->
   <div class="screen on" id="attract">
-    <!-- 0831 최종 포스터 컴포지션 -->
-    <div class="agrid"></div>
-    <img class="aptn" src="assets/kv_partners.png" alt="SM ENTERTAINMENT · LOTTE WORLD · DEEP">
-    <img class="argt" src="assets/kv_right.png" alt="">
-    <img class="akick" src="assets/kv_kick.png" alt="NCT 10TH ANNIVERSARY — EXHIBITION : NEO DIMENSION">
-    <img class="argv" src="assets/kv_rightv.png" alt="EVERYTHING ALL AT ONCE, NEO">
-    <img class="alft" src="assets/kv_left.png" alt="DREAM CONNECTED">
-    <div class="hero">
-      <img src="assets/kv_hero.png" alt="">
-      <svg class="hrip" viewBox="0 0 1300 632" fill="none">
-        <ellipse cx="650" cy="316" rx="635" ry="259" stroke="#CFFF3B" stroke-width="1.5">
-          <animate attributeName="rx" values="635;1400" dur="5.4s" repeatCount="indefinite"/>
-          <animate attributeName="ry" values="259;571" dur="5.4s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values=".45;0" dur="5.4s" repeatCount="indefinite"/>
-        </ellipse>
-        <ellipse cx="650" cy="316" rx="635" ry="259" stroke="#CFFF3B" stroke-width="1.5">
-          <animate attributeName="rx" values="635;1400" dur="5.4s" begin="1.8s" repeatCount="indefinite"/>
-          <animate attributeName="ry" values="259;571" dur="5.4s" begin="1.8s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0;.45;0" keyTimes="0;.06;1" dur="5.4s" begin="1.8s" repeatCount="indefinite"/>
-        </ellipse>
-        <ellipse cx="650" cy="316" rx="635" ry="259" stroke="#CFFF3B" stroke-width="1.5">
-          <animate attributeName="rx" values="635;1400" dur="5.4s" begin="3.6s" repeatCount="indefinite"/>
-          <animate attributeName="ry" values="259;571" dur="5.4s" begin="3.6s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0;.45;0" keyTimes="0;.06;1" dur="5.4s" begin="3.6s" repeatCount="indefinite"/>
-        </ellipse>
-      </svg>
-      <div class="kvsat"></div><div class="kvsat s2"></div>
+    <div class="kick pix">
+      <svg viewBox="0 0 52 52" fill="none" stroke="#E0E45F" stroke-width="1.6"><circle cx="26" cy="26" r="24"/><circle cx="26" cy="26" r="18"/><circle cx="26" cy="26" r="12"/><circle cx="26" cy="26" r="6.5"/><circle cx="26" cy="26" r="2.4" fill="#E0E45F"/></svg>
+      <span>EVERYTHING<br>ALL AT ONCE, NEO</span>
     </div>
+    <div class="orb">
+      <svg viewBox="0 0 34 34" fill="none" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
+      <svg viewBox="0 0 34 34" fill="none" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
+      <svg viewBox="0 0 34 34" fill="none" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
+      <svg viewBox="0 0 34 34" fill="none" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
+    </div>
+    <div class="halo"></div>
+    <img class="logo" src="assets/logo.svg" alt="">
+    <svg class="ripwrap" viewBox="0 0 1000 1000" fill="none">
+      <circle cx="500" cy="500" r="20" stroke="#E0E45F" stroke-width="1.6">
+        <animate attributeName="r" values="20;470" dur="4.6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".7;0" dur="4.6s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="500" cy="500" r="20" stroke="#E0E45F" stroke-width="1.6">
+        <animate attributeName="r" values="20;470" dur="4.6s" begin="1.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;.7;0" keyTimes="0;.05;1" dur="4.6s" begin="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="500" cy="500" r="20" stroke="#E0E45F" stroke-width="1.6">
+        <animate attributeName="r" values="20;470" dur="4.6s" begin="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;.7;0" keyTimes="0;.05;1" dur="4.6s" begin="3s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+    <div class="sat"></div><div class="sat s2"></div>
+    <div class="stars" id="stars"></div>
     <div class="touch">
       <div class="bar pix" id="touchBar"><span class="chv">▶▶</span> TOUCH TO SYNCHRONIZE</div>
       <div class="sub">당신의 신호와 공명하는 멤버를 찾습니다</div>
+    </div>
+    <div class="rbars" id="rbars"></div>
+    <div class="foot pix">
+      <svg width="44" height="44" viewBox="0 0 34 34" fill="none" stroke="#E0E45F" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
+      <span>DREAM<br>CONNECTED</span>
+      <span class="chv blink">▶▶▶▶</span>
+      <span style="opacity:.7">[NCT 2026]</span>
     </div>
   </div>
 
   <!-- BRIEF -->
   <div class="screen" id="brief">
-    <div class="ln">당신은 NEO DIMENSION에 초대된<br><span class="hl">SYNCHRONIZER</span> 입니다.</div>
-    <svg class="spiral" viewBox="0 0 809 742" fill="none" id="spiralSvg">
-      <g class="orbits" stroke="#CFFF3B" stroke-width="1" stroke-miterlimit="10" opacity=".9">
-        <path style="--len:850" d="M624.579 151.93C725.884 151.93 808.008 118.031 808.008 76.2149C808.008 34.3987 725.884 0.5 624.579 0.5C523.274 0.5 441.151 34.3987 441.151 76.2149C441.151 118.031 523.274 151.93 624.579 151.93Z"/>
-        <path style="--len:1080" d="M555.557 236.135C684.236 236.135 788.552 193.074 788.552 139.956C788.552 86.8374 684.236 43.7764 555.557 43.7764C426.878 43.7764 322.563 86.8374 322.563 139.956C322.563 193.074 426.878 236.135 555.557 236.135Z"/>
-        <path style="--len:1310" d="M486.554 320.34C642.618 320.34 769.133 268.117 769.133 203.696C769.133 139.276 642.618 87.0524 486.554 87.0524C330.49 87.0524 203.975 139.276 203.975 203.696C203.975 268.117 330.49 320.34 486.554 320.34Z"/>
-        <path style="--len:1539" d="M417.532 404.546C600.98 404.546 749.695 343.168 749.695 267.456C749.695 191.743 600.98 130.366 417.532 130.366C234.083 130.366 85.3689 191.743 85.3689 267.456C85.3689 343.168 234.083 404.546 417.532 404.546Z"/>
-        <path style="--len:1769" d="M348.51 488.75C559.333 488.75 730.239 418.211 730.239 331.196C730.239 244.181 559.333 173.641 348.51 173.641C137.687 173.641 -33.2185 244.181 -33.2185 331.196C-33.2185 418.211 137.687 488.75 348.51 488.75Z"/>
-        <path style="--len:1999" d="M279.488 572.955C517.696 572.955 710.801 493.254 710.801 394.936C710.801 296.619 517.696 216.917 279.488 216.917C41.2807 216.917 -151.825 296.619 -151.825 394.936C-151.825 493.254 41.2807 572.955 279.488 572.955Z"/>
-        <path style="--len:2228" d="M210.467 657.161C476.049 657.161 691.345 568.297 691.345 458.678C691.345 349.058 476.049 260.194 210.467 260.194C-55.1156 260.194 -270.412 349.058 -270.412 458.678C-270.412 568.297 -55.1156 657.161 210.467 657.161Z"/>
-        <path style="--len:2458" d="M141.463 741.384C434.43 741.384 671.926 643.358 671.926 522.436C671.926 401.514 434.43 303.488 141.463 303.488C-151.504 303.488 -389 401.514 -389 522.436C-389 643.358 -151.504 741.384 141.463 741.384Z"/>
+    <div class="ln">당신은 공중정원을 완성하기 위해 초대된<br><span class="hl">SYNCHRONIZER</span> 입니다.</div>
+    <svg class="spiral" viewBox="0 0 1200 760" fill="none" id="spiralSvg">
+      <g class="orbits" stroke="#E0E45F" stroke-width="1.4" opacity=".9">
+        <ellipse cx="560" cy="380" rx="540" ry="150" transform="rotate(-14 560 380)"/>
+        <ellipse cx="580" cy="340" rx="460" ry="128" transform="rotate(-10 580 340)"/>
+        <ellipse cx="600" cy="300" rx="380" ry="106" transform="rotate(-6 600 300)"/>
+        <ellipse cx="612" cy="264" rx="300" ry="84" transform="rotate(-3 612 264)"/>
+        <ellipse cx="620" cy="236" rx="224" ry="62"/>
+        <ellipse cx="624" cy="214" rx="150" ry="42" transform="rotate(3 624 214)"/>
       </g>
+      <path d="M330 520 L430 470 L680 470" stroke="#E0E45F" stroke-width="1.4"/>
+      <path d="M840 250 L900 200 L1160 200" stroke="#E0E45F" stroke-width="1.4"/>
+      <path class="hex" d="M420 462 l16 9 -0.2 18 -16 9 -16-9 0-18z" fill="#E0E45F"/>
+      <path class="hex h2" d="M888 192 l16 9 -0.2 18 -16 9 -16-9 0-18z" fill="#E0E45F"/>
     </svg>
-    <svg class="a2line" viewBox="0 0 246.313 47.0453" preserveAspectRatio="none" fill="none" style="left:85px;top:878.77px;width:246.313px;height:47.0453px"><path style="--len:266" d="M245.959 0.353553L199.767 46.5453H0" stroke="#CFFF3B" stroke-miterlimit="10"/></svg>
-    <svg class="a2line" viewBox="0 0 246.313 47.0454" preserveAspectRatio="none" fill="none" style="left:773.44px;top:730.71px;width:246.313px;height:47.0454px"><path style="--len:266" d="M0.353553 46.6918L46.5454 0.5H246.313" stroke="#CFFF3B" stroke-miterlimit="10"/></svg>
-    <svg class="a2hex hex" viewBox="0 0 38.6735 33.5023" preserveAspectRatio="none" style="left:313.28px;top:864.92px;width:38.6735px;height:33.5023px"><path d="M28.7217 0.5L38.0957 16.7422L28.7207 33.002H9.95215L0.577148 16.7412L9.95215 0.5H28.7217Z" fill="#CFFF3B"/></svg>
-    <svg class="a2hex hex h2" viewBox="0 0 38.6918 33.5024" preserveAspectRatio="none" style="left:749.07px;top:758.03px;width:38.6918px;height:33.5024px"><path d="M28.7217 0.5L38.1133 16.7598L28.7217 33.002H9.95215L0.576172 16.7607L9.95215 0.5H28.7217Z" fill="#CFFF3B"/></svg>
-    <div class="bullet" style="left:85px;top:864.92px;width:11.44px;height:14.82px"></div>
-    <div class="co pix" style="top:865.86px;left:107.11px;width:129.352px;height:39.389px">NEO /*<br>&nbsp;&nbsp;DIMENSION</div>
-    <div class="co pix" style="top:679px;right:44.71px;width:161.424px;height:36.565px;text-align:right">37°32'40.2"N<br>127°02'40.0"E</div>
+    <div class="co pix" style="top:1090px;left:120px">■ NEO /*<br>&nbsp;&nbsp;DIMENSION</div>
+    <div class="co pix" style="top:820px;right:96px;text-align:right">37°32'40.2"N<br>127°02'40.0"E</div>
     <div class="ln b2">흩어진 <span class="hl">NEO SIGNAL</span> 을 따라가면,<br>NCT와의 공명으로 단 한 명의<br>멤버와 연결됩니다.</div>
   </div>
 
@@ -373,24 +376,14 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
     <div class="hudbox" style="top:400px">
       <div class="hudbar">
         <span class="l pix"><span class="chv">▶▶</span> SYNCHRONIZER</span>
+        <span class="r pix">
+          <svg width="40" height="40" viewBox="0 0 34 34" fill="none" stroke="#E0E45F" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
+          DREAM<br>CONNECTED <span class="chv">▶▶▶</span>
+        </span>
       </div>
       <div class="wavebox">
-        <svg class="lensSvg" viewBox="0 0 874 194" fill="none">
-          <g class="lensSweep">
-            <g transform="translate(13.648 0)">
-              <path d="M853.186 88.5318C825.853 153.873 786.523 194.865 742.791 194.865C703.603 194.865 667.964 161.83 641.111 107.66L632.094 88.07C605.454 33.8999 571.786 0.865 530.414 0.865C489.043 0.865 451.86 37.4165 424.794 96.4353L423.48 99.2947C396.414 158.314 359.231 194.865 317.842 194.865C276.453 194.865 239.27 158.314 212.204 99.2947L210.89 96.4353C183.824 37.4165 146.411 0.865 105.039 0.865C60.1182 0.865 28.1889 24.8419 0.803195 93.3449M423.48 99.2947C423.924 98.4245 424.368 97.3233 424.794 96.4353" stroke="#CFFF3B" stroke-width="1.73" stroke-miterlimit="10" stroke-dasharray="2.31 6.92"/>
-            </g>
-            <g transform="translate(11.9446 0)">
-              <path d="M854.89 107.198C827.557 41.8567 788.227 0.86499 744.495 0.86499C705.306 0.86499 669.668 33.8999 642.814 88.07L633.798 107.66C607.158 161.83 571.502 194.865 532.118 194.865C490.747 194.865 453.564 158.313 426.498 99.2947L425.184 96.4353C398.118 37.4165 360.917 0.86499 319.546 0.86499C278.157 0.86499 240.974 37.4165 213.908 96.4353L212.594 99.2947C185.528 158.313 148.115 194.865 106.743 194.865C61.8221 194.865 28.1889 166.359 0.803223 97.8561M425.184 96.4353C425.628 97.3055 426.072 98.4067 426.498 99.2947" stroke="#CFFF3B" stroke-width="1.73" stroke-miterlimit="10" stroke-dasharray="2.31 6.92"/>
-            </g>
-            <circle cx="11.945" cy="96.99" r="11.945" fill="#CFFF3B"/>
-            <circle cx="223.257" cy="96.99" r="11.945" fill="#CFFF3B"/>
-            <circle cx="439.13" cy="96.99" r="11.945" fill="#CFFF3B"/>
-            <circle cx="650.708" cy="96.99" r="11.945" fill="#CFFF3B"/>
-            <circle cx="862.056" cy="96.99" r="11.945" fill="#CFFF3B"/>
-          </g>
-        </svg>
-        <div class="cap pix blink"><span class="chv">▶▶▶</span> NEO SIGNAL ...</div>
+        <canvas id="lens" width="900" height="120"></canvas>
+        <div class="cap pix"><span class="chv">▶▶▶</span> NEO SIGNAL ...</div>
       </div>
       <div class="namefield empty" id="namefield"><span id="nameout">이름을 입력하세요</span><span class="car" id="caret" style="display:none"></span></div>
       <div class="nlen" id="nlen">0 / 10</div>
@@ -402,8 +395,23 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
 
   <!-- SURVEY -->
   <div class="screen" id="survey">
-    <img class="sbg" src="assets/kv_grid.png" alt="">
-    <div class="ticker t1"><div class="tk" id="tk1"></div></div>
+    <!-- 티커 아래: 도트 — 회전 지구본 — 도트 -->
+    <img class="dotp" src="assets/dots1.svg" style="top:405px;left:64px;width:270px" alt="">
+    <img class="dotp" src="assets/dots1.svg" style="top:405px;left:750px;width:270px;opacity:.75" alt="">
+    <div class="globewrap"><i class="shell"></i><i class="shell s2"></i><div class="globe3d">
+      <i class="m" style="transform:rotateY(0deg)"></i>
+      <i class="m" style="transform:rotateY(36deg)"></i>
+      <i class="m" style="transform:rotateY(72deg)"></i>
+      <i class="m" style="transform:rotateY(108deg)"></i>
+      <i class="m" style="transform:rotateY(144deg)"></i>
+      <i class="lat" style="transform:rotateX(90deg)"></i>
+      <i class="lat" style="transform:rotateX(90deg) translateZ(64px) scale(.72)"></i>
+      <i class="lat" style="transform:rotateX(90deg) translateZ(-64px) scale(.72)"></i>
+    </div></div>
+    <div class="cascade" id="cascade">
+      <div class="ticker t1"><div class="tk" id="tk1"></div></div>
+      <div class="ticker t2"><div class="tk" id="tk2"></div></div>
+    </div>
     <div class="qwrap">
       <div class="sigprog"><div class="cells" id="sigcells"></div><span class="siglab" id="siglab">SIGNAL 01 / 10</span></div>
       <div class="qtext" id="qtext"></div>
@@ -418,7 +426,7 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
     <div class="zone">
       <div class="gridplane"><div class="gp"></div></div>
       <div class="radar"><i></i><i></i><i></i>
-        <svg style="position:absolute;inset:30%;opacity:.9" viewBox="0 0 40 40" fill="none" stroke="#CFFF3B" stroke-width="2"><circle cx="20" cy="20" r="16"/><circle cx="20" cy="20" r="8"/></svg>
+        <svg style="position:absolute;inset:30%;opacity:.9" viewBox="0 0 40 40" fill="none" stroke="#E0E45F" stroke-width="2"><circle cx="20" cy="20" r="16"/><circle cx="20" cy="20" r="8"/></svg>
       </div>
       <img class="map" src="assets/worldmap.svg" alt="">
       <img class="dots" src="assets/dots2.svg" alt="">
@@ -437,9 +445,10 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
         </div>
       </div>
       <div class="frame">
+        <div class="rs" id="resCode">RS-00</div>
         <div class="big pix" id="resEn">—</div>
         <div class="kon" id="resKo">—</div>
-        <div class="note">※ 추후 실제 멤버 사진으로 교체 예정</div>
+        <div class="note">MEMBER PORTRAIT · 실제 전시 시 멤버 초상</div>
       </div>
     </div>
     <div class="hp" id="hpCue">헤드폰을 착용하세요</div>
@@ -454,11 +463,13 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
       <span class="l"><span class="chv">▶▶</span> AI VOICE LINK</span>
       <span class="r">멤버가 당신의 이름을 부릅니다</span>
     </div>
+    <div class="hpq">헤드폰을 착용하세요</div>
     <div class="tbox">
+      <img class="bf" src="assets/butterfly2d.svg" alt="">
       <span class="nm" id="vnm">—</span>
       <div class="tx" id="vtx"></div>
     </div>
-    <div class="hp">헤드폰을 착용하세요</div>
+    <div class="bars" id="vbars"></div>
   </div>
 
   <!-- DONE (yellow) -->
@@ -467,33 +478,61 @@ body.lite #grainOv{opacity:.10;mix-blend-mode:multiply;filter:invert(1)}
     <img class="bg bgGrid" src="assets/done_grid.svg" alt="">
     <img class="bg bgCir" src="assets/done_circles.svg" alt="">
     <img class="bg bgS3" src="assets/done_sphere.svg" alt="">
-    <div class="b1" id="dB1"></div>
-    <div class="b2" id="dB2"></div>
-    <div class="sy">
-      <div><span class="chv">▶▶</span><span id="dSy1"></span></div>
-      <div><span class="chv" style="visibility:hidden">▶▶</span><span id="dSy2"></span></div>
+    <div class="b1">동기화 완료</div>
+    <div class="b2">공중정원에 당신의 신호가 새겨졌습니다.</div>
+    <div class="b3">DREAM.DATA TRANSFERRED</div>
+    <div class="sy"><span class="chv">▶▶</span>SYNCHRONIZING<br>&nbsp;&nbsp;RESONANCE<span style="letter-spacing:.4em">...</span></div>
+    <div class="b4">다른 차원에서, 우리 꼭 다시 만나.</div>
+    <button class="donehome" onclick="reset()"><span class="chv blink">▶▶</span> RE-SYNC <span class="kr">처음으로 돌아가기</span></button>
+
+    <div id="pickup">
+      <div class="cap"><span class="ic">PICK-UP</span> 출력구에 손을 살짝 넣어 포토카드를 꺼내 주세요</div>
+      <svg viewBox="0 0 940 300">
+        <!-- 키오스크 단면: 오른쪽이 전면(개구부), 카드는 안쪽 트레이에 떨어짐 -->
+        <rect x="20" y="20" width="900" height="250" fill="none" stroke="#070404" stroke-width="3"/>
+        <text class="lbl" x="40" y="52">KIOSK SECTION VIEW</text>
+        <!-- 프린터 -->
+        <rect x="60" y="70" width="220" height="90" fill="#070404"/>
+        <text x="82" y="122" fill="#E0E45F" font-size="24" font-weight="700">PHOTO PRINTER</text>
+        <!-- 슈트: 카드가 전면(개구부) 쪽까지 미끄러져 내려온다 -->
+        <path d="M280 140 L640 214" stroke="#070404" stroke-width="4"/>
+        <path d="M280 175 L625 249" stroke="#070404" stroke-width="4"/>
+        <text class="lbl" x="360" y="162" transform="rotate(11 360 162)">DROP CHUTE</text>
+        <!-- 트레이: 개구부 바로 안쪽 -->
+        <path d="M625 249 L862 249 L862 205" fill="none" stroke="#070404" stroke-width="4"/>
+        <text class="lbl" x="530" y="266">TRAY · 개구부 바로 안쪽</text>
+        <!-- 전면 벽 + 개구부 -->
+        <path d="M920 20 L920 130" stroke="#070404" stroke-width="8"/>
+        <path d="M920 214 L920 270" stroke="#070404" stroke-width="8"/>
+        <text class="lbl" x="806" y="118" text-anchor="end" transform="rotate(-90 806 118)"></text>
+        <text class="lbl" x="938" y="180" transform="rotate(90 938 180)">OPENING</text>
+        <!-- 카드 -->
+        <g id="pkCard"><rect x="-32" y="-5" width="64" height="10" rx="2" fill="#070404"/><rect x="-28" y="-3" width="56" height="6" rx="1" fill="#E0E45F"/></g>
+        <!-- 팔: 개구부를 지나 안쪽 트레이까지 (pivot 바깥 → 손끝) -->
+        <g id="pkArm" opacity="0">
+          <line id="armLine" x1="1000" y1="168" x2="920" y2="172" stroke="#070404" stroke-width="24" stroke-linecap="round" opacity=".88"/>
+          <circle id="armTip" cx="920" cy="172" r="16" fill="#070404"/>
+        </g>
+        <!-- 진행 화살표 (안쪽 방향 안내) -->
+        <path id="pkArrow" d="M905 172 h-90" stroke="#070404" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#ah)"/>
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#070404"/></marker></defs>
+      </svg>
     </div>
-    <div class="b4" id="dB4"></div>
   </div>
 
-  <!-- PICK UP (260826 피드백: 완료 메시지와 분리 · 화살표로 아래 출력구 안내) -->
-  <div class="screen" id="pickup">
-    <div class="pk-tag pix"><span class="chv">▶▶</span> MESSAGE READY</div>
-    <div class="pk-big pix">PICK UP</div>
-    <div class="pk-sub">메세지가 도착했습니다</div>
-    <div class="pk-guide">화면 아래 <b>출력구</b>에 손을 살짝 넣어<br>메세지를 꺼내 주세요</div>
-    <svg class="pk-arr a1" viewBox="0 0 200 110"><path d="M12 12 L100 96 L188 12" fill="none" stroke="#CFFF3B" stroke-width="24" stroke-linecap="square"/></svg>
-    <svg class="pk-arr a2" viewBox="0 0 200 110"><path d="M12 12 L100 96 L188 12" fill="none" stroke="#CFFF3B" stroke-width="24" stroke-linecap="square"/></svg>
-    <svg class="pk-arr a3" viewBox="0 0 200 110"><path d="M12 12 L100 96 L188 12" fill="none" stroke="#CFFF3B" stroke-width="24" stroke-linecap="square"/></svg>
-    <div class="pk-slot"></div>
-    <div class="pk-slotlab pix">OUTPUT</div>
+  <!-- 하단 글로브 -->
+  <div id="globes">
+    <svg viewBox="0 0 34 34" fill="none" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
+    <svg viewBox="0 0 34 34" fill="none" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
+    <svg viewBox="0 0 34 34" fill="none" stroke-width="1.6"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/></svg>
+    <svg viewBox="0 0 34 34" fill="none" stroke-width="2"><circle cx="17" cy="17" r="15"/><ellipse cx="17" cy="17" rx="7" ry="15"/><ellipse cx="17" cy="17" rx="12" ry="15"/><line x1="2" y1="17" x2="32" y2="17"/><line x1="4" y1="10" x2="30" y2="10"/><line x1="4" y1="24" x2="30" y2="24"/></svg>
   </div>
 
   <!-- 나비 -->
   <div id="bfWrap"><img id="bf2d" src="assets/butterfly2d.svg" alt=""></div>
 
   <!-- 오버레이 -->
-  <div id="grainOv"></div>
+  <svg id="noise"><filter id="nz"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2"><animate attributeName="seed" values="1;9" dur=".6s" repeatCount="indefinite" calcMode="discrete"/></feTurbulence></filter><rect width="100%" height="100%" filter="url(#nz)"/></svg>
   <div id="scan"></div>
 </div>
 
@@ -528,12 +567,12 @@ const Q=[
  {t:'당신의 마음이 더 가는 물건은?',o:['종이 비행기','모래시계','구슬','나비']},
  {t:'내 마음이 가장 끌리는 순간은?',o:['만남','교감','환호','몰입']},
  {t:'지금 당신의 감정과 가장 가까운 단어는?',o:['편안함','그리움','설렘','기쁨']},
- {t:'함께한 소중한 순간들은<br>타임캡슐에 담는다면?',o:['사진','편지','노래','빛']},
+ {t:'함께한 소중한 순간들을 타임캡슐에 담는다면?',o:['사진','편지','노래','빛']},
  {t:'꿈의 경계를 열기 위해 필요한 것은?',o:['열쇠','기억의 조각','공명','용기']},
  {t:'마음이 가장 따뜻하게 채워지는 장면은?',o:['눈부시게 쏟아지는 여름밤의 유성우','비 갠 뒤 하늘 위에 그려진 무지개','따스한 햇살 아래 함께 걷는 길','쏟아지는 달빛 아래서 함께 춤추는 밤']},
  {t:'멀리서 불빛이 깜빡인다면?',o:['뛰어간다','지켜본다','천천히 걸어간다','손을 흔든다']},
- {t:'나를 위로해 줄 단 하나의<br>풍경을 고른다면?',o:['끝없는 바다','비밀스러운 정원','무한한 별들의 궤도','멈추지 않는 빛의 물결']},
- {t:'길을 잃었을 때,<br>나를 이끌어줄 것 같은 존재는?',o:['밤하늘의 북극성','스쳐 지나가는 바람결','발 밑을 비추는 나비','내 이름을 부르는 목소리']},
+ {t:'나를 위로해 줄 단 하나의 풍경을 고른다면?',o:['끝없는 바다','비밀스러운 정원','무한한 별들의 궤도','멈추지 않는 빛의 물결']},
+ {t:'길을 잃었을 때, 나를 이끌어줄 것 같은 존재는?',o:['밤하늘의 북극성','스쳐 지나가는 바람결','발 밑을 비추는 나비','내 이름을 부르는 목소리']},
 ];
 const TIE=['제노','천러','유타','재민','해찬','료','샤오쥔','쟈니','재현','양양','사쿠야','헨드리','쿤','재희','리쿠','런쥔','태용','시온','텐','지성','유우시'];
 
@@ -546,6 +585,17 @@ addEventListener('resize',fit);fit();
 /* 눈금 */
 (()=>{const t=document.getElementById('rulerTicks');
   for(let i=0;i<=4;i++){const b=document.createElement('i');b.style.left=(i*25)+'%';t.appendChild(b);}
+  const rb=document.getElementById('rbars');
+  for(let i=0;i<14;i++){const b=document.createElement('i');b.style.width=(8+Math.round(Math.random()*40))+'px';b.style.opacity=(0.25+i*0.05);rb.appendChild(b);}
+  /* 어트랙트 별 반짝임 — 로고 워드마크·터치 바와 겹치지 않는 두 밴드에만 생성 */
+  const st=document.getElementById('stars');
+  for(let i=0;i<26;i++){const s=document.createElement('i');
+    const band=Math.random()<0.62?[240,560]:[1140,1240];
+    s.style.left=(30+Math.random()*1020)+'px';
+    s.style.top=(band[0]+Math.random()*(band[1]-band[0]))+'px';
+    s.style.animationDelay=(Math.random()*3)+'s';
+    s.style.animationDuration=(2.2+Math.random()*2.6)+'s';
+    st.appendChild(s);}
 })();
 function ruler(v){const f=Math.max(0,Math.min(1,(v-1)/4));document.getElementById('rulerFill').style.width=(f*100)+'%';}
 
@@ -715,7 +765,7 @@ function renderQ(){
     if(i<qi)c.className='fill';else if(i===qi)c.className='cur';
     cells.appendChild(c);}
   document.getElementById('siglab').textContent='SIGNAL '+String(qi+1).padStart(2,'0')+' / 10';
-  const qt=document.getElementById('qtext');qt.innerHTML=q.t;
+  const qt=document.getElementById('qtext');qt.textContent=q.t;
   qt.classList.remove('fadeup');void qt.offsetWidth;qt.classList.add('fadeup');
   const box=document.getElementById('opts');box.innerHTML='';
   box.classList.remove('fadeup');void box.offsetWidth;box.classList.add('fadeup');
@@ -739,10 +789,12 @@ function addressee(n){if(!n)return '';const c=n.charCodeAt(n.length-1);
   if(c>=0xAC00&&c<=0xD7A3)return n+(((c-0xAC00)%28)===0?'야':'아');return n;}
 
 function showResult(){
-  const m=match.m;
+  const m=match.m, pad=n=>String(n).padStart(2,'0');
   document.getElementById('resEn').textContent=m.en;
   document.getElementById('resKo').textContent=m.ko;
+  document.getElementById('resCode').textContent='RS-'+pad(m.id);
   lite(true);show('result');ruler(4);resetIdle();
+  BF.card(); /* 나비: 카드 헤더 자리에 고정으로 앉아 살짝 날갯짓 */
 }
 /* 목소리(TTS) 미사용 — 대사 텍스트만 표시. 실제 전시에서는 멤버 녹음 음원 재생으로 대체 */
 const VOICE_MS=11500;
@@ -759,54 +811,43 @@ function playVoice(){
 function gotoDone(){
   stopWaves();
   lite(true);show('done');ruler(5);
-  typeDone();
-  clearTimeout(doneT);doneT=setTimeout(goPickup,7000); /* 완료 메시지 7초 후 PICK UP 페이지로 (260826 피드백: 페이지 분리) */
-}
-/* 완료 화면 문구 — 상단부터 순서대로 타이핑 연출 */
-let doneTypeT=[];
-function typeDone(){
-  doneTypeT.forEach(clearTimeout);doneTypeT=[];
-  const seq=[
-    {el:document.getElementById('dB1'),text:'동기화 완료'},
-    {el:document.getElementById('dB2'),text:'당신의 신호가 새겨졌습니다.'},
-    {el:document.getElementById('dSy1'),text:'SYNCHRONIZING'},
-    {el:document.getElementById('dSy2'),text:'RESONANCE'},
-    {el:document.getElementById('dB4'),text:'다른 차원에서, 우리 꼭 다시 만나.'}
-  ];
-  seq.forEach(s=>{s.el.textContent='';s.el.style.transition='opacity .3s';s.el.style.opacity=0;});
-  let si=0;
-  function typeItem(){
-    if(si>=seq.length)return;
-    const{el,text}=seq[si];let ci=0;
-    el.style.opacity=1;
-    (function ch(){
-      const c=text[ci];ci++;
-      el.innerHTML=text.slice(0,ci)+'<span class="tcur">▮</span>';
-      if(ci<text.length){
-        let d=26+Math.random()*28;              /* 불규칙 타건 속도 */
-        if(',.?!'.includes(c))d+=140;            /* 문장부호 뒤 호흡 */
-        else if(c===' ')d+=40;
-        doneTypeT.push(setTimeout(ch,d));
-      }else{
-        el.textContent=text;                     /* 줄 완료 시 커서 제거 */
-        si++;doneTypeT.push(setTimeout(typeItem,280));
-      }
-    })();
-  }
-  typeItem();
-}
-function goPickup(){
-  BF.hide();lite(false);show('pickup');
-  clearTimeout(doneT);doneT=setTimeout(reset,20000); /* 20초 무입력 시 처음으로 (터치하면 20초 재시작) */
+  BF.done();startPickup();
+  clearTimeout(doneT);doneT=setTimeout(reset,20000); /* 20초 무입력 시 자동으로 처음으로 (터치하면 20초 재시작) */
 }
 function reset(){
   clearTimeout(voiceT);clearTimeout(doneT);clearTimeout(briefT);
-  stopWaves();stopFreq();
+  stopWaves();stopFreq();stopPickup();
   resetData();lite(false);show('attract');ruler(1);clearTimeout(idleT);BF.hide();
 }
 
 /* ================= 캔버스 연출 ================= */
-/* NEO SIGNAL 렌즈 웨이브 (이름 화면) — 순수 CSS clip-path 스윕, 원본 Figma 벡터 그대로 */
+/* NEO SIGNAL 렌즈 웨이브 (이름 화면) */
+let lensRAF=null;
+function drawLens(){
+  const cv=document.getElementById('lens');if(!cv)return;
+  const ctx=cv.getContext('2d');const W=cv.width,H=cv.height;
+  let t=0;
+  function fr(){
+    if(!document.getElementById('enter').classList.contains('on')){lensRAF=null;return;}
+    ctx.clearRect(0,0,W,H);t+=.02;
+    ctx.fillStyle='#E0E45F';
+    const n=5;
+    for(let s=0;s<n;s++){
+      const x0=s*(W/n), x1=(s+1)*(W/n);
+      for(let i=0;i<26;i++){
+        const u=i/25, x=x0+(x1-x0)*u;
+        const amp=Math.sin(u*Math.PI)*(H*0.42)*(0.75+0.25*Math.sin(t*2+s));
+        ctx.globalAlpha=.85;
+        ctx.fillRect(x,H/2-amp,2.5,2.5);ctx.fillRect(x,H/2+amp,2.5,2.5);
+      }
+      ctx.globalAlpha=1;
+      ctx.beginPath();ctx.arc(x0,H/2,7,0,7);ctx.fill();
+    }
+    ctx.beginPath();ctx.arc(W,H/2,7,0,7);ctx.fill();
+    lensRAF=requestAnimationFrame(fr);
+  }
+  if(!lensRAF)fr();
+}
 /* 공명 주파수 차트 (동기화) */
 let freqRAF=null;
 function startFreq(){
@@ -821,11 +862,11 @@ function startFreq(){
     }
     if(data.length>240)data.splice(0,data.length-240);
     ctx.clearRect(0,0,W,H);
-    ctx.strokeStyle='rgba(207,255,59,.28)';ctx.lineWidth=1;
+    ctx.strokeStyle='rgba(224,228,95,.28)';ctx.lineWidth=1;
     for(let gy=0;gy<=8;gy++){ctx.beginPath();ctx.moveTo(0,gy*H/8);ctx.lineTo(W,gy*H/8);ctx.stroke();}
     for(let gx=0;gx<=8;gx++){ctx.beginPath();ctx.moveTo(gx*W/8,0);ctx.lineTo(gx*W/8,H);ctx.stroke();}
     ctx.strokeStyle='#c33';ctx.beginPath();ctx.moveTo(0,H*0.42);ctx.lineTo(W,H*0.42);ctx.stroke();
-    ctx.strokeStyle='#CFFF3B';ctx.lineWidth=2;ctx.beginPath();
+    ctx.strokeStyle='#E0E45F';ctx.lineWidth=2;ctx.beginPath();
     data.forEach((d,i)=>{const px=i*(W/240);i?ctx.lineTo(px,d):ctx.moveTo(px,d);ctx.lineTo(px+W/240,d);});
     ctx.stroke();
     freqRAF=requestAnimationFrame(fr);
@@ -838,20 +879,23 @@ let waveRAF=null;
 function startWaves(){
   const cv=document.getElementById('waves');const ctx=cv.getContext('2d');
   const W=cv.width,H=cv.height;let t=0;
+  const bars=document.getElementById('vbars');bars.innerHTML='';
+  for(let i=0;i<24;i++){const b=document.createElement('i');bars.appendChild(b);}
   function fr(){
     if(!document.getElementById('phone').classList.contains('on')){waveRAF=null;return;}
     t+=.016;
     ctx.clearRect(0,0,W,H);
-    ctx.strokeStyle='rgba(207,255,59,.25)';ctx.lineWidth=1;
+    ctx.strokeStyle='rgba(224,228,95,.25)';ctx.lineWidth=1;
     for(let gy=0;gy<6;gy++){ctx.beginPath();ctx.moveTo(0,gy*H/5);ctx.lineTo(W,gy*H/5);ctx.stroke();}
-    ctx.setLineDash([6,7]);ctx.strokeStyle='rgba(207,255,59,.5)';ctx.lineWidth=2;ctx.beginPath();
+    ctx.setLineDash([6,7]);ctx.strokeStyle='rgba(224,228,95,.5)';ctx.lineWidth=2;ctx.beginPath();
     for(let x=0;x<W;x+=4){const y=H/2+Math.sin(x*0.008+t*1.4)*H*0.2;x?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
-    ctx.setLineDash([]);ctx.strokeStyle='#CFFF3B';ctx.lineWidth=2.5;ctx.beginPath();
+    ctx.setLineDash([]);ctx.strokeStyle='#E0E45F';ctx.lineWidth=2.5;ctx.beginPath();
     for(let x=0;x<W;x+=3){const k=0.006+x*0.0000135;
       const y=H/2+Math.sin(x*k+t*2.2)*H*0.36*(0.55+0.45*Math.sin(t*0.9));
       x?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
-    ctx.fillStyle='#CFFF3B';ctx.beginPath();ctx.arc(70,H*0.72,9,0,7);ctx.fill();
-    ctx.font='700 24px "Barlow Semi Condensed"';ctx.fillText('REALITY',44,H*0.72+42);
+    ctx.fillStyle='#E0E45F';ctx.beginPath();ctx.arc(70,H*0.72,9,0,7);ctx.fill();
+    ctx.font='24px Galmuri';ctx.fillText('REALITY',44,H*0.72+42);
+    [...bars.children].forEach((b,i)=>{b.style.height=(10+Math.abs(Math.sin(t*6+i*0.7))*58)+'px';});
     waveRAF=requestAnimationFrame(fr);
   }
   if(!waveRAF)fr();
@@ -892,11 +936,51 @@ function typeLines(lines){
   step();
 }
 /* 설문 NEO SIGNAL 티커 — 동일 콘텐츠 2배 복제로 이음새 없는 무한 루프 */
-(()=>{['tk1'].forEach(id=>{
+(()=>{['tk1','tk2'].forEach(id=>{
   const el=document.getElementById(id);
   let s='';for(let i=0;i<8;i++)s+='<span class="chv">▶▶</span>&nbsp;&nbsp;NEO&nbsp;SIGNAL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
   el.innerHTML=s+s;
 });})();
+
+/* ================= 픽업 시뮬레이션 ================= */
+let pickRAF=null;
+function startPickup(){
+  const card=document.getElementById('pkCard'), arm=document.getElementById('pkArm'),
+        line=document.getElementById('armLine'), tip=document.getElementById('armTip'),
+        arrow=document.getElementById('pkArrow');
+  const t0=performance.now();
+  function lerp(a,b,u){return a+(b-a)*u;}
+  function ease(u){return u<0?0:u>1?1:u*u*(3-2*u);}
+  /* 10초 주기 — 트레이가 개구부 바로 안쪽이라 손을 살짝만 넣는다:
+     0.00–0.14 카드가 슈트를 타고 전면 트레이로 낙하
+     0.14–0.28 대기 (화살표: 안쪽 방향 안내)
+     0.28–0.42 손끝이 개구부로 살짝 들어감 (얕은 진입)
+     0.42–0.52 카드 잡기
+     0.52–0.72 손이 카드와 함께 바로 밖으로
+     0.72–1.00 비움 (다음 반복 대기) */
+  function fr(now){
+    if(!document.getElementById('done').classList.contains('on')){pickRAF=null;return;}
+    const t=((now-t0)%10000)/10000;
+    let cx=-200,cy=-200,rot=0, tipx=920,tipy=172, armOn=0, arrowOn=1;
+    if(t<.14){const u=ease(t/.14);cx=lerp(300,800,u);cy=lerp(150,240,u);rot=lerp(12,0,u);}
+    else if(t<.28){cx=800;cy=240;}
+    else if(t<.42){const u=ease((t-.28)/.14);cx=800;cy=240;armOn=1;arrowOn=0;
+      tipx=lerp(918,816,u);tipy=lerp(174,224,u);}
+    else if(t<.52){cx=800;cy=240;armOn=1;arrowOn=0;
+      tipx=816;tipy=226+Math.sin((t-.42)*90)*2;}
+    else if(t<.72){const u=ease((t-.52)/.2);armOn=1;arrowOn=0;
+      tipx=lerp(816,975,u);tipy=lerp(224,168,u);cx=tipx-4;cy=tipy+12;}
+    /* t>=.72 : 카드·팔 모두 화면 밖, 화살표만 */
+    card.setAttribute('transform',`translate(${cx} ${cy}) rotate(${rot})`);
+    line.setAttribute('x2',tipx);line.setAttribute('y2',tipy);
+    tip.setAttribute('cx',tipx);tip.setAttribute('cy',tipy);
+    arm.setAttribute('opacity',armOn);
+    arrow.style.opacity=arrowOn?'1':'0';
+    pickRAF=requestAnimationFrame(fr);
+  }
+  if(!pickRAF)pickRAF=requestAnimationFrame(fr);
+}
+function stopPickup(){if(pickRAF){cancelAnimationFrame(pickRAF);pickRAF=null;}}
 
 /* ================= 나비 (2D 폴백 → three.js가 대체) ================= */
 function bez(p0,p1,p2,p3,u){const w=1-u;
@@ -906,7 +990,42 @@ const BF={
   el:document.getElementById('bf2d'), mode:'hide', impl:null,
   pos:{x:865,y:300,s:.55},
   hide(){this.mode='hide';this.el.style.opacity=0;},
-  target(){return null;}
+  card(){this.mode='card';this._t0=performance.now();},
+  done(){this.mode='done';this._t0=performance.now();
+    /* 시안의 대형 나비 자리: DREAM.DATA TRANSFERRED와 SYNCHRONIZING 사이의 빈 공간 (텍스트와 겹치지 않음) */
+    this._perch={x:540,y:625};
+  },
+  /* card : 결과 화면 — 카드 패널 우상단 모서리에 걸쳐 앉아 살짝 날갯짓 (이동 없음)
+     done : 완료 화면 — '우리 꼭 다시 만나.' 바 위에 앉아 있다가(0~6초)
+            왼쪽 위로 아주 천천히, 잔잔한 물결을 타며 유려하게 날아가 퇴장(6~13초) */
+  target(now){
+    const t=now-this._t0;
+    switch(this.mode){
+      case 'card':{
+        const a=Math.min(1,t/700);
+        return{x:928,y:202+Math.sin(t/1100)*3,s:.55,a};
+      }
+      case 'done':{
+        const P=this._perch||{x:540,y:625};
+        if(t<6000){ /* 빈 공간에 앉아 잔잔한 날갯짓 */
+          const a=Math.min(1,t/700);
+          return{x:P.x,y:P.y+Math.sin(t/1200)*4,s:1.05,a,fs:1.0};
+        }
+        /* 실제 나비 비행: 날갯짓에 맞춰 떠올랐다 가라앉는 요동 + 사행(蛇行) 경로 + 빠른 날갯짓 */
+        const u=(t-6000)/8000;
+        if(u>=1)return null; /* 퇴장 완료 */
+        const e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
+        const p=bez([P.x,P.y],[P.x-130,P.y-150],[250,P.y-40],[-240,P.y-300],e);
+        const ramp=Math.min(1,(t-6000)/900);          /* 이륙하며 요동이 서서히 커진다 */
+        const beat=-24*Math.abs(Math.sin(t/165))*ramp; /* 날갯짓 한 번마다 살짝 떠오름 */
+        const drift=13*Math.sin(t/620)*ramp;           /* 느린 상하 너울 */
+        const wav=15*Math.sin(t/410)*ramp;             /* 좌우 흔들림 */
+        const a=u<.75?1:Math.max(0,1-(u-.75)/.25);
+        return{x:p.x+wav,y:p.y+beat+drift,s:1.05,a,fs:2.1};
+      }
+      default:return null;
+    }
+  }
 };
 (function bf2dLoop(){
   requestAnimationFrame(bf2dLoop);
@@ -925,9 +1044,9 @@ function resetIdle(){clearTimeout(idleT);
   if(document.getElementById('attract').classList.contains('on'))return;
   idleT=setTimeout(reset,IDLE);}
 ['pointerdown','click'].forEach(ev=>document.addEventListener(ev,resetIdle,true));
-/* PICK UP 화면: 화면을 만지면 20초 자동 복귀 타이머가 다시 시작된다 */
+/* 완료 화면: 화면을 만지면 20초 자동 복귀 타이머가 다시 시작된다 */
 document.addEventListener('pointerdown',()=>{
-  if(document.getElementById('pickup').classList.contains('on')){
+  if(document.getElementById('done').classList.contains('on')){
     clearTimeout(doneT);doneT=setTimeout(reset,20000);
   }
 },true);
@@ -941,8 +1060,104 @@ tapCounter(document.getElementById('codeTitle'),()=>{
   if(confirm('사용된 코드 기록('+usedCodes().length+'건)을 초기화할까요?')){
     localStorage.removeItem('neosk_used_codes');codeWarn('');alert('초기화 완료');}});
 
+/* 화면 전환 시 lens 캔버스 기동 */
+new MutationObserver(()=>{if(document.getElementById('enter').classList.contains('on'))drawLens();})
+  .observe(document.getElementById('enter'),{attributes:true});
+
 ruler(1);BF.hide();
 </script>
 
+<!-- ================= three.js 나비 (FBX) ================= -->
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js",
+"three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
+</script>
+<script type="module">
+try{
+  const THREE=await import('three');
+  const {FBXLoader}=await import('three/addons/loaders/FBXLoader.js');
+  const wrap=document.getElementById('bfWrap');
+  const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
+  renderer.setSize(1080,1920);renderer.setPixelRatio(1);
+  wrap.appendChild(renderer.domElement);
+  const scene=new THREE.Scene();
+  const cam=new THREE.OrthographicCamera(-540,540,960,-960,-2000,2000);
+  cam.position.z=800;
+  const amb=new THREE.AmbientLight(0xffffff,2.2);scene.add(amb);
+
+  /* 글로우 스프라이트 */
+  const gcv=document.createElement('canvas');gcv.width=gcv.height=256;
+  const g=gcv.getContext('2d');const gr=g.createRadialGradient(128,128,0,128,128,128);
+  gr.addColorStop(0,'rgba(255,255,255,.95)');gr.addColorStop(.35,'rgba(255,255,255,.4)');gr.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle=gr;g.fillRect(0,0,256,256);
+  const gtex=new THREE.CanvasTexture(gcv);
+  const glowA=new THREE.Sprite(new THREE.SpriteMaterial({map:gtex,blending:THREE.AdditiveBlending,transparent:true,opacity:.95,depthWrite:false}));
+  const glowN=new THREE.Sprite(new THREE.SpriteMaterial({map:gtex,transparent:true,opacity:.75,depthWrite:false}));
+  glowA.scale.set(300,300,1);glowN.scale.set(240,240,1);scene.add(glowA);scene.add(glowN);
+
+  /* 파티클 트레일 */
+  const N=260;
+  const tpos=new Float32Array(N*3), tcol=new Float32Array(N*3), tlife=new Float32Array(N);
+  const tgeo=new THREE.BufferGeometry();
+  tgeo.setAttribute('position',new THREE.BufferAttribute(tpos,3));
+  tgeo.setAttribute('color',new THREE.BufferAttribute(tcol,3));
+  const tmat=new THREE.PointsMaterial({size:7,vertexColors:true,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,map:gtex});
+  const trail=new THREE.Points(tgeo,tmat);scene.add(trail);
+  let ti=0;
+
+  /* FBX 로드 */
+  const group=new THREE.Group();scene.add(group);
+  const bmat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1});
+  let mixer=null, act=null, loaded=false;
+  new FBXLoader().load('butterfly.fbx',obj=>{
+    obj.traverse(c=>{if(c.isMesh){c.material=bmat;c.frustumCulled=false;}});
+    const box=new THREE.Box3().setFromObject(obj);
+    const size=box.getSize(new THREE.Vector3()).length()||1;
+    const k=170/size;obj.scale.setScalar(k);
+    const c2=new THREE.Box3().setFromObject(obj).getCenter(new THREE.Vector3());
+    obj.position.sub(c2);
+    obj.rotation.x=Math.PI/2.6; /* 위에서 비스듬히 */
+    group.add(obj);
+    if(obj.animations&&obj.animations.length){
+      mixer=new THREE.AnimationMixer(obj);
+      act=mixer.clipAction(obj.animations[0]);act.timeScale=1.15;act.play();
+    }
+    loaded=true;
+    BF.impl=impl;              /* 2D 폴백 비활성 */
+    document.getElementById('bf2d').style.opacity=0;
+  },undefined,err=>{console.warn('FBX load fail',err);});
+
+  const impl={setMode(){}};    /* 모드는 BF.target에서 읽음 */
+  const clock=new THREE.Clock();
+  let prev={x:540,y:560}, fc=0;
+  function toWorld(p){return{x:p.x-540,y:-(p.y-960)};}
+  function frame(){
+    requestAnimationFrame(frame);fc++;
+    const dt=clock.getDelta();
+    if(mixer)mixer.update(dt);
+    const lite=document.body.classList.contains('lite');
+    const t=BF.target(performance.now());
+    const vis=!!t&&loaded;
+    group.visible=vis;trail.visible=false; /* 파티클 트레일 미사용 (고정 착지 연출) */
+    glowA.visible=vis&&!lite;glowN.visible=vis&&lite;
+    if(!vis){renderer.render(scene,cam);return;}
+    const a=t.a??1;
+    if(act)act.timeScale=t.fs||1.15; /* 비행 중엔 날갯짓이 빨라진다 */
+    bmat.opacity=a;
+    glowA.material.opacity=.85*a;glowN.material.opacity=.5*a;
+    const w=toWorld(t);
+    const dx=w.x-prev.x;
+    group.position.x=w.x;group.position.y=w.y;
+    /* 이동 방향에 따른 미세한 기울기 (정지 시 0) */
+    group.rotation.z=THREE.MathUtils.lerp(group.rotation.z,Math.max(-0.4,Math.min(0.4,-dx*0.02)),0.08);
+    group.scale.setScalar(t.s);
+    glowA.position.copy(group.position);glowN.position.copy(group.position);
+    glowA.scale.setScalar(190*t.s);glowN.scale.setScalar(160*t.s);
+    prev=w;
+    renderer.render(scene,cam);
+  }
+  frame();
+}catch(e){console.warn('three.js unavailable — 2D butterfly fallback',e);}
+</script>
 </body>
 </html>
