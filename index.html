@@ -37,11 +37,16 @@ body.lite #ruler{color:var(--ink)}
 /* 포스터 그레인/스캔라인 — 실제 KV 그레인 텍스처를 미세 지터로 재생 (필름 셰이더 느낌) */
 #grainOv{position:absolute;inset:-40px;z-index:60;pointer-events:none;opacity:.13;mix-blend-mode:screen;
   background:url('assets/kv_grain.png');background-size:900px;
-  animation:grainJit 1.2s steps(4) infinite} /* 모바일 피드백: 노이즈 모션 완화 */
+  will-change:transform;
+  animation:grainJit 1.1s step-end infinite} /* 보간 없이 순간 점프 — 미끄러짐 제거 */
 body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 @keyframes grainJit{
-  0%{transform:translate(0,0)}25%{transform:translate(-6px,4px)}50%{transform:translate(4px,-6px)}
-  75%{transform:translate(-3px,-4px)}100%{transform:translate(0,0)}}
+  0%{transform:translate(0,0)}
+  20%{transform:translate(-9px,6px)}
+  40%{transform:translate(7px,-9px)}
+  60%{transform:translate(-5px,-6px)}
+  80%{transform:translate(9px,8px)}
+  100%{transform:translate(0,0)}}
 #scan{position:absolute;inset:0;z-index:61;pointer-events:none;opacity:.10;
   background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.55) 3px 4px)}
 #bfWrap{position:absolute;inset:0;z-index:55;pointer-events:none}
