@@ -281,7 +281,12 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 #phone .tbox .nm{font-family:'Barlow Semi Condensed','Pretendard';font-weight:700;font-size:34px;display:block;margin-bottom:20px}
 #phone .tbox .tx{font-weight:700;font-size:38px;line-height:1.75;white-space:pre-wrap}
 .tcur{display:inline-block;width:.62em;margin-left:4px;animation:blink .75s steps(2) infinite}
-#phone .hp{margin:44px 64px 0;background:var(--ink);border:1px solid rgba(207,255,59,.45);color:var(--lime);text-align:center;font-weight:700;font-size:46px;padding:29px 0;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(207,255,59,.06) 0 2px,transparent 2px 6px);
+/* AI 생성 고지 (이름 호명 구간 한정) */
+#phone .ainote{display:flex;align-items:center;justify-content:center;gap:14px;margin:18px 64px 0;
+  color:rgba(207,255,59,.62);font-size:22px;letter-spacing:.02em}
+#phone .aitag{flex:none;border:1.5px solid rgba(207,255,59,.62);color:rgba(207,255,59,.85);
+  font-size:19px;letter-spacing:.14em;padding:3px 10px}
+#phone .hp{margin:26px 64px 0;background:var(--ink);border:1px solid rgba(207,255,59,.45);color:var(--lime);text-align:center;font-weight:700;font-size:46px;padding:29px 0;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(207,255,59,.06) 0 2px,transparent 2px 6px);
   display:flex;align-items:center;justify-content:center;gap:22px}/* ---------- DONE (LITE) — 시안 7_완료 BG 에셋 사용 ---------- */
 #done .bg{position:absolute;pointer-events:none}
 #done .bgGrid{top:430px;left:30px;width:837px;opacity:.85}
@@ -510,6 +515,7 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
       <span class="nm" id="vnm">—</span>
       <div class="tx" id="vtx"></div>
     </div>
+    <div class="ainote"><span class="aitag pix">AI</span> 이름 호명 구간은 AI로 생성된 음성입니다 · 그 외 대사는 사전 녹음된 멤버 목소리입니다</div>
     <div class="hp">헤드폰을 착용하세요</div>
   </div>
 
