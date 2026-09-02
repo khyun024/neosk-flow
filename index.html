@@ -836,7 +836,8 @@ function chooseVoice(side){
 /* 목소리(TTS) 미사용 — 대사 텍스트만 표시. 실제 전시에서는 멤버 녹음 음원 재생으로 대체 */
 const VOICE_MS=11500;
 function playVoice(){
-  const m=chosenM||match.m, voc=addressee(uname); /* 선택한 멤버(최애 또는 공명)의 목소리·포토 출력 */
+  /* 보이스 파트는 현행 유지(작업 보류). 선택 결과는 chosenM에 저장되어 있어 추후 음원 연동 시 match.m → chosenM 로만 바꾸면 됨 */
+  const m=match.m, voc=addressee(uname);
   const ENTRY=(voc?voc+', ':'')+'들려? 공유몽 가장 깊은 곳에서, 네가 보낸 신호를 내가 제일 먼저 받았어.';
   const LINK='너랑 같은 주파수로 떨리고 있는 나, '+m.ko+'야.';
   const lines=['"'+ENTRY+'"','"'+LINK+'"','"'+m.voice+'"'];
