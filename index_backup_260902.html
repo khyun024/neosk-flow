@@ -115,44 +115,6 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 #brief .bullet{position:absolute;background:var(--lime);opacity:0;animation:fadeUp .5s ease 3.3s both}
 #brief .co{position:absolute;color:var(--lime);font-family:'Barlow Semi Condensed','Pretendard';font-size:19px;line-height:1.05;letter-spacing:.02em}
 #brief .b2{position:absolute;top:1460px;left:90px;right:90px}
-#brief .nextbtn{position:absolute;left:90px;right:90px;bottom:110px;padding:26px 0;font-size:42px;animation:fadeUp .5s ease 1.6s both}
-/* 처음으로 (코드 화면 — 재이용 저지 시 다음 관객이 초기화면으로) */
-#code .homebtn{position:absolute;left:64px;right:64px;bottom:120px;display:flex;align-items:center;justify-content:center;gap:16px;
-  background:var(--ink);color:var(--lime);border:2px solid rgba(207,255,59,.65);cursor:pointer;
-  font-family:'Barlow Semi Condensed','Pretendard';font-weight:600;font-size:32px;letter-spacing:.12em;padding:20px 0}
-#code .homebtn:active{background:rgba(207,255,59,.12)}
-
-/* ---------- BIAS SELECT ---------- */
-#bias .mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:22px}
-#bias .mcell{background:#0d0d0b;border:1px solid #2e2e20;cursor:pointer;text-align:center;padding:16px 4px 14px}
-#bias .mcell .en{font-family:'Barlow Semi Condensed','Pretendard';font-weight:700;color:var(--lime);font-size:31px;letter-spacing:.04em;line-height:1.05}
-#bias .mcell .ko{color:rgba(207,255,59,.6);font-size:21px;font-weight:600;margin-top:5px}
-#bias .mcell.sel{background:var(--lime);box-shadow:0 0 22px rgba(207,255,59,.45);
-  background-image:repeating-linear-gradient(0deg,rgba(7,4,4,.08) 0 2px,transparent 2px 6px)}
-#bias .mcell.sel .en{color:var(--ink)}
-#bias .mcell.sel .ko{color:rgba(7,4,4,.65)}
-#bias .gobtn:disabled{opacity:.35;cursor:default}
-#bias .gobtn:disabled:active{transform:none}
-
-/* ---------- RESULT: 최애·공명 좌우 카드 ---------- */
-#result .rhead{position:absolute;top:150px;left:64px;right:64px}
-#result .duo{position:absolute;top:400px;left:64px;right:64px;display:flex;gap:22px}
-#result .mcard{flex:1;background:#0d0d0b;border:2px solid rgba(207,255,59,.4);padding:18px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
-#result .mcard.sel{border-color:var(--lime);box-shadow:0 0 34px rgba(207,255,59,.4);background:#12120c}
-#result .mtag{display:flex;justify-content:space-between;align-items:center;color:var(--lime);font-size:24px;letter-spacing:.16em;margin-bottom:14px}
-#result .mtag .pk{width:26px;height:26px;border:2px solid rgba(207,255,59,.6);border-radius:50%;flex:none;position:relative}
-#result .mcard.sel .pk{background:var(--lime);border-color:var(--lime);box-shadow:0 0 12px rgba(207,255,59,.8)}
-#result .mframe{background:#fff;border-radius:18px;height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative}
-#result .mframe .rs{font-family:'Barlow Semi Condensed';color:#9aa03e;font-size:24px;letter-spacing:.28em}
-#result .mframe .big2{font-family:'Barlow Semi Condensed';font-weight:700;color:var(--ink);font-size:64px;letter-spacing:.01em;line-height:1.05;text-align:center}
-#result .mframe .kon2{font-weight:800;color:var(--ink);font-size:38px;margin-top:2px}
-#result .mframe .note2{position:absolute;bottom:20px;color:#b9bd8f;font-size:17px;letter-spacing:.1em}
-#result.single .duo{left:220px;right:220px}
-#result.single #cardBias{display:none}
-#result .perfect{display:none;position:absolute;top:352px;left:64px;right:64px;text-align:center}
-#result.single .perfect{display:block}
-#result .perfect span{background:var(--lime);color:var(--ink);font-weight:800;font-size:30px;padding:10px 26px;
-  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
 
 /* ---------- CODE / ENTER 공통 HUD ---------- */
 .hudhead{position:absolute;top:150px;right:64px;display:flex;align-items:center;gap:18px}
@@ -265,9 +227,9 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 #result .frame .big{font-family:'Barlow Semi Condensed','Pretendard';font-weight:700;color:var(--ink);font-size:120px;letter-spacing:.02em;line-height:1.05;text-align:center}
 #result .frame .kon{font-weight:700;color:var(--ink);font-size:56px;margin-top:6px}
 #result .frame .note{position:absolute;bottom:34px;color:#8e9a00;font-size:27px;font-weight:700;letter-spacing:.06em}
-#result .hp{position:absolute;top:1120px;left:100px;right:100px;margin:0;background:var(--ink);color:var(--lime);text-align:center;font-weight:700;font-size:46px;padding:30px 0;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(207,255,59,.06) 0 2px,transparent 2px 6px);
-  display:flex;align-items:center;justify-content:center;gap:22px;border:1px solid rgba(207,255,59,.35)}
-#result .listen{position:absolute;top:1282px;left:100px;right:100px;margin:0;padding:30px 0;font-size:44px}
+#result .hp{margin:44px 150px 0;background:var(--ink);color:var(--lime);text-align:center;font-weight:700;font-size:46px;padding:30px 0;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);background-image:repeating-linear-gradient(0deg,rgba(207,255,59,.06) 0 2px,transparent 2px 6px);
+  display:flex;align-items:center;justify-content:center;gap:22px}
+#result .listen{margin:26px 150px 0;padding:30px 0;font-size:44px;width:calc(100% - 300px)}
 
 /* ---------- VOICE ---------- */
 #phone{padding-top:170px}
@@ -373,7 +335,6 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
     <div class="co pix" style="top:865.86px;left:107.11px;width:129.352px;height:39.389px">NEO /*<br>&nbsp;&nbsp;DIMENSION</div>
     <div class="co pix" style="top:679px;right:44.71px;width:161.424px;height:36.565px;text-align:right">37°32'40.2"N<br>127°02'40.0"E</div>
     <div class="ln b2">흩어진 <span class="hl">NEO SIGNAL</span> 을 따라가면,<br>NCT와의 공명으로 단 한 명의<br>멤버와 연결됩니다.</div>
-    <button class="btn nextbtn" onclick="goCode()">다음 <span class="pix chv">▶▶</span></button>
   </div>
 
   <!-- CODE -->
@@ -390,7 +351,6 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
       <div class="kb" id="codekb"></div>
       <button class="btn gobtn" id="codego" onclick="submitCode()">입장하기 <span class="pix chv">▶▶</span></button>
     </div>
-    <button class="homebtn" onclick="reset()"><span class="pix chv">◀◀</span> 처음 화면으로 돌아가기</button>
   </div>
 
   <!-- ENTER -->
@@ -427,20 +387,6 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
     </div>
   </div>
 
-  <!-- BIAS SELECT (이름 입력 후 · 설문 전) -->
-  <div class="screen" id="bias">
-    <div class="hudhead"><span class="ex pix">[!]</span><span class="t pix">BIAS SELECT</span></div>
-    <div class="tilt">최애 멤버를 선택하세요.</div>
-    <div class="hudbox" style="top:400px">
-      <div class="hudbar">
-        <span class="l pix"><span class="chv">▶▶</span> MY BIAS</span>
-        <span class="r pix" id="biasCnt">PICK 1 / 21</span>
-      </div>
-      <div class="mgrid" id="mgrid"></div>
-      <button class="btn gobtn" id="biasgo" onclick="startSurvey()" disabled>신호 보내기 <span class="pix chv">▶▶</span></button>
-    </div>
-  </div>
-
   <!-- SURVEY -->
   <div class="screen" id="survey">
     <img class="sbg" src="assets/kv_grid.png" alt="">
@@ -468,30 +414,19 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
     <canvas id="freq" width="952" height="640"></canvas>
   </div>
 
-  <!-- RESULT (black) — 최애·공명 좌우 배치, 목소리 들을 멤버 선택 -->
+  <!-- RESULT (yellow) -->
   <div class="screen" id="result">
-    <div class="rhead">
-      <div class="tilt" style="position:static;display:inline-block">목소리를 들을 멤버를 선택하세요.</div>
-    </div>
-    <div class="perfect"><span>PERFECT SYNC · 최애와 공명이 일치합니다</span></div>
-    <div class="duo">
-      <div class="mcard" id="cardBias" onclick="chooseVoice('bias')">
-        <div class="mtag pix"><span><span class="chv">▶</span> MY BIAS · 최애</span><span class="pk"></span></div>
-        <div class="mframe">
-          <div class="rs" id="bRs">RS-00</div>
-          <div class="big2" id="bEn">—</div>
-          <div class="kon2" id="bKo">—</div>
-          <div class="note2">※ 실제 멤버 사진 영역</div>
+    <div class="panel">
+      <div class="ph">
+        <div>
+          <div class="ko">당신의 신호가 닿은 멤버</div>
+          <div class="en">YOUR RESONANCE</div>
         </div>
       </div>
-      <div class="mcard sel" id="cardRes" onclick="chooseVoice('res')">
-        <div class="mtag pix"><span><span class="chv">▶</span> RESONANCE · 공명</span><span class="pk"></span></div>
-        <div class="mframe">
-          <div class="rs" id="rRs">RS-00</div>
-          <div class="big2" id="rEn">—</div>
-          <div class="kon2" id="rKo">—</div>
-          <div class="note2">※ 실제 멤버 사진 영역</div>
-        </div>
+      <div class="frame">
+        <div class="big pix" id="resEn">—</div>
+        <div class="kon" id="resKo">—</div>
+        <div class="note">※ 추후 실제 멤버 사진으로 교체 예정</div>
       </div>
     </div>
     <div class="hp" id="hpCue">헤드폰을 착용하세요</div>
@@ -746,40 +681,17 @@ let qi=0, answers=[], uname='', match=null;
 let voiceT=null, doneT=null, briefT=null;
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));}
 function lite(on){document.body.classList.toggle('lite',on);document.body.classList.toggle('dark',!on);}
-function resetData(){qi=0;answers=[];uname='';S='';comp={cho:-1,jung:-1,jong:0};match=null;kbMode='ko';shift=false;codeS='';biasM=null;chosenM=null;}
+function resetData(){qi=0;answers=[];uname='';S='';comp={cho:-1,jung:-1,jong:0};match=null;kbMode='ko';shift=false;codeS='';}
 
-document.getElementById('attract').addEventListener('click',()=>{show('brief');ruler(1.2);resetIdle();});
-/* 브리프: 자동 전환 없음 — '다음' 버튼으로만 진행 (피드백 반영) */
+document.getElementById('attract').addEventListener('click',()=>{show('brief');ruler(1.2);resetIdle();
+  clearTimeout(briefT);briefT=setTimeout(goCode,5500);});
+document.getElementById('brief').addEventListener('click',goCode);
 function goCode(){clearTimeout(briefT);renderCode();codeWarn('');drawCodeKB();show('code');ruler(1.5);resetIdle();}
 function startSession(){resetData();drawKB();renderName();show('enter');ruler(2);resetIdle();}
-/* 이름 확인 → 최애 선택 페이지로 */
-let biasM=null, chosenM=null;
 function goSurvey(){
   const v=validateName(fullName());resetIdle();
   if(!v.ok){nameWarn(v.msg);return;}
   uname=fullName().trim();
-  buildBias();show('bias');ruler(2);resetIdle();
-}
-function buildBias(){
-  const g=document.getElementById('mgrid');g.innerHTML='';
-  document.getElementById('biasgo').disabled=true;
-  MEMBERS.forEach(m=>{
-    const c=document.createElement('div');c.className='mcell';
-    c.innerHTML='<div class="en">'+m.en+'</div><div class="ko">'+m.ko+'</div>';
-    c.onclick=()=>{
-      biasM=m;
-      [...g.children].forEach(x=>x.classList.remove('sel'));
-      c.classList.add('sel');
-      document.getElementById('biasCnt').textContent='BIAS : '+m.en;
-      document.getElementById('biasgo').disabled=false;
-      resetIdle();
-    };
-    g.appendChild(c);
-  });
-}
-/* 최애 선택 완료 → 설문 시작 */
-function startSurvey(){
-  if(!biasM)return;
   qi=0;answers=[];renderQ();show('survey');resetIdle();
 }
 function renderQ(){
@@ -813,30 +725,16 @@ function doSync(){
 function addressee(n){if(!n)return '';const c=n.charCodeAt(n.length-1);
   if(c>=0xAC00&&c<=0xD7A3)return n+(((c-0xAC00)%28)===0?'야':'아');return n;}
 
-/* 결과: 최애·공명 좌우 카드 → 목소리 들을 멤버 선택 (기본 선택 = 공명) */
 function showResult(){
-  const r=match.m, b=biasM||r, pad=n=>String(n).padStart(2,'0');
-  document.getElementById('bEn').textContent=b.en;
-  document.getElementById('bKo').textContent=b.ko;
-  document.getElementById('bRs').textContent='RS-'+pad(b.id);
-  document.getElementById('rEn').textContent=r.en;
-  document.getElementById('rKo').textContent=r.ko;
-  document.getElementById('rRs').textContent='RS-'+pad(r.id);
-  const scr=document.getElementById('result');
-  scr.classList.toggle('single',b.id===r.id); /* 최애=공명이면 단일 카드 + PERFECT SYNC */
-  chooseVoice('res');
-  lite(false);show('result');ruler(4);resetIdle(); /* 결과 화면 블랙 배경 (디자이너 확정) */
-}
-function chooseVoice(side){
-  chosenM=(side==='bias')?(biasM||match.m):match.m;
-  document.getElementById('cardBias').classList.toggle('sel',side==='bias');
-  document.getElementById('cardRes').classList.toggle('sel',side!=='bias');
-  resetIdle();
+  const m=match.m;
+  document.getElementById('resEn').textContent=m.en;
+  document.getElementById('resKo').textContent=m.ko;
+  lite(false);show('result');ruler(4);resetIdle(); /* 디자이너 확인: 결과 카드 화면은 블랙 배경, 라임 전환은 이후 화면부터 */
 }
 /* 목소리(TTS) 미사용 — 대사 텍스트만 표시. 실제 전시에서는 멤버 녹음 음원 재생으로 대체 */
 const VOICE_MS=11500;
 function playVoice(){
-  const m=chosenM||match.m, voc=addressee(uname); /* 선택한 멤버(최애 또는 공명)의 목소리·포토 출력 */
+  const m=match.m, voc=addressee(uname);
   const ENTRY=(voc?voc+', ':'')+'들려? 공유몽 가장 깊은 곳에서, 네가 보낸 신호를 내가 제일 먼저 받았어.';
   const LINK='너랑 같은 주파수로 떨리고 있는 나, '+m.ko+'야.';
   const lines=['"'+ENTRY+'"','"'+LINK+'"','"'+m.voice+'"'];
