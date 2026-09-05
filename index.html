@@ -927,7 +927,7 @@ function startEEG(){
   function fr(now){
     if(!document.getElementById('brief').classList.contains('on')){eegRAF=null;return;}
     const dt=Math.min(50,now-last);last=now;
-    off+=dt*0.13;                                        /* 약 130px/s */
+    off+=dt*0.2;                                         /* 약 200px/s */
     ctx.clearRect(0,0,W,H);
     ctx.strokeStyle='rgba(207,255,59,.11)';ctx.lineWidth=1;
     for(let g=1;g<14;g++){const gy=Math.round(g*H/14)+.5;ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
