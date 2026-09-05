@@ -878,29 +878,30 @@ function startWaves(){
     return Math.min(1.15,a*(0.7+0.7*phrase));
   }
   function carrier(x){
-    const cyc=0.72+0.28*Math.sin(x*0.19)*Math.sin(x*0.071+1.3);           /* 주기별 크기 변화 → 자연스러운 결 */
-    return (Math.sin(x*0.92)*0.62+Math.sin(x*1.61+0.5)*0.26+Math.sin(x*0.47+2.0)*0.12)*cyc;
+    const cyc=0.7+0.3*Math.sin(x*0.13)*Math.sin(x*0.047+1.3);            /* 주기별 크기 변화 → 자연스러운 결 */
+    return (Math.sin(x*0.55)*0.6+Math.sin(x*0.31+0.5)*0.28+Math.sin(x*0.17+2.0)*0.12)*cyc;   /* 최소 파장 ≈ 11px */
   }
   function fr(now){
     if(!document.getElementById('phone').classList.contains('on')){waveRAF=null;return;}
     const dt=Math.min(50,now-last);last=now;
-    off+=dt*(waveAct?0.3:0.09);                          /* 전파 속도: 재생 중 300px/s, 대기 90px/s */
-    drift+=dt*0.004;                                     /* 결은 4px/s로만 아주 천천히 */
+    off+=dt*(waveAct?0.12:0.04);                         /* 흐름 속도: 재생 중 120px/s, 대기 40px/s */
+    drift=off;                                           /* 결과 봉우리가 함께 흘러간다 (녹음 파형 재생처럼) */
     lvl+=((waveAct?1:0.25)-lvl)*(1-Math.exp(-dt/450)); /* 시간 기준 보간 (프레임레이트 무관) */
     ctx.clearRect(0,0,W,H);
     ctx.strokeStyle='rgba(207,255,59,.14)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(0,mid);ctx.lineTo(W,mid);ctx.stroke();
     ctx.beginPath();
-    /* 발화 로브가 오른쪽에서 생겨 왼쪽으로 흘러간다 (한 방향성 · 260906 피드백). 결(캐리어)은 고정 */
+    /* 파형 전체가 오른쪽에서 왼쪽으로 흘러간다 (한 방향성). 진폭은 tanh로 부드럽게 압축 → 끝이 잘리지 않음 */
     for(let x=0;x<=W;x+=1){
       const edge=Math.pow(Math.sin(x/W*Math.PI),0.3);
-      const amp=Math.max(-0.48,Math.min(0.48,carrier(x+drift)*1.25*envelope(x+off)*0.62*lvl*edge));
+      const raw=carrier(x+drift)*1.15*envelope(x+off)*0.5*lvl*edge;
+      const amp=0.36*Math.tanh(raw/0.36);                /* 최대 ±36%H (캔버스 안에 여유) */
       const y=mid+amp*H;
       x?ctx.lineTo(x,y):ctx.moveTo(x,y);
     }
     ctx.lineJoin='round';ctx.lineCap='round';
-    ctx.shadowColor='rgba(207,255,59,.9)';ctx.shadowBlur=42;ctx.strokeStyle='rgba(207,255,59,.16)';ctx.lineWidth=12;ctx.stroke();
-    ctx.shadowBlur=16;ctx.strokeStyle='rgba(207,255,59,.55)';ctx.lineWidth=4;ctx.stroke();
+    ctx.shadowColor='rgba(207,255,59,.85)';ctx.shadowBlur=30;ctx.strokeStyle='rgba(207,255,59,.14)';ctx.lineWidth=9;ctx.stroke();
+    ctx.shadowBlur=12;ctx.strokeStyle='rgba(207,255,59,.5)';ctx.lineWidth=3.2;ctx.stroke();
     ctx.shadowBlur=0;ctx.strokeStyle='#f3ffd0';ctx.lineWidth=1.8;ctx.stroke();
     waveRAF=requestAnimationFrame(fr);
   }
