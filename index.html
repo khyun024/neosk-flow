@@ -318,6 +318,7 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
   background:transparent;border:2px solid rgba(207,255,59,.65);color:var(--lime);cursor:pointer;font-family:'Pretendard';
   clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%)}
 #phone .vplay{display:block;margin:30px 64px 0;width:calc(100% - 128px);padding:30px 0;font-size:44px}
+#brief #eeg{position:absolute;top:580px;left:0;width:1080px;height:560px;pointer-events:none}
 #attract .syncttl{text-align:center;color:var(--lime);font-weight:700;font-size:58px;line-height:1.25;letter-spacing:.18em;margin-bottom:44px;text-shadow:0 0 34px rgba(207,255,59,.35)}</style>
 </head>
 <body class="dark"><div id="stage">
@@ -348,15 +349,10 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 
   <!-- BRIEF -->
   <div class="screen" id="brief">
-    <!-- 뇌파(EEG) 그래픽 (260904 피드백: 구체 → 뇌파로 변경) -->
-    <canvas class="spiral" id="eeg" width="809" height="742"></canvas>
-    <svg class="a2line" viewBox="0 0 246.313 47.0453" preserveAspectRatio="none" fill="none" style="left:85px;top:878.77px;width:246.313px;height:47.0453px"><path style="--len:266" d="M245.959 0.353553L199.767 46.5453H0" stroke="#CFFF3B" stroke-miterlimit="10"/></svg>
-    <svg class="a2line" viewBox="0 0 246.313 47.0454" preserveAspectRatio="none" fill="none" style="left:773.44px;top:730.71px;width:246.313px;height:47.0454px"><path style="--len:266" d="M0.353553 46.6918L46.5454 0.5H246.313" stroke="#CFFF3B" stroke-miterlimit="10"/></svg>
-    <svg class="a2hex hex" viewBox="0 0 38.6735 33.5023" preserveAspectRatio="none" style="left:313.28px;top:864.92px;width:38.6735px;height:33.5023px"><path d="M28.7217 0.5L38.0957 16.7422L28.7207 33.002H9.95215L0.577148 16.7412L9.95215 0.5H28.7217Z" fill="#CFFF3B"/></svg>
-    <svg class="a2hex hex h2" viewBox="0 0 38.6918 33.5024" preserveAspectRatio="none" style="left:749.07px;top:758.03px;width:38.6918px;height:33.5024px"><path d="M28.7217 0.5L38.1133 16.7598L28.7217 33.002H9.95215L0.576172 16.7607L9.95215 0.5H28.7217Z" fill="#CFFF3B"/></svg>
-    <div class="bullet" style="left:85px;top:864.92px;width:11.44px;height:14.82px"></div>
-    <div class="co pix" style="top:865.86px;left:107.11px;width:129.352px;height:39.389px">NEO /*<br>&nbsp;&nbsp;DIMENSION</div>
-    <div class="co pix" style="top:679px;right:44.71px;width:161.424px;height:36.565px;text-align:right">37°32'40.2"N<br>127°02'40.0"E</div>
+    <!-- 뇌파(EEG) 그래픽 — 단일 트레이스 오실로스코프, 느린 스크롤 (260906 피드백) -->
+    <canvas id="eeg" width="1080" height="560"></canvas>
+    <div class="co pix" style="top:520px;left:64px;width:160px;height:39.389px">NEO /*<br>&nbsp;&nbsp;DIMENSION</div>
+    <div class="co pix" style="top:520px;right:64px;width:161.424px;height:36.565px;text-align:right">37°32'40.2"N<br>127°02'40.0"E</div>
     <div class="ln b2">나와 같은 꿈을 꾸고 있는<br>멤버는 누구일까요?</div>
     <button class="btn nextbtn" onclick="goCode()">NEXT <span class="pix chv">▶▶</span></button>
   </div>
@@ -844,64 +840,70 @@ function startFreq(){
   if(!freqRAF)fr();
 }
 function stopFreq(){if(freqRAF){cancelAnimationFrame(freqRAF);freqRAF=null;}}
-/* 오디오 웨이브폼 (보이스) — 260904 피드백: 그래픽 변경. 재생 전엔 잔잔히, 재생 중엔 크게 */
+/* ---- 공통 신호 생성기: 저주파 드리프트 + 구간별 결정적 스파이크(해시) → 스크롤해도 형태가 일관됨 ---- */
+const sigHash=k=>{const s=Math.sin(k*12.9898+78.233)*43758.5453;return s-Math.floor(s);};
+function sigAt(u,seg,spikeP,fine){
+  let y=Math.sin(u*0.019)*0.20+Math.sin(u*0.043+1.3)*0.14+Math.sin(u*0.097+0.4)*0.08+Math.sin(u*0.21)*fine;
+  const k=Math.floor(u/seg), h=sigHash(k);
+  if(h<spikeP){
+    const c=k*seg+seg*(0.25+0.5*sigHash(k+7)), w=8+9*sigHash(k+3), d=(u-c)/w;
+    const s=Math.exp(-d*d)*(0.65+0.7*sigHash(k+11))*(sigHash(k+5)<0.5?-1:1);
+    y+=s;
+    const d2=(u-c-w*2.2)/(w*1.4); y-=Math.exp(-d2*d2)*0.38*Math.sign(s);   /* 스파이크 뒤 반동 */
+  }
+  return y;
+}
+/* 오디오 파장 (보이스) — 글로우 연속 라인 (260906 피드백: 레퍼런스 톤). 재생 전엔 잔잔히, 재생 중엔 크게 */
 let waveRAF=null, waveAct=false;
 function startWaves(){
   const cv=document.getElementById('waves');const ctx=cv.getContext('2d');
-  const W=cv.width,H=cv.height;let t=0;
-  const n=150, bw=W/n, mid=H/2;
-  function fr(){
+  const W=cv.width,H=cv.height,mid=H/2;let off=0,lvl=0.28,last=performance.now();
+  function fr(now){
     if(!document.getElementById('phone').classList.contains('on')){waveRAF=null;return;}
-    t+=.016;
+    const dt=Math.min(50,now-last);last=now;
+    off+=dt*(waveAct?0.09:0.04);
+    lvl+=((waveAct?1:0.28)-lvl)*0.035;
     ctx.clearRect(0,0,W,H);
-    ctx.strokeStyle='rgba(207,255,59,.16)';ctx.lineWidth=1;
+    ctx.strokeStyle='rgba(207,255,59,.14)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(0,mid);ctx.lineTo(W,mid);ctx.stroke();
-    const scale=waveAct?1:0.32;
-    for(let i=0;i<n;i++){
-      const env=Math.pow(Math.sin(i/n*Math.PI),0.6);
-      const a1=Math.abs(Math.sin(i*0.83+t*3.1))*0.6+Math.abs(Math.sin(i*2.71-t*4.7))*0.4;
-      const beat=0.55+0.45*Math.sin(t*1.7+i*0.05);
-      const amp=Math.max(3,H*0.44*env*a1*beat*scale);
-      const al=.35+.65*(amp/(H*0.44));
-      ctx.fillStyle='rgba(207,255,59,'+al.toFixed(2)+')';
-      ctx.fillRect(i*bw+1,mid-amp,bw-3,amp*2);
+    ctx.beginPath();
+    for(let x=0;x<=W;x+=2){
+      const env=Math.pow(Math.sin(x/W*Math.PI),0.45);
+      const y=mid+sigAt(x+off,80,0.72,0.06)*H*0.40*lvl*env;
+      x?ctx.lineTo(x,y):ctx.moveTo(x,y);
     }
+    ctx.lineJoin='round';ctx.lineCap='round';
+    ctx.shadowColor='rgba(207,255,59,.9)';ctx.shadowBlur=42;ctx.strokeStyle='rgba(207,255,59,.16)';ctx.lineWidth=12;ctx.stroke();
+    ctx.shadowBlur=16;ctx.strokeStyle='rgba(207,255,59,.55)';ctx.lineWidth=4;ctx.stroke();
+    ctx.shadowBlur=0;ctx.strokeStyle='#f3ffd0';ctx.lineWidth=1.8;ctx.stroke();
     waveRAF=requestAnimationFrame(fr);
   }
-  if(!waveRAF)fr();
+  if(!waveRAF)waveRAF=requestAnimationFrame(fr);
 }
 function stopWaves(){if(waveRAF){cancelAnimationFrame(waveRAF);waveRAF=null;}waveAct=false;}
-/* 뇌파(EEG) 그래픽 (브리프) — 260904 피드백: 구체 → 뇌파 */
+/* 뇌파(EEG) 그래픽 (브리프) — 단일 트레이스 오실로스코프, 가는 수평 그리드, 느린 스크롤 (260906 피드백) */
 let eegRAF=null;
 function startEEG(){
   const cv=document.getElementById('eeg');const ctx=cv.getContext('2d');
-  const W=cv.width,H=cv.height;let t=0;
-  const CH=6, pad=70;
-  function trace(y0,seed,amp){
-    ctx.beginPath();
-    for(let x=0;x<W;x+=3){
-      const p=x*0.011+t*2.2+seed;
-      let y=Math.sin(p)*0.35+Math.sin(p*2.7+seed*3)*0.25+Math.sin(p*6.3+seed*7)*0.14;
-      const sp=Math.sin(x*0.05-t*5+seed*11);
-      if(sp>0.96)y+=(sp-0.96)*22*Math.sin(x*0.9+seed);   /* 간헐적 스파이크 */
-      const py=y0+y*amp;
-      x?ctx.lineTo(x,py):ctx.moveTo(x,py);
-    }
-    ctx.stroke();
-  }
-  function fr(){
+  const W=cv.width,H=cv.height,mid=H/2;let off=0,last=performance.now();
+  function fr(now){
     if(!document.getElementById('brief').classList.contains('on')){eegRAF=null;return;}
-    t+=.016;
+    const dt=Math.min(50,now-last);last=now;
+    off+=dt*0.038;                                       /* 약 38px/s — 천천히 */
     ctx.clearRect(0,0,W,H);
-    for(let c=0;c<CH;c++){
-      const y0=pad+c*(H-pad*2)/(CH-1);
-      ctx.strokeStyle='rgba(207,255,59,'+(0.35+0.65*Math.abs(Math.sin(c*1.3+t*0.7))).toFixed(2)+')';
-      ctx.lineWidth=c===2?2.2:1.4;
-      trace(y0,c*4.7,26+((c*37)%23));
+    ctx.strokeStyle='rgba(207,255,59,.11)';ctx.lineWidth=1;
+    for(let g=1;g<14;g++){const gy=Math.round(g*H/14)+.5;ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+    ctx.beginPath();
+    for(let x=0;x<=W;x+=2){
+      const y=mid+sigAt(x+off,170,0.42,0.04)*H*0.36;
+      x?ctx.lineTo(x,y):ctx.moveTo(x,y);
     }
+    ctx.lineJoin='round';
+    ctx.shadowColor='rgba(207,255,59,.55)';ctx.shadowBlur=14;ctx.strokeStyle='rgba(207,255,59,.30)';ctx.lineWidth=5;ctx.stroke();
+    ctx.shadowBlur=0;ctx.strokeStyle='#eef7d4';ctx.lineWidth=1.5;ctx.stroke();
     eegRAF=requestAnimationFrame(fr);
   }
-  if(!eegRAF)fr();
+  if(!eegRAF)eegRAF=requestAnimationFrame(fr);
 }
 /* 대사 타이핑 — 레트로 터미널 로그 스타일
    : '>' 프롬프트 → 대기 비트(> · · ·) → 줄 단위 타이핑, 블록 커서 점멸, 불규칙 리듬 */
