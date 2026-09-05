@@ -857,19 +857,35 @@ function sigAt(u,seg,spikeP,fine){
 let waveRAF=null, waveAct=false;
 function startWaves(){
   const cv=document.getElementById('waves');const ctx=cv.getContext('2d');
-  const W=cv.width,H=cv.height,mid=H/2;let off=0,lvl=0.28,last=performance.now();
+  const W=cv.width,H=cv.height,mid=H/2;let off=0,lvl=0.22,last=performance.now();
+  /* 음성 파형: 음절 버스트(발화) + 사이의 짧은 침묵, 버스트 내부는 고주파로 촘촘한 진동 */
+  function voice(u){
+    const seg=150, k0=Math.floor(u/seg);
+    let env=0.035;                                       /* 침묵 구간의 미세 노이즈 */
+    for(let k=k0-1;k<=k0+1;k++){
+      const h=sigHash(k);
+      if(h<0.8){
+        const c=k*seg+seg*(0.2+0.6*sigHash(k+7)), w=26+44*sigHash(k+3), d=(u-c)/w;
+        env+=Math.exp(-d*d*1.1)*(0.4+0.6*sigHash(k+11));
+      }
+    }
+    const phrase=0.5+0.5*Math.sin(u*0.0052+0.8);        /* 문장 단위 강약 */
+    env*=0.45+0.9*phrase;
+    const car=Math.sin(u*0.58)*0.48+Math.sin(u*0.97+1.2)*0.3+Math.sin(u*1.75+0.4)*0.15+Math.sin(u*3.3)*0.07;
+    return car*Math.min(1,env);
+  }
   function fr(now){
     if(!document.getElementById('phone').classList.contains('on')){waveRAF=null;return;}
     const dt=Math.min(50,now-last);last=now;
-    off+=dt*(waveAct?0.09:0.04);
-    lvl+=((waveAct?1:0.28)-lvl)*0.035;
+    off+=dt*(waveAct?0.17:0.06);
+    lvl+=((waveAct?1:0.22)-lvl)*0.035;
     ctx.clearRect(0,0,W,H);
     ctx.strokeStyle='rgba(207,255,59,.14)';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(0,mid);ctx.lineTo(W,mid);ctx.stroke();
     ctx.beginPath();
-    for(let x=0;x<=W;x+=2){
-      const env=Math.pow(Math.sin(x/W*Math.PI),0.45);
-      const y=mid+sigAt(x+off,80,0.72,0.06)*H*0.40*lvl*env;
+    for(let x=0;x<=W;x+=1.5){
+      const edge=Math.pow(Math.sin(x/W*Math.PI),0.35);
+      const y=mid+voice(x+off)*H*0.44*lvl*edge;
       x?ctx.lineTo(x,y):ctx.moveTo(x,y);
     }
     ctx.lineJoin='round';ctx.lineCap='round';
