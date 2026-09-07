@@ -451,7 +451,6 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
     <div class="duo">
       <div class="mcard sel" id="cardRes">
         <div class="mframe">
-          <div class="rs" id="rRs">RS-00</div>
           <div class="big2" id="rEn">—</div>
           <div class="kon2" id="rKo">—</div>
           <div class="note2">※ 실제 멤버 사진 영역</div>
@@ -771,7 +770,6 @@ function showResult(){
   const r=match.m, pad=n=>String(n).padStart(2,'0');
   document.getElementById('rEn').textContent=r.en;
   document.getElementById('rKo').textContent=r.ko;
-  document.getElementById('rRs').textContent='RS-'+pad(r.id);
   document.getElementById('goDreamLb').textContent=r.ko+'의 꿈 속으로';
   document.getElementById('result').classList.add('single');
   lite(false);show('result');ruler(4);resetIdle();
