@@ -323,6 +323,9 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
   clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%)}
 #phone .vplay{display:block;margin:30px 64px 0;width:calc(100% - 128px);padding:30px 0;font-size:44px}
 #brief #eeg{position:absolute;top:580px;left:0;width:1080px;height:560px;pointer-events:none}
+#attract .langsw{display:flex;justify-content:center;gap:14px;margin-top:22px}
+#attract .langsw button{font-family:'Barlow Semi Condensed','Pretendard';font-weight:600;font-size:26px;letter-spacing:.14em;padding:12px 30px;background:transparent;border:2px solid rgba(207,255,59,.55);color:rgba(207,255,59,.75);cursor:pointer;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
+#attract .langsw button.on{background:var(--lime);color:var(--ink);border-color:var(--lime)}
 #attract .syncttl{text-align:center;color:var(--lime);font-weight:700;font-size:58px;line-height:1.25;letter-spacing:.18em;margin-bottom:44px;text-shadow:0 0 34px rgba(207,255,59,.35)}</style>
 </head>
 <body class="dark"><div id="stage">
@@ -348,6 +351,7 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
     <div class="touch">
       <div class="syncttl pix">SYNCHRONIZATION<br>OF DREAMS</div>
       <div class="bar pix" id="touchBar"><span class="chv">▶▶</span> START</div>
+      <div class="langsw pix" id="langsw"><button data-lang="ko" class="on">한국어</button><button data-lang="en">ENGLISH</button></div>
     </div>
   </div>
 
@@ -357,7 +361,7 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
     <canvas id="eeg" width="1080" height="560"></canvas>
     <div class="co pix" style="top:520px;left:64px;width:160px;height:39.389px">NEO /*<br>&nbsp;&nbsp;DIMENSION</div>
     <div class="co pix" style="top:520px;right:64px;width:161.424px;height:36.565px;text-align:right">37°32'40.2"N<br>127°02'40.0"E</div>
-    <div class="ln b2">나와 같은 꿈을 꾸고 있는<br>멤버는 누구일까요?</div>
+    <div class="ln b2" id="briefLn">나와 같은 꿈을 꾸고 있는<br>멤버는 누구일까요?</div>
     <button class="btn nextbtn" onclick="goCode()">NEXT <span class="pix chv">▶▶</span></button>
   </div>
 
@@ -379,7 +383,7 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 
   <!-- ENTER -->
   <div class="screen" id="enter">
-    <div class="tilt">이름을 입력하세요.</div>
+    <div class="tilt" id="enterTitle">이름을 입력하세요.</div>
     <div class="hudbox" style="top:400px">
       <div class="hudbar">
         <span class="l pix"><span class="chv">▶▶</span> CONNECTING TO DREAM</span>
@@ -412,14 +416,14 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
   <!-- MEMBER SELECT (260904 피드백: 결과 이후 · 나레이션 직전으로 이동) -->
   <div class="screen" id="bias">
     <div class="hudhead"><span class="ex pix">[!]</span><span class="t pix">SELECT</span></div>
-    <div class="tilt">어느 멤버의 꿈에 연결할까요?</div>
+    <div class="tilt" id="biasTitle">어느 멤버의 꿈에 연결할까요?</div>
     <div class="hudbox" style="top:400px">
       <div class="hudbar">
         <span class="l pix"><span class="chv">▶▶</span> MY BIAS</span>
         <span class="r pix" id="biasCnt">PICK 1 / 21</span>
       </div>
       <div class="mgrid" id="mgrid"></div>
-      <button class="btn gobtn" id="biasgo" onclick="confirmSelect()" disabled>선택하기 <span class="pix chv">▶▶</span></button>
+      <button class="btn gobtn" id="biasgo" onclick="confirmSelect()" disabled><span id="biasgoLb">선택하기</span> <span class="pix chv">▶▶</span></button>
     </div>
   </div>
 
@@ -461,7 +465,7 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
       </div>
     </div>
     <button class="btn listen" onclick="goVoiceStandby(match.m)"><span id="goDreamLb">멤버의 꿈 속으로</span> <span class="pix chv">▶▶</span></button>
-    <button class="othbtn" onclick="openSelect()">다른 멤버 선택하기</button>
+    <button class="othbtn" id="othBtn" onclick="openSelect()">다른 멤버 선택하기</button>
   </div>
 
   <!-- VOICE -->
@@ -475,16 +479,16 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
       <span class="nm" id="vnm">—</span>
       <div class="tx" id="vtx"></div>
     </div>
-    <div class="ainote"><span class="aitag pix">AI</span> 이름 호명 구간은 AI로 생성된 음성입니다</div>
-    <div class="hp">헤드폰을 착용하세요</div>
-    <button class="btn vplay" id="playBtn" onclick="startNarration()">보이스 메시지 듣기 <span class="pix chv">▶▶</span></button>
+    <div class="ainote"><span class="aitag pix">AI</span> <span id="aiNoteTx">이름 호명 구간은 AI로 생성된 음성입니다</span></div>
+    <div class="hp" id="phoneHp">헤드폰을 착용하세요</div>
+    <button class="btn vplay" id="playBtn" onclick="startNarration()"><span id="playLb">보이스 메시지 듣기</span> <span class="pix chv">▶▶</span></button>
   </div>
 
   <!-- PICK UP (260904 피드백: MESSAGE ARRIVED · QR 안내 · 3초 후 첫 화면) -->
   <div class="screen" id="pickup">
     <div class="pk-big pix" style="font-size:150px;letter-spacing:.02em">MESSAGE<br>ARRIVED</div>
-    <div class="pk-guide">화면 아래 <b>출력구</b>에 손을 살짝 넣어<br>메세지를 꺼내 주세요</div>
-    <div class="pk-qr">QR 코드를 통해서 <b id="pkMem">멤버</b>의 이야기를 만나보세요.</div>
+    <div class="pk-guide" id="pkGuide">화면 아래 <b>출력구</b>에 손을 살짝 넣어<br>메세지를 꺼내 주세요</div>
+    <div class="pk-qr" id="pkQr">QR 코드를 통해서 <b id="pkMem">멤버</b>의 이야기를 만나보세요.</div>
     <svg class="pk-arr a1" viewBox="0 0 200 110"><path d="M12 12 L100 96 L188 12" fill="none" stroke="#CFFF3B" stroke-width="24" stroke-linecap="square"/></svg>
     <svg class="pk-arr a2" viewBox="0 0 200 110"><path d="M12 12 L100 96 L188 12" fill="none" stroke="#CFFF3B" stroke-width="24" stroke-linecap="square"/></svg>
     <svg class="pk-arr a3" viewBox="0 0 200 110"><path d="M12 12 L100 96 L188 12" fill="none" stroke="#CFFF3B" stroke-width="24" stroke-linecap="square"/></svg>
@@ -501,6 +505,77 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 </div>
 
 <script>
+
+/* ================= 한/영 (번역시트 260908 기준) ================= */
+let LANG='ko';
+const T={
+ ko:{brief:'나와 같은 꿈을 꾸고 있는<br>멤버는 누구일까요?',codeTitle:'입장 코드를 입력하세요.',codeLen:'[!] 6자리 코드를 모두 입력하세요',codeUsed:'[!] 이미 사용된 코드입니다 · 스태프에게 문의하세요',
+   enterTitle:'이름을 입력하세요.',namePh:'이름을 입력하세요',nameEmpty:'[!] 이름을 입력하세요',nameJamo:'[!] 완성된 글자로 입력하세요 (초성·모음 단독 불가)',nameBanned:'[!] 사용할 수 없는 단어가 포함되어 있습니다',
+   kbKo:'한글 / ABC',kbEn:'ABC / 한글',kbSpace:'공백',kbClear:'전체삭제',biasTitle:'어느 멤버의 꿈에 연결할까요?',select:'선택하기',other:'다른 멤버 선택하기',
+   dream:m=>m.ko+'의 꿈 속으로',vnm:m=>m.ko+' ('+m.en+')',aiNote:'이름 호명 구간은 AI로 생성된 음성입니다',hp:'헤드폰을 착용하세요',play:'보이스 메시지 듣기',
+   pkGuide:'화면 아래 <b>출력구</b>에 손을 살짝 넣어<br>메세지를 꺼내 주세요',pkQr:m=>'QR 코드를 통해서 <b id="pkMem">'+m.ko+'</b>의 이야기를 만나보세요.',
+   entry:(voc)=>(voc?voc+', ':'')+'깊은 꿈 속까지 찾아와 줘서 고마워. 사라지지 않는 빛을 따라 걷다 보니, 결국 이렇게 우리가 만나게 되었어.',
+   outro:'우리가 함께 쌓아온 추억들은 앞으로 펼쳐질 더 큰 미래의 시작이 될거야. 꿈을 통해 서로 공감하고, 음악으로 하나되어 서로를 믿고 응원해온 소중한 마음을 오래도록 기억하자. 이제 눈을 뜨면, 우리가 바라온 꿈으로 이어질 거야.',
+   staffReset:n=>'사용된 코드 기록('+n+'건)을 초기화할까요?',staffDone:'초기화 완료'},
+ en:{brief:"Which member's dream<br>is in sync with mine?",codeTitle:'Enter your entry code.',codeLen:'[!] Please enter all 6 digits.',codeUsed:'[!] Used code. Please contact staff.',
+   enterTitle:'Enter your name.',namePh:'Your name here.',nameEmpty:'[!] Please enter your name.',nameJamo:'[!] Please enter complete characters (single consonants or vowels alone are not allowed).',nameBanned:'[!] Contains a restricted word.',
+   kbKo:'Korean / English',kbEn:'English / Korean',kbSpace:'Space',kbClear:'Clear All',biasTitle:'Whose dream would you like to connect to?',select:'Select',other:'Select another member',
+   dream:m=>'Dream connected with '+m.en,vnm:m=>m.en,aiNote:'AI-generated voice was used for the name-calling segment.',hp:'Please wear headphones.',play:'Listen to voice message',
+   pkGuide:'Gently place your hand into the <b>slot</b><br>under the screen to retrieve the message.',pkQr:m=>'Scan the QR code to discover <b id="pkMem">'+m.en+"</b>'s story.",
+   entry:(name)=>(name?name+', ':'')+'Thanks for coming all the way to the depths of our dream. Following the unfading light got us to meet like this at last.',
+   outro:"The memories we've built together will be the beginning of a bigger future. Let us remember for a long time the precious hearts that empathized with each other through dreams, became one through music, and trusted and supported one another. Now, when we open our eyes, it will lead us to the dream we've always wished for.",
+   staffReset:n=>'Reset the record of used codes ('+n+')?',staffDone:'Reset complete.'}
+};
+const t=(k,...a)=>{const v=T[LANG][k];return typeof v==='function'?v(...a):v;};
+const VOICE_EN={JOHNNY:"Every moment we've spent with you is the kindest strength for us.",
+ TAEYONG:"Even in the dark, we didn't lose our way because you were always by our side, looking in the same direction.",
+ YUTA:"Some love comes through even without words. That love will always bring us back together as one.",
+ KUN:"I hope you smile more often. I'll cherish even the smallest memory with you for a long time.",
+ TEN:"Meeting you was truly a stroke of luck. I wish this dream could last forever.",
+ JAEHYUN:"Your heart, which has always been with us, remains the warmest touch deep within our dream.",
+ XIAOJUN:"Memories faded by the darkness became clear again because of the light named you.",
+ HENDERY:"The moments we've shared together will someday blossom into a bigger dream.",
+ RENJUN:"I get scared sometimes, but the precious memories I have with you keep me going.",
+ JENO:"Our dreams are connected by one shared belief, all because of the light called you.",
+ HAECHAN:"When different lights shine on one shared dream, we'll shine more freely and brightly.",
+ JAEMIN:"Following your voice, the time we thought had stopped quietly began to flow once more.",
+ YANGYANG:"With you, we can move toward the same dream, no matter what time we're in.",
+ CHENLE:"Every moment you spent with us became a brighter, clearer song that connects us.",
+ JISUNG:"With you, even a dream that's still clumsy will gradually grow into a light that shines on everyone.",
+ SION:"Nothing scares me as long as you're here because even the scattered fragments of our dream can be pieced back together.",
+ RIKU:"Our connected wishes are becoming a great light that shines beyond the darkness.",
+ YUSHI:"If it weren't for you, we wouldn't have found a new beginning at the end of this dream.",
+ JAEHEE:"Just as you became our brightest light, we want to be the star that lights up your dream.",
+ RYO:"With you, even a dormant dream feels like it could wake up smiling again.",
+ SAKUYA:"You and I can always find each other again, following this light."};
+const Q_EN=[
+ {t:'What kind of light comes to your mind right now?',o:['Aurora','Glittering water','Sunset','Moonlight']},
+ {t:'Which object do you feel more drawn to?',o:['Paper airplane','Hourglass','Marble','Butterfly']},
+ {t:'Which moment is your heart most drawn to?',o:['Encounter','Connection','Cheering','Immersion']},
+ {t:'Which word best describes your current feelings?',o:['Comfort','Longing','Fluttering','Joy']},
+ {t:'If you were to put your precious shared moments<br>in a time capsule, what would it be?',o:['Photos','Letters','Songs','Light']},
+ {t:'What is needed to open the boundary of dreams?',o:['A key','A fragment of memory','Synchronization','Courage']},
+ {t:'Which scene fills your heart with most warmth?',o:['A dazzling meteor shower on a summer night','A rainbow after the rain','A path walked together under warm sunlight','A night of dancing bathed in moonlight']},
+ {t:'If you saw a light flickering in the distance,<br>what would you do?',o:['Run toward it','Just watch it','Walk slowly toward it','Wave your hand']},
+ {t:'Which scenery is likely to<br>comfort you the most?',o:['An endless ocean','A secret garden','An infinite orbit of stars','An unending wave of light']},
+ {t:"When you're lost,<br>what do you think would guide you?",o:['The North Star in the night sky','A passing breeze','A butterfly lighting your path','A voice calling your name']}];
+function setLang(l){
+  LANG=(l==='en')?'en':'ko';
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('#langsw button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
+  document.getElementById('briefLn').innerHTML=t('brief');
+  document.getElementById('codeTitle').textContent=t('codeTitle');
+  document.getElementById('enterTitle').textContent=t('enterTitle');
+  document.getElementById('biasTitle').textContent=t('biasTitle');
+  document.getElementById('biasgoLb').textContent=t('select');
+  document.getElementById('othBtn').textContent=t('other');
+  document.getElementById('aiNoteTx').textContent=t('aiNote');
+  document.getElementById('phoneHp').textContent=t('hp');
+  document.getElementById('playLb').textContent=t('play');
+  document.getElementById('pkGuide').innerHTML=t('pkGuide');
+  if(typeof renderName==='function'&&document.getElementById('kb').children.length){drawKB();renderName();}
+}
+
 /* ================= 데이터 ================= */
 const BANNED=['시발','씨발','시팔','씨팔','시바','씨바','좆','존나','존나게','썅','썅년','씹','병신','븅신','등신','지랄','미친','또라이','개새','새끼','개년','잡놈','호로','섹스','자지','보지','강간','창녀','걸레','야동','성기','정액','일베','한남','김치녀','틀딱','짱깨','쪽바리','흑형','장애인새','ㅅㅂ','ㅆㅂ','ㅄ','ㅂㅅ','ㅈㄹ','ㅁㅊ','ㅈㄴ','ㄱㅅㄲ','ㅗ','fuck','shit','bitch','dick','pussy','asshole','bastard','sex','porn','nigg'];
 const MEMBERS=[
@@ -602,7 +677,7 @@ function renderName(){
   const out=document.getElementById('nameout'), field=document.getElementById('namefield'),
         caret=document.getElementById('caret'), coming=syl();
   const committed=S, total=(S+coming);
-  if(total.length===0){out.textContent='이름을 입력하세요';field.classList.add('empty');caret.style.display='none';}
+  if(total.length===0){out.textContent=t('namePh');field.classList.add('empty');caret.style.display='none';}
   else{field.classList.remove('empty');caret.style.display='inline-block';
     out.innerHTML=committed.replace(/</g,'&lt;')+(coming?'<span class="comp">'+coming+'</span>':'');}
   document.getElementById('nlen').textContent=total.length+' / 10';
@@ -635,10 +710,10 @@ function drawKB(){
     kb.appendChild(r);
   });
   const r=document.createElement('div');r.className='kbrow';
-  const langEl=document.createElement('div');langEl.className='key fn x2';langEl.textContent=kbMode==='ko'?'한글 / ABC':'ABC / 한글';
+  const langEl=document.createElement('div');langEl.className='key fn x2';langEl.textContent=kbMode==='ko'?t('kbKo'):t('kbEn');
   langEl.onclick=()=>{kbMode=kbMode==='ko'?'en':'ko';shift=false;commit();drawKB();renderName();};
-  const sp=document.createElement('div');sp.className='key wide';sp.textContent='공백';sp.onclick=()=>addChar(' ');
-  const clr=document.createElement('div');clr.className='key fn x2';clr.textContent='전체삭제';clr.onclick=()=>{S='';comp={cho:-1,jung:-1,jong:0};renderName();};
+  const sp=document.createElement('div');sp.className='key wide';sp.textContent=t('kbSpace');sp.onclick=()=>addChar(' ');
+  const clr=document.createElement('div');clr.className='key fn x2';clr.textContent=t('kbClear');clr.onclick=()=>{S='';comp={cho:-1,jung:-1,jong:0};renderName();};
   r.appendChild(langEl);r.appendChild(sp);r.appendChild(clr);kb.appendChild(r);
 }
 
@@ -652,9 +727,9 @@ const JAMO_ONLY=/^[ㄱ-ㅎㅏ-ㅣ]+$/;
 function bannedHit(s){const n=normName(s), j=toJamo(s);
   return BANNED.find(w=>n.includes(normName(w))||(!JAMO_ONLY.test(w)&&j.includes(toJamo(w))))||null;}
 function validateName(raw){const t=raw.trim();
-  if(!t) return {ok:false,msg:'[!] 이름을 입력하세요'};
-  if(!/^[가-힣A-Za-z][가-힣A-Za-z ]*$/.test(t)) return {ok:false,msg:'[!] 완성된 글자로 입력하세요 (초성·모음 단독 불가)'};
-  if(bannedHit(t)) return {ok:false,msg:'[!] 사용할 수 없는 단어가 포함되어 있습니다'};
+  if(!t) return {ok:false,msg:T[LANG].nameEmpty};
+  if(!/^[가-힣A-Za-z][가-힣A-Za-z ]*$/.test(t)) return {ok:false,msg:T[LANG].nameJamo};
+  if(bannedHit(t)) return {ok:false,msg:T[LANG].nameBanned};
   return {ok:true,msg:''};}
 function nameWarn(m){const w=document.getElementById('nameWarn');
   if(!m){w.classList.remove('on');return;}
@@ -685,9 +760,9 @@ function drawCodeKB(){
 function usedCodes(){try{return JSON.parse(localStorage.getItem('neosk_used_codes')||'[]');}catch(e){return [];}}
 function submitCode(){
   resetIdle();
-  if(codeS.length<CODE_LEN){codeWarn('[!] 6자리 코드를 모두 입력하세요');return;}
+  if(codeS.length<CODE_LEN){codeWarn(t('codeLen'));return;}
   const used=usedCodes();
-  if(used.includes(codeS)){codeWarn('[!] 이미 사용된 코드입니다 · 스태프에게 문의하세요');return;}
+  if(used.includes(codeS)){codeWarn(t('codeUsed'));return;}
   used.push(codeS);localStorage.setItem('neosk_used_codes',JSON.stringify(used));
   startSession();
 }
@@ -700,6 +775,7 @@ function lite(on){document.body.classList.toggle('lite',on);document.body.classL
 function resetData(){qi=0;answers=[];uname='';S='';comp={cho:-1,jung:-1,jong:0};match=null;kbMode='ko';shift=false;codeS='';biasM=null;chosenM=null;}
 
 document.getElementById('attract').addEventListener('click',()=>{show('brief');ruler(1.2);startEEG();resetIdle();});
+document.querySelectorAll('#langsw button').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();setLang(b.dataset.lang);}));
 /* 브리프: 자동 전환 없음 — 'NEXT' 버튼으로만 진행 */
 function goCode(){clearTimeout(briefT);renderCode();codeWarn('');drawCodeKB();show('code');ruler(1.5);resetIdle();}
 function startSession(){resetData();drawKB();renderName();show('enter');ruler(2);resetIdle();}
@@ -745,12 +821,13 @@ function renderQ(){
     if(i<qi)c.className='fill';else if(i===qi)c.className='cur';
     cells.appendChild(c);}
   document.getElementById('siglab').textContent='SIGNAL '+String(qi+1).padStart(2,'0')+' / 10';
-  const qt=document.getElementById('qtext');qt.innerHTML=q.t;
+  const qe=Q_EN[qi];
+  const qt=document.getElementById('qtext');qt.innerHTML=LANG==='en'?qe.t:q.t;
   qt.classList.remove('fadeup');void qt.offsetWidth;qt.classList.add('fadeup');
   const box=document.getElementById('opts');box.innerHTML='';
   box.classList.remove('fadeup');void box.offsetWidth;box.classList.add('fadeup');
   q.o.forEach((label,idx)=>{const d=document.createElement('div');d.className='opt';
-    d.innerHTML='<span class="num">'+(idx+1)+'</span><span class="lb">'+label+'</span>';
+    d.innerHTML='<span class="num">'+(idx+1)+'</span><span class="lb">'+(LANG==='en'?qe.o[idx]:label)+'</span>';
     d.onclick=()=>{d.classList.add('sel');setTimeout(()=>pick(idx),170);};box.appendChild(d);});
 }
 function pick(idx){answers[qi]=idx;qi++;resetIdle();
@@ -774,7 +851,7 @@ function showResult(){
   document.getElementById('rEn').textContent=r.en;
   document.getElementById('rKo').textContent=r.ko;
   document.getElementById('rPh').src='assets/members/'+r.en.toLowerCase()+'.webp';
-  document.getElementById('goDreamLb').textContent=r.ko+'의 꿈 속으로';
+  document.getElementById('goDreamLb').textContent=t('dream',r);
   document.getElementById('result').classList.add('single');
   lite(false);show('result');ruler(4);resetIdle();
 }
@@ -783,7 +860,7 @@ const VOICE_MS=26000; /* 나레이션 3파트 타이핑 약 19초 + 마지막 �
 /* 보이스 대기: 헤드폰 안내 + '보이스 메시지 듣기' 버튼을 눌러야 재생 시작 */
 function goVoiceStandby(m){
   chosenM=m||match.m;
-  document.getElementById('vnm').textContent=chosenM.ko+' ('+chosenM.en+')';
+  document.getElementById('vnm').textContent=t('vnm',chosenM);
   document.getElementById('vtx').innerHTML='';
   document.getElementById('playBtn').style.display='block';
   waveAct=false;
@@ -793,9 +870,10 @@ function goVoiceStandby(m){
 function startNarration(){
   const m=chosenM||match.m, voc=addressee(uname);
   /* 나레이션 구성(확정 대본): 1 진입(공통·호명) → 2 멤버별 한줄 → 3 마무리(공통) */
-  const ENTRY=(voc?voc+', ':'')+'깊은 꿈 속까지 찾아와 줘서 고마워. 사라지지 않는 빛을 따라 걷다 보니, 결국 이렇게 우리가 만나게 되었어.';
-  const OUTRO='우리가 함께 쌓아온 추억들은 앞으로 펼쳐질 더 큰 미래의 시작이 될거야. 꿈을 통해 서로 공감하고, 음악으로 하나되어 서로를 믿고 응원해온 소중한 마음을 오래도록 기억하자. 이제 눈을 뜨면, 우리가 바라온 꿈으로 이어질 거야.';
-  const lines=['"'+ENTRY+'"','"'+m.voice+'"','"'+OUTRO+'"'];
+  const ENTRY=LANG==='en'?t('entry',uname):t('entry',voc);   /* 영문은 호격 조사 없이 이름만 */
+  const OUTRO=t('outro');
+  const LINE=LANG==='en'?(VOICE_EN[m.en]||m.voice):m.voice;
+  const lines=['"'+ENTRY+'"','"'+LINE+'"','"'+OUTRO+'"'];
   document.getElementById('playBtn').style.display='none';
   waveAct=true;
   typeLines(lines);resetIdle();
@@ -804,14 +882,14 @@ function startNarration(){
 /* 260904 피드백: 완료 화면 삭제 — 보이스 종료 후 바로 픽업, 3초 후 첫 화면 복귀 */
 function goPickup(){
   stopWaves();
-  document.getElementById('pkMem').textContent=(chosenM||match.m).ko;
+  document.getElementById('pkQr').innerHTML=t('pkQr',chosenM||match.m);
   BF.hide();lite(false);show('pickup');
   clearTimeout(doneT);doneT=setTimeout(reset,3000);
 }
 function reset(){
   clearTimeout(voiceT);clearTimeout(doneT);clearTimeout(briefT);
   stopWaves();stopFreq();
-  resetData();lite(false);show('attract');ruler(1);clearTimeout(idleT);BF.hide();
+  resetData();lite(false);show('attract');ruler(1);clearTimeout(idleT);BF.hide();setLang('ko');
 }
 
 /* ================= 캔버스 연출 ================= */
@@ -1041,8 +1119,8 @@ function tapCounter(el,fn){let n=0,t=null;
     if(n>=5){n=0;fn();e.stopPropagation();}});}
 tapCounter(document.querySelector('#ruler .hid'),()=>{if(document.getElementById('code').classList.contains('on'))startSession();});
 tapCounter(document.getElementById('codeTitle'),()=>{
-  if(confirm('사용된 코드 기록('+usedCodes().length+'건)을 초기화할까요?')){
-    localStorage.removeItem('neosk_used_codes');codeWarn('');alert('초기화 완료');}});
+  if(confirm(t('staffReset',usedCodes().length))){
+    localStorage.removeItem('neosk_used_codes');codeWarn('');alert(t('staffDone'));}});
 
 ruler(1);BF.hide();
 </script>
