@@ -184,8 +184,8 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 .key:active{background:var(--lime);color:var(--ink)}
 .key.fn{background:#1a1a12;font-size:30px}
 .key.fn.onk{background:var(--lime);color:var(--ink)}
-.key.wide{max-width:none;flex:3.4;font-family:'Pretendard';font-weight:700;font-size:30px}
-.key.x2{max-width:none;flex:1.4;font-family:'Pretendard';font-weight:700;font-size:28px}
+.key.wide{max-width:none;flex:3.2;font-family:'Pretendard';font-weight:700;font-size:30px}
+.key.x2{max-width:none;flex:2;font-family:'Pretendard';font-weight:700;font-size:28px}
 .gobtn{margin:10px 26px 30px;padding:26px 0;font-size:42px;width:calc(100% - 52px)}
 
 /* 이름 입력 */
@@ -722,11 +722,13 @@ function drawKB(){
     });
     kb.appendChild(r);
   });
-  /* 이름은 한글 전용 (한/영 전환 키 없음) — 아래 줄: 공백 + 전체삭제 */
+  /* 아래 줄: 한/영 전환 · 공백 · 전체삭제 (한글·영문 이름 모두 입력 가능) */
   const r=document.createElement('div');r.className='kbrow';
+  const langEl=document.createElement('div');langEl.className='key fn x2';langEl.textContent=kbMode==='ko'?t('kbKo'):t('kbEn');
+  langEl.onclick=()=>{kbMode=kbMode==='ko'?'en':'ko';shift=false;commit();drawKB();renderName();};
   const sp=document.createElement('div');sp.className='key wide';sp.textContent=t('kbSpace');sp.onclick=()=>addChar(' ');
   const clr=document.createElement('div');clr.className='key fn x2';clr.textContent=t('kbClear');clr.onclick=()=>{S='';comp={cho:-1,jung:-1,jong:0};renderName();};
-  r.appendChild(sp);r.appendChild(clr);kb.appendChild(r);
+  r.appendChild(langEl);r.appendChild(sp);r.appendChild(clr);kb.appendChild(r);
 }
 
 /* ================= 이름 검증 ================= */
