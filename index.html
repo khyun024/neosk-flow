@@ -184,8 +184,8 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 .key:active{background:var(--lime);color:var(--ink)}
 .key.fn{background:#1a1a12;font-size:30px}
 .key.fn.onk{background:var(--lime);color:var(--ink)}
-.key.wide{max-width:none;flex:3.2;font-family:'Pretendard';font-weight:700;font-size:30px}
-.key.x2{max-width:none;flex:2;font-family:'Pretendard';font-weight:700;font-size:28px}
+.key.wide{max-width:none;flex:3.4;font-family:'Pretendard';font-weight:700;font-size:30px}
+.key.x2{max-width:none;flex:1.4;font-family:'Pretendard';font-weight:700;font-size:28px}
 .gobtn{margin:10px 26px 30px;padding:26px 0;font-size:42px;width:calc(100% - 52px)}
 
 /* 이름 입력 */
@@ -284,6 +284,8 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
   background-image:radial-gradient(rgba(7,4,4,.22) 1.6px,transparent 1.6px);background-size:56px 56px}
 #phone .tbox .nm{font-family:'Barlow Semi Condensed','Pretendard';font-weight:700;font-size:34px;display:block;margin-bottom:20px}
 #phone .tbox .tx{font-weight:700;font-size:38px;line-height:1.75;white-space:pre-wrap}
+html[lang="en"] #phone .tbox .tx{font-size:29px;line-height:1.5}   /* 영문 나레이션은 글자 수가 2.5배라 한 화면에 들어가도록 축소 */
+html[lang="en"] #phone .tbox .nm{font-size:30px}
 .tcur{display:inline-block;width:.62em;margin-left:4px;animation:blink .75s steps(2) infinite}
 /* AI 생성 고지 (이름 호명 구간 한정) */
 #phone .ainote{display:flex;align-items:center;justify-content:center;gap:14px;margin:18px 64px 0;
@@ -722,13 +724,11 @@ function drawKB(){
     });
     kb.appendChild(r);
   });
-  /* 아래 줄: 한/영 전환 · 공백 · 전체삭제 (한글·영문 이름 모두 입력 가능) */
+  /* 자판은 선택한 언어에 고정 (한국어 모드=한글, 영어 모드=영문). 아래 줄: 공백 · 전체삭제 */
   const r=document.createElement('div');r.className='kbrow';
-  const langEl=document.createElement('div');langEl.className='key fn x2';langEl.textContent=kbMode==='ko'?t('kbKo'):t('kbEn');
-  langEl.onclick=()=>{kbMode=kbMode==='ko'?'en':'ko';shift=false;commit();drawKB();renderName();};
   const sp=document.createElement('div');sp.className='key wide';sp.textContent=t('kbSpace');sp.onclick=()=>addChar(' ');
   const clr=document.createElement('div');clr.className='key fn x2';clr.textContent=t('kbClear');clr.onclick=()=>{S='';comp={cho:-1,jung:-1,jong:0};renderName();};
-  r.appendChild(langEl);r.appendChild(sp);r.appendChild(clr);kb.appendChild(r);
+  r.appendChild(sp);r.appendChild(clr);kb.appendChild(r);
 }
 
 /* ================= 이름 검증 ================= */
@@ -793,7 +793,7 @@ document.getElementById('attract').addEventListener('click',()=>{show('lang');ru
 document.querySelectorAll('#lang .langbtn').forEach(b=>b.addEventListener('click',()=>{setLang(b.dataset.lang);show('brief');ruler(1.2);startEEG();resetIdle();}));
 /* 브리프: 자동 전환 없음 — 'NEXT' 버튼으로만 진행 */
 function goCode(){clearTimeout(briefT);renderCode();codeWarn('');drawCodeKB();show('code');ruler(1.5);resetIdle();}
-function startSession(){resetData();drawKB();renderName();show('enter');ruler(2);resetIdle();}
+function startSession(){resetData();kbMode=(LANG==='en')?'en':'ko';drawKB();renderName();show('enter');ruler(2);resetIdle();}
 /* 이름 확인 → 설문 시작 (260904 피드백: 멤버 선택은 결과 이후로 이동) */
 let biasM=null, chosenM=null;
 function goSurvey(){
@@ -871,7 +871,7 @@ function showResult(){
   lite(false);show('result');ruler(4);resetIdle();
 }
 /* 목소리(TTS) 미사용 — 대사 텍스트만 표시. 실제 전시에서는 멤버 녹음 음원 재생으로 대체 */
-const VOICE_MS=26000; /* 나레이션 3파트 타이핑 약 19초 + 마지막 문장 읽을 여유 */
+const VOICE_TAIL=6000, VOICE_MAX=150000; /* 타이핑이 끝난 뒤 6초 여운 후 픽업 · 안전 상한 150초 (영문은 한국어보다 2배 이상 길어 고정 시간이면 잘림) */
 /* 보이스 대기: 헤드폰 안내 + '보이스 메시지 듣기' 버튼을 눌러야 재생 시작 */
 function goVoiceStandby(m){
   chosenM=m||match.m;
@@ -891,8 +891,9 @@ function startNarration(){
   const lines=['"'+ENTRY+'"','"'+LINE+'"','"'+OUTRO+'"'];
   document.getElementById('playBtn').style.display='none';
   waveAct=true;
-  typeLines(lines);resetIdle();
-  clearTimeout(voiceT);voiceT=setTimeout(goPickup,VOICE_MS);
+  resetIdle();
+  clearTimeout(voiceT);voiceT=setTimeout(goPickup,VOICE_MAX);
+  typeLines(lines,()=>{clearTimeout(voiceT);voiceT=setTimeout(goPickup,VOICE_TAIL);});
 }
 /* 260904 피드백: 완료 화면 삭제 — 보이스 종료 후 바로 픽업, 3초 후 첫 화면 복귀 */
 function goPickup(){
@@ -1061,7 +1062,7 @@ function startEEG(){
 /* 대사 타이핑 — 레트로 터미널 로그 스타일
    : '>' 프롬프트 → 대기 비트(> · · ·) → 줄 단위 타이핑, 블록 커서 점멸, 불규칙 리듬 */
 let typeT=[];
-function typeLines(lines){
+function typeLines(lines,onDone){
   typeT.forEach(clearTimeout);typeT=[];
   const el=document.getElementById('vtx');el.innerHTML='';
   const seq=[{type:'dots'}, ...lines.map(t=>({type:'line',text:t}))];
@@ -1072,7 +1073,7 @@ function typeLines(lines){
   }
   function step(){
     const item=seq[si];
-    if(!item){render(false);return;}
+    if(!item){render(false);if(onDone)onDone();return;}
     if(item.type==='dots'){ /* 수신 대기 비트 */
       if(dots===0)out+='> ';
       out+='· ';dots++;render(true);
