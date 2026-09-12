@@ -913,12 +913,12 @@ function startNarration(){
   clearTimeout(voiceT);voiceT=setTimeout(goPickup,VOICE_MAX);
   typeLines(lines,()=>{clearTimeout(voiceT);voiceT=setTimeout(goPickup,VOICE_TAIL);});
 }
-/* 260904 피드백: 완료 화면 삭제 — 보이스 종료 후 바로 픽업, 3초 후 첫 화면 복귀 */
+/* 260904 피드백: 완료 화면 삭제 — 보이스 종료 후 바로 픽업, 7초 후 첫 화면 복귀 */
 function goPickup(){
   stopWaves();
   document.getElementById('pkQr').innerHTML=t('pkQr',chosenM||match.m);
   BF.hide();lite(false);show('pickup');
-  clearTimeout(doneT);doneT=setTimeout(reset,3000);
+  clearTimeout(doneT);doneT=setTimeout(reset,7000);
 }
 function reset(){
   clearTimeout(voiceT);clearTimeout(doneT);clearTimeout(briefT);
@@ -1140,10 +1140,10 @@ function resetIdle(){clearTimeout(idleT);
   if(document.getElementById('attract').classList.contains('on'))return;
   idleT=setTimeout(reset,IDLE);}
 ['pointerdown','click'].forEach(ev=>document.addEventListener(ev,resetIdle,true));
-/* PICK UP 화면: 화면을 만지면 3초 자동 복귀 타이머가 다시 시작된다 (260904 피드백: 3초 후 첫 화면) */
+/* PICK UP 화면: 화면을 만지면 7초 자동 복귀 타이머가 다시 시작된다 */
 document.addEventListener('pointerdown',()=>{
   if(document.getElementById('pickup').classList.contains('on')){
-    clearTimeout(doneT);doneT=setTimeout(reset,3000);
+    clearTimeout(doneT);doneT=setTimeout(reset,7000);
   }
 },true);
 document.addEventListener('contextmenu',e=>e.preventDefault());
