@@ -335,6 +335,18 @@ html[lang="ja"] #phone .tbox .tx, html[lang="zh"] #phone .tbox .tx{font-size:33p
 #lang .langgrid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 #lang .langbtn.alt{background:transparent;color:var(--lime);box-shadow:inset 0 0 0 3px var(--lime)}
 #lang .langbtn{font-family:'Pretendard','Hiragino Sans','Yu Gothic','PingFang SC','Microsoft YaHei',sans-serif}
+#staffOv{position:absolute;inset:120px 64px;background:#0d0d0b;border:2px solid var(--lime);color:#fff;z-index:90;padding:34px;font-size:26px;overflow:auto}
+#staffOv .sp-head{font-weight:800;font-size:34px;color:var(--lime);margin-bottom:18px}
+#staffOv .sp-head span{font-weight:500;font-size:24px;color:#fff;margin-left:14px}
+#staffOv table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+#staffOv th,#staffOv td{padding:8px 10px;border-bottom:1px solid #2e2e20;text-align:left}
+#staffOv th{color:var(--lime);font-weight:700}
+#staffOv td:nth-child(n+3),#staffOv th:nth-child(n+3){text-align:right}
+#staffOv tr.low td{color:#ff8a65}
+#staffOv .sp-last{margin-top:16px;color:#cfd3b0}
+#staffOv .sp-btns{display:flex;gap:14px;margin-top:22px}
+#staffOv .sp-btns button{flex:1;padding:18px 0;font-size:26px;font-weight:700;background:var(--lime);color:var(--ink);border:0;cursor:pointer}
+#staffOv .sp-btns #spReset{background:transparent;color:var(--lime);border:2px solid var(--lime)}
 #attract .langsw{display:flex;justify-content:center;gap:14px;margin-top:22px}
 #attract .langsw button{font-family:'Barlow Semi Condensed','Pretendard';font-weight:600;font-size:26px;letter-spacing:.14em;padding:12px 30px;background:transparent;border:2px solid rgba(207,255,59,.55);color:rgba(207,255,59,.75);cursor:pointer;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
 #attract .langsw button.on{background:var(--lime);color:var(--ink);border-color:var(--lime)}
@@ -916,6 +928,9 @@ function startNarration(){
 /* 260904 피드백: 완료 화면 삭제 — 보이스 종료 후 바로 픽업, 7초 후 첫 화면 복귀 */
 function goPickup(){
   stopWaves();
+  /* 포토 리워드: 최종 선택 멤버의 풀에서 코드 1개 발급 → 출력물 QR (프린터 연동 지점) */
+  const rw=REWARD.take(chosenM||match.m);
+  if(rw){window.NEOSK_REWARD=rw;document.dispatchEvent(new CustomEvent('neosk:reward',{detail:rw}));console.log('[NEOSK reward]',rw.member,rw.code||'EXHAUSTED');}
   document.getElementById('pkQr').innerHTML=t('pkQr',chosenM||match.m);
   BF.hide();lite(false);show('pickup');
   clearTimeout(doneT);doneT=setTimeout(reset,7000);
@@ -1134,6 +1149,56 @@ const BF={
   BF.el.style.transform=`translate(${p.x-60}px,${p.y-55}px) scale(${p.s*flap},${p.s})`;
 })();
 
+
+/* ================= 포토 리워드 난수코드 (멤버별 풀 · 순차 소진) =================
+   - assets/reward_codes.json : 전체매핑 시트에서 생성 (멤버 영문명 → 코드 배열, 순번 순)
+   - 관객이 최종 선택한 멤버(chosenM, 없으면 match.m)의 풀에서 미사용 코드 1개를 꺼내 출력물 QR에 사용
+   - 사용 위치(커서)는 localStorage 'neosk_reward_cursor' 에 저장, 발급 기록은 'neosk_reward_log'
+   - 프린터 연동: goPickup() 시점에 window.NEOSK_REWARD 갱신 + 'neosk:reward' 이벤트 발생 */
+const REWARD={data:null,cursor:{},log:[],last:null};
+REWARD.load=async function(){
+  try{const r=await fetch('assets/reward_codes.json',{cache:'no-store'});REWARD.data=await r.json();}
+  catch(e){console.warn('reward_codes.json 로드 실패',e);REWARD.data=null;}
+  try{REWARD.cursor=JSON.parse(localStorage.getItem('neosk_reward_cursor')||'{}');}catch(e){REWARD.cursor={};}
+  try{REWARD.log=JSON.parse(localStorage.getItem('neosk_reward_log')||'[]');}catch(e){REWARD.log=[];}
+};
+REWARD.remaining=function(en){if(!REWARD.data||!REWARD.data.pools[en])return 0;return REWARD.data.pools[en].length-(REWARD.cursor[en]||0);};
+REWARD.take=function(m){
+  if(!REWARD.data)return null;
+  const en=m.en, pool=REWARD.data.pools[en]||[], i=REWARD.cursor[en]||0;
+  if(i>=pool.length){REWARD.last={member:en,ko:m.ko,rs:REWARD.data.rs[en],code:null,exhausted:true};return REWARD.last;}
+  const code=pool[i];
+  REWARD.cursor[en]=i+1;localStorage.setItem('neosk_reward_cursor',JSON.stringify(REWARD.cursor));
+  const rec={ts:new Date().toISOString(),member:en,ko:m.ko,rs:REWARD.data.rs[en],code,idx:i+1,name:uname||''};
+  REWARD.log.push(rec);if(REWARD.log.length>5000)REWARD.log=REWARD.log.slice(-5000);
+  localStorage.setItem('neosk_reward_log',JSON.stringify(REWARD.log));
+  REWARD.last={...rec,remaining:pool.length-(i+1),exhausted:false};
+  return REWARD.last;
+};
+REWARD.csv=function(){
+  const rows=[['시각','멤버','한글','영상코드','난수코드','순번','관객이름']].concat(REWARD.log.map(r=>[r.ts,r.member,r.ko,r.rs,r.code,r.idx,r.name]));
+  return '﻿'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');
+};
+/* 스태프 현황판: 대기 화면 상단 눈금 라벨 5회 터치 */
+function staffPanel(){
+  let ov=document.getElementById('staffOv');
+  if(ov){ov.remove();return;}
+  ov=document.createElement('div');ov.id='staffOv';
+  const d=REWARD.data;
+  let html='<div class="sp-head">포토 리워드 난수코드 현황 <span>총 '+(d?d.total.toLocaleString():'-')+' · 발급 '+REWARD.log.length.toLocaleString()+'</span></div>';
+  html+='<table><tr><th>영상코드</th><th>멤버</th><th>배분</th><th>발급</th><th>잔여</th></tr>';
+  if(d){for(const m of MEMBERS){const en=m.en,pool=d.pools[en]||[],used=REWARD.cursor[en]||0,rem=pool.length-used;
+    html+='<tr class="'+(rem<=Math.max(20,pool.length*0.1)?'low':'')+'"><td>'+(d.rs[en]||'')+'</td><td>'+m.ko+' '+en+'</td><td>'+pool.length.toLocaleString()+'</td><td>'+used.toLocaleString()+'</td><td>'+rem.toLocaleString()+'</td></tr>';}}
+  else html+='<tr><td colspan="5">reward_codes.json 을 불러오지 못했습니다</td></tr>';
+  html+='</table>';
+  if(REWARD.last)html+='<div class="sp-last">마지막 발급: '+REWARD.last.ko+' '+(REWARD.last.code||'(소진!)')+'</div>';
+  html+='<div class="sp-btns"><button id="spCsv">발급 기록 CSV 저장</button><button id="spReset">발급 위치 초기화</button><button id="spClose">닫기</button></div>';
+  ov.innerHTML=html;document.getElementById('stage').appendChild(ov);
+  document.getElementById('spClose').onclick=()=>ov.remove();
+  document.getElementById('spCsv').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([REWARD.csv()],{type:'text/csv'}));a.download='neosk_reward_log_'+new Date().toISOString().slice(0,10)+'.csv';a.click();};
+  document.getElementById('spReset').onclick=()=>{if(confirm('멤버별 발급 위치(커서)를 모두 0으로 되돌릴까요? 발급 기록은 유지됩니다.')){REWARD.cursor={};localStorage.removeItem('neosk_reward_cursor');ov.remove();staffPanel();}};
+}
+
 /* ================= 가드/스태프 ================= */
 let idleT;const IDLE=70000;
 function resetIdle(){clearTimeout(idleT);
@@ -1151,7 +1216,8 @@ let lastTouch=0;document.addEventListener('touchend',e=>{const n=Date.now();if(n
 function tapCounter(el,fn){let n=0,t=null;
   el.addEventListener('click',e=>{n++;clearTimeout(t);t=setTimeout(()=>{n=0;},1500);
     if(n>=5){n=0;fn();e.stopPropagation();}});}
-tapCounter(document.querySelector('#ruler .hid'),()=>{if(document.getElementById('code').classList.contains('on'))startSession();});
+tapCounter(document.querySelector('#ruler .hid'),()=>{if(document.getElementById('code').classList.contains('on'))startSession();else if(document.getElementById('attract').classList.contains('on'))staffPanel();});
+REWARD.load();
 tapCounter(document.getElementById('codeTitle'),()=>{
   if(confirm(t('staffReset',usedCodes().length))){
     localStorage.removeItem('neosk_used_codes');codeWarn('');alert(t('staffDone'));}});
