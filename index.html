@@ -286,6 +286,9 @@ body.lite #grainOv{opacity:.09;mix-blend-mode:multiply;filter:invert(1)}
 #phone .tbox .tx{font-weight:700;font-size:38px;line-height:1.75;white-space:pre-wrap}
 html[lang="en"] #phone .tbox .tx{font-size:29px;line-height:1.5}   /* 영문 나레이션은 글자 수가 2.5배라 한 화면에 들어가도록 축소 */
 html[lang="en"] #phone .tbox .nm{font-size:30px}
+html[lang="ja"] body, html[lang="ja"] #stage{font-family:'Pretendard','Hiragino Sans','Yu Gothic','Meiryo','Noto Sans JP',sans-serif}
+html[lang="zh"] body, html[lang="zh"] #stage{font-family:'Pretendard','PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif}
+html[lang="ja"] #phone .tbox .tx, html[lang="zh"] #phone .tbox .tx{font-size:33px;line-height:1.6}
 .tcur{display:inline-block;width:.62em;margin-left:4px;animation:blink .75s steps(2) infinite}
 /* AI 생성 고지 (이름 호명 구간 한정) */
 #phone .ainote{display:flex;align-items:center;justify-content:center;gap:14px;margin:18px 64px 0;
@@ -329,7 +332,9 @@ html[lang="en"] #phone .tbox .nm{font-size:30px}
 #lang .langtt{text-align:center;color:#fff;font-weight:800;font-size:60px;line-height:1.2;margin-bottom:56px}
 #lang .langtt span{display:block;font-family:'Barlow Semi Condensed','Pretendard';font-weight:600;font-size:32px;letter-spacing:.22em;color:var(--lime);margin-top:18px}
 #lang .langbtn{padding:44px 0;font-size:54px;font-weight:800}
-#lang .langbtn[data-lang="en"]{background:transparent;color:var(--lime);box-shadow:inset 0 0 0 3px var(--lime)}
+#lang .langgrid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+#lang .langbtn.alt{background:transparent;color:var(--lime);box-shadow:inset 0 0 0 3px var(--lime)}
+#lang .langbtn{font-family:'Pretendard','Hiragino Sans','Yu Gothic','PingFang SC','Microsoft YaHei',sans-serif}
 #attract .langsw{display:flex;justify-content:center;gap:14px;margin-top:22px}
 #attract .langsw button{font-family:'Barlow Semi Condensed','Pretendard';font-weight:600;font-size:26px;letter-spacing:.14em;padding:12px 30px;background:transparent;border:2px solid rgba(207,255,59,.55);color:rgba(207,255,59,.75);cursor:pointer;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
 #attract .langsw button.on{background:var(--lime);color:var(--ink);border-color:var(--lime)}
@@ -365,8 +370,12 @@ html[lang="en"] #phone .tbox .nm{font-size:30px}
   <div class="screen" id="lang">
     <div class="langbox">
       <div class="langtt">언어를 선택하세요<span>SELECT YOUR LANGUAGE</span></div>
-      <button class="btn langbtn" data-lang="ko">한국어 <span class="pix chv">▶▶</span></button>
-      <button class="btn langbtn" data-lang="en">ENGLISH <span class="pix chv">▶▶</span></button>
+      <div class="langgrid">
+        <button class="btn langbtn" data-lang="ko">한국어</button>
+        <button class="btn langbtn alt" data-lang="en">ENGLISH</button>
+        <button class="btn langbtn alt" data-lang="ja">日本語</button>
+        <button class="btn langbtn alt" data-lang="zh">中文</button>
+      </div>
     </div>
   </div>
 
@@ -574,8 +583,17 @@ const Q_EN=[
  {t:'If you saw a light flickering in the distance,<br>what would you do?',o:['Run toward it','Just watch it','Walk slowly toward it','Wave your hand']},
  {t:'Which scenery is likely to<br>comfort you the most?',o:['An endless ocean','A secret garden','An infinite orbit of stars','An unending wave of light']},
  {t:"When you're lost,<br>what do you think would guide you?",o:['The North Star in the night sky','A passing breeze','A butterfly lighting your path','A voice calling your name']}];
+
+/* ===== 일본어·중국어 (번역시트 260913 · 시트에서 자동 생성) ===== */
+T.ja={brief:"私と同じ夢を見ているメンバーは誰でしょうか？",codeTitle:"コードを入力してください",codeLen:"[!] 6ケタのコードを全て入力してください",codeUsed:"[!] すでに使用されているコードです・スタッフにお問い合わせください",enterTitle:"名前を入力してください",namePh:"名前を入力してください",nameEmpty:"[!] 名前を入力してください",nameJamo:"[!] 完成した文字で入力してください（母音・子音のみの入力不可）",nameBanned:"[!] 使用できない単語が含まれています",kbKo:"韓国語 / ABC",kbEn:"韓国語 / ABC",kbSpace:"スペース",kbClear:"全削除",biasTitle:"どのメンバーの夢に接続しますか？",select:"選択する",other:"他のメンバーを選択する",aiNote:"名前を呼ぶ部分はAIで生成された音声です",hp:"ヘッドホンを着用してください",play:"ボイスメッセージを聞く",outro:"僕たちが一緒に積み重ねてきた思い出は、これから広がるもっと大きな未来の始まりになる。夢を通して共感し、音楽で一つになって、お互いを信じ応援し合ってきた大切な気持ちをいつまでも覚えていよう。さぁ、目を開けたら、僕たちが願い続けてきた夢に繋がるよ。",staffDone:"リセット完了",pkGuide:"画面下の受け取り口に手を入れて<br>メッセージを取り出してください",dream:m=>m.en+'の夢の中へ',vnm:m=>m.ko+' ('+m.en+')',pkQr:m=>'QRコードを通して <b id="pkMem">'+m.en+'</b>のストーリーをお楽しみください',entry:(name)=>(name?name+'、':'')+'夢の中で会えて嬉しい。消えない光をたどって、僕たちは巡り逢えたんだ。',staffReset:n=>'使用したコード記録('+n+'件)をリセットしますか？'};
+T.zh={brief:"哪位成员正在与你做着同一个梦？",codeTitle:"请输入入场代码",codeLen:"[!] 请输入完整的6位数代码",codeUsed:"[!] 该代码已被使用·请咨询现场工作人员",enterTitle:"请输入姓名",namePh:"请输入姓名",nameEmpty:"[!] 请输入姓名",nameJamo:"[!] 请输入完整字符（不可仅输入声母或韵母）",nameBanned:"[!] 包含不可使用的词汇",kbKo:"韩文/ABC",kbEn:"韩文/ABC",kbSpace:"空格",kbClear:"全部删除",biasTitle:"要连接哪位成员的梦境？",select:"选择",other:"选择其他成员",aiNote:"姓名念读部分为 AI 生成语音",hp:"请佩戴耳机",play:"收听语音信息",outro:"我们共同积累的回忆，将成为宏大未来的序幕。我们通过梦想产生共鸣，因音乐融为一体，彼此信任并相互支持，让我们长久地铭记这份珍贵的心意。现在只要睁开双眼，就会通往我们一直期盼的那个梦想。",staffDone:"重置完成",pkGuide:"请将手轻轻伸入屏幕下方取纸口<br>取出您的信息",dream:m=>'进入'+m.en+'的梦境',vnm:m=>m.ko+' ('+m.en+')',pkQr:m=>'请通过二维码查看<b id="pkMem">'+m.en+'</b>的故事。',entry:(name)=>'谢谢'+(name||'你')+'来我深深的梦里，顺着不灭的光芒一路走来，我们终于相遇了。',staffReset:n=>'是否重置已使用的代码记录（'+n+'条）？'};
+const VOICE_JA={"JOHNNY": "君と共に過ごしたすべての瞬間が、僕たちとって一番優しい力だよ。", "TAEYONG": "暗闇の中でも道に迷わなかったのは、君が僕たちと同じ場所を見つめて、一緒にいてくれたからだよ。", "YUTA": "言葉にしなくても伝わる想いがある。その想いがいつでも僕たちをまた一つに繋いでくれる。", "KUN": "君にもっと笑っていてほしい。君との小さな思い出ひとつまで、ずっと大切に守るよ。", "TEN": "君に出会えたのは本当に幸運だよ。この夢が永遠に続いてくれたらいいな。", "JAEHYUN": "いつもそばにいてくれた君の想いが、深い夢の中で一番あたたかい温もりとして残っているよ。", "XIAOJUN": "闇に隠れてかすんでいた記憶が、君という光で、また鮮やかになったよ。", "HENDERY": "君と一緒に過ごしてきた瞬間の数々が、いつかもっと大きな夢に変わるよ。", "RENJUN": "怖くなる時もある。でも、君と過ごした大切な思い出が、僕の背中を押してくれる。", "JENO": "僕たちの夢が一つの信じる心で繋がっているのは、君という光があるから。", "HAECHAN": "それぞれ異なる光がひとつの夢を照らす時、僕たちはもっと自由に、眩しく輝ける。", "JAEMIN": "止まったと思っていた時間が、君の声に合わせてまたゆっくりと動き出した。", "YANGYANG": "君と一緒なら、どんな時間の中でも同じ夢に向かって進んでいけるよ。", "CHENLE": "君が一緒に過ごしてくれた全ての瞬間が、僕らを繋ぐより明るく鮮やかな歌になった。", "JISUNG": "君と一緒なら、未熟な夢も少しずつ育って、みんなを照らす光になるよ。", "SION": "君がそばにいれば何も怖くない。散らばった夢のかけらも、また繋ぎ直せるから。", "RIKU": "お互いの夢が繋がって闇の向こうを照らす大きな光になっているよ。", "YUSHI": "君がいなかったら、僕たちはこの夢の果てで新たな始まりを見つけられなかったはず。", "JAEHEE": "僕たちにとって一番明るい光になってくれた君のように、僕たちも君の夢を照らす星になりたい。", "RYO": "眠っていた夢も、君とならまた笑顔で目を覚ますことができる気がするよ。", "SAKUYA": "君と僕はこの光を辿って、いつでもまたお互いを見つけ出せるよ。"};
+const VOICE_ZH={"JOHNNY": "和你一起走过的每个瞬间，对我们而言都是最温柔的力量。", "TAEYONG": "在黑暗中也没有迷失方向，是因为有你和我们望着同一处、陪伴着彼此。", "YUTA": "有些心意，即使不说也能感受到。这份心意将我们重新连接在一起。", "KUN": "希望你笑得更多。关于你哪怕是再小的记忆我也会长久地守护。", "TEN": "能遇见你真的是最大的幸运，希望这个梦能永远持续下去。", "JAEHYUN": "你的心意一直陪伴着我们，化作深梦中最温暖的温度留存着。", "XIAOJUN": "被黑暗遮蔽而变得模糊的记忆，因为你这道光再次清晰起来。", "HENDERY": "和你一同度过的瞬间，总有一天会绽放出更大的梦想。", "RENJUN": "有时也会感到害怕。但和你在一起的珍贵记忆让我向前进。", "JENO": "我们的梦想之所以能连结成同一个信念，是因为有你这道光的存在。", "HAECHAN": "当不同的光芒照亮同一个梦想时，我们会更加自由、耀眼地闪烁。", "JAEMIN": "以为已经停止的时间，随着你的声音又开始缓缓流淌。", "YANGYANG": "只要和你在一起，无论在哪个时空都能朝着相同的梦想前行。", "CHENLE": "你陪伴的每个瞬间，都化作了将我们紧紧相连的、更明亮清晰的歌曲。", "JISUNG": "只要和你在一起，哪怕是还很生涩的梦想也会一点点长大，成为照亮所有人的光。", "SION": "只要你在身边，就没什么好怕的。因为连那些散落的梦想碎片，也能重新拼凑连结起来。", "RIKU": "彼此的愿望交织在一起，正成为照亮黑暗彼岸的巨大光芒。", "YUSHI": "如果没有你，我们或许就无法在这个梦的尽头发现崭新的开始。", "JAEHEE": "如同你成为了我们最亮的光，我们也想成为照亮你梦想的星星。", "RYO": "只要和你在一起，沉睡的梦想也一定能带着微笑再次醒来。", "SAKUYA": "顺着这道光，你和我随时都能再次找到彼此。"};
+const Q_JA=[{"t": "今あなたの目の前に見える光は？", "o": ["オーロラ", "波の光", "夕焼け", "月光"]}, {"t": "あなたの心がより惹かれるものは？", "o": ["紙飛行機", "砂時計", "ビー玉", "蝶々"]}, {"t": "あなたの心が最も惹かれる瞬間は？", "o": ["出会い", "共感", "歓声", "没入"]}, {"t": "今のあなたの感情と一番近い単語は？", "o": ["穏やかさ", "恋しさ", "ときめき", "喜び"]}, {"t": "共に過ごした大切な瞬間をタイムカプセルに入れるとしたら？", "o": ["写真", "手紙", "歌", "光"]}, {"t": "夢の境界を開くために必要なことは？", "o": ["鍵", "記憶のかけら", "共鳴", "勇気"]}, {"t": "心が最も暖かく満たされる場面は？", "o": ["眩しく降り注ぐ夏の夜の流星群", "雨上がり空に描かれた虹", "暖かな日差しの下で一緒に歩く道", "降り注ぐ月明かりの下で一緒に踊る夜"]}, {"t": "遠くで光がちらついていたら？", "o": ["走っていく", "見守る", "ゆっくり歩いていく", "手を振る"]}, {"t": "私を慰めてくれるたった一つの風景を選ぶとしたら？", "o": ["果てしない海", "秘密の庭園", "無限の星々の軌道", "止むことのない光の波"]}, {"t": "道に迷った時、あなたを導いてくれる存在は？", "o": ["夜空の北極星", "かすめて行く風の感触", "足元を照らす蝶", "私の名前を呼ぶ声"]}];
+const Q_ZH=[{"t": "此刻浮现在你眼前的光是？", "o": ["极光", "波光", "晚霞", "月光"]}, {"t": "你更倾心的物品是？", "o": ["纸飞机", "沙漏", "圆珠", "蝴蝶"]}, {"t": "最吸引我心灵的时刻是？", "o": ["相遇", "共鸣", "欢呼", "沉浸"]}, {"t": "最贴近你此刻心情的词语是？", "o": ["舒适", "思念", "心动", "喜悦"]}, {"t": "如果要将共度过的珍贵瞬间装入时光胶囊，你会选择？", "o": ["照片", "信件", "歌曲", "光芒"]}, {"t": "开启梦境边界所需的是？", "o": ["钥匙", "记忆碎片", "共鸣", "勇气"]}, {"t": "最让心灵充盈温暖感觉的画面是？", "o": ["夏夜里无比耀眼倾泻而下的流星雨", "雨过天晴后挂在天空中的彩虹", "在温暖阳光下携手同行的路", "在倾泻的月光下翩翩起舞的夜晚"]}, {"t": "远方的灯光若隐若现地闪烁，你会？", "o": ["奔跑过去", "静静注视", "缓缓走去", "挥手"]}, {"t": "最能抚慰你的风景是？", "o": ["无尽的大海", "秘密花园", "无限的繁星轨道", "永不停止的光之涟漪"]}, {"t": "迷失方向时，能够为你指引道路的是？", "o": ["夜空中的北极星", "拂面而过的微风", "照亮脚下的蝴蝶", "呼唤我名字的声音"]}];
+const VMAP={en:VOICE_EN,ja:VOICE_JA,zh:VOICE_ZH}, QMAP={en:Q_EN,ja:Q_JA,zh:Q_ZH};
 function setLang(l){
-  LANG=(l==='en')?'en':'ko';
+  LANG=T[l]?l:'ko';
   document.documentElement.lang=LANG;
   document.querySelectorAll('#langsw button').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));
   document.getElementById('briefLn').innerHTML=t('brief');
@@ -793,7 +811,7 @@ document.getElementById('attract').addEventListener('click',()=>{show('lang');ru
 document.querySelectorAll('#lang .langbtn').forEach(b=>b.addEventListener('click',()=>{setLang(b.dataset.lang);show('brief');ruler(1.2);startEEG();resetIdle();}));
 /* 브리프: 자동 전환 없음 — 'NEXT' 버튼으로만 진행 */
 function goCode(){clearTimeout(briefT);renderCode();codeWarn('');drawCodeKB();show('code');ruler(1.5);resetIdle();}
-function startSession(){resetData();kbMode=(LANG==='en')?'en':'ko';drawKB();renderName();show('enter');ruler(2);resetIdle();}
+function startSession(){resetData();kbMode=(LANG==='ko')?'ko':'en';drawKB();renderName();show('enter');ruler(2);resetIdle();}
 /* 이름 확인 → 설문 시작 (260904 피드백: 멤버 선택은 결과 이후로 이동) */
 let biasM=null, chosenM=null;
 function goSurvey(){
@@ -836,13 +854,13 @@ function renderQ(){
     if(i<qi)c.className='fill';else if(i===qi)c.className='cur';
     cells.appendChild(c);}
   document.getElementById('siglab').textContent='SIGNAL '+String(qi+1).padStart(2,'0')+' / 10';
-  const qe=Q_EN[qi];
-  const qt=document.getElementById('qtext');qt.innerHTML=LANG==='en'?qe.t:q.t;
+  const qe=(QMAP[LANG]||[])[qi];
+  const qt=document.getElementById('qtext');qt.innerHTML=qe?qe.t:q.t;
   qt.classList.remove('fadeup');void qt.offsetWidth;qt.classList.add('fadeup');
   const box=document.getElementById('opts');box.innerHTML='';
   box.classList.remove('fadeup');void box.offsetWidth;box.classList.add('fadeup');
   q.o.forEach((label,idx)=>{const d=document.createElement('div');d.className='opt';
-    d.innerHTML='<span class="num">'+(idx+1)+'</span><span class="lb">'+(LANG==='en'?qe.o[idx]:label)+'</span>';
+    d.innerHTML='<span class="num">'+(idx+1)+'</span><span class="lb">'+(qe?qe.o[idx]:label)+'</span>';
     d.onclick=()=>{d.classList.add('sel');setTimeout(()=>pick(idx),170);};box.appendChild(d);});
 }
 function pick(idx){answers[qi]=idx;qi++;resetIdle();
@@ -885,9 +903,9 @@ function goVoiceStandby(m){
 function startNarration(){
   const m=chosenM||match.m, voc=addressee(uname);
   /* 나레이션 구성(확정 대본): 1 진입(공통·호명) → 2 멤버별 한줄 → 3 마무리(공통) */
-  const ENTRY=LANG==='en'?t('entry',uname):t('entry',voc);   /* 영문은 호격 조사 없이 이름만 */
+  const ENTRY=LANG==='ko'?t('entry',voc):t('entry',uname);   /* 한국어만 아/야 호격, 그 외 언어는 이름만 */
   const OUTRO=t('outro');
-  const LINE=LANG==='en'?(VOICE_EN[m.en]||m.voice):m.voice;
+  const LINE=(VMAP[LANG]&&VMAP[LANG][m.en])||m.voice;
   const lines=['"'+ENTRY+'"','"'+LINE+'"','"'+OUTRO+'"'];
   document.getElementById('playBtn').style.display='none';
   waveAct=true;
